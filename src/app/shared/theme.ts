@@ -1,0 +1,20 @@
+export const C = {
+  green: "#00a15a", greenDk: "#007a44", greenLt: "#e6f7ee", greenMd: "#b3e6cc",
+  bg: "#fafbfc", white: "#fff",
+  g50: "#f8f9fa", g100: "#f1f3f5", g200: "#e2e5e9", g300: "#ced4da",
+  g400: "#98a2b3", g500: "#667085", g600: "#475467", g700: "#344054",
+  g800: "#1d2939", g900: "#101828",
+  amber50: "#fffcf0", amber100: "#fef0c7", amber500: "#f79009", amber600: "#dc6803",
+  red50: "#fef3f2", red500: "#f04438",
+  blue50: "#eff8ff", blue100: "#d1e9ff", blue500: "#2e90fa",
+} as const;
+
+export type BadgeColor = 'green' | 'amber' | 'gray' | 'blue' | 'red';
+
+export const BADGE_STYLES: Record<BadgeColor, { bg: string; c: string }> = {
+  green: { bg: C.greenLt, c: C.green },
+  amber: { bg: C.amber100, c: C.amber600 },
+  gray: { bg: C.g100, c: C.g500 },
+  blue: { bg: C.blue50, c: C.blue500 },
+  red: { bg: C.red50, c: C.red500 },
+};

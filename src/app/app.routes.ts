@@ -1,0 +1,23 @@
+import { Routes } from '@angular/router';
+
+export const routes: Routes = [
+  { path: '', loadComponent: () => import('./pages/landing/landing.component').then(m => m.LandingComponent) },
+  { path: 'not-eligible', loadComponent: () => import('./pages/not-dev/not-dev.component').then(m => m.NotDevComponent) },
+  { path: 'verify', loadComponent: () => import('./pages/absher/absher.component').then(m => m.AbsherComponent), data: { mode: 'register' } },
+  { path: 'sign-in', loadComponent: () => import('./pages/absher/absher.component').then(m => m.AbsherComponent), data: { mode: 'login' } },
+  { path: 'onboarding/project', loadComponent: () => import('./pages/project-onboard/project-onboard.component').then(m => m.ProjectOnboardComponent) },
+  { path: 'onboarding/financing', loadComponent: () => import('./pages/financing-onboard/financing-onboard.component').then(m => m.FinancingOnboardComponent) },
+  { path: 'onboarding/complete', loadComponent: () => import('./pages/first-dashboard/first-dashboard.component').then(m => m.FirstDashboardComponent) },
+  { path: 'submit-success', loadComponent: () => import('./pages/submit-success/submit-success.component').then(m => m.SubmitSuccessComponent) },
+  { path: 'dashboard', loadComponent: () => import('./pages/dashboard/dashboard.component').then(m => m.DashboardComponent) },
+  { path: 'project/new', loadComponent: () => import('./pages/add-project/add-project.component').then(m => m.AddProjectComponent) },
+  { path: 'company/new', loadComponent: () => import('./pages/add-company/add-company.component').then(m => m.AddCompanyComponent) },
+  { path: 'application/:id/status', loadComponent: () => import('./pages/submitted/submitted.component').then(m => m.SubmittedComponent) },
+  { path: 'application/:id/term-sheet', loadComponent: () => import('./pages/offer/offer.component').then(m => m.OfferComponent) },
+  { path: 'application/:id/accepted', loadComponent: () => import('./pages/offer-result/offer-result.component').then(m => m.OfferResultComponent), data: { accepted: true } },
+  { path: 'application/:id/declined', loadComponent: () => import('./pages/offer-result/offer-result.component').then(m => m.OfferResultComponent), data: { accepted: false } },
+  { path: 'profile', loadComponent: () => import('./pages/profile/profile.component').then(m => m.ProfileComponent) },
+  { path: 'support', loadComponent: () => import('./pages/support/support.component').then(m => m.SupportComponent) },
+  { path: 'verify/owner/:token', loadComponent: () => import('./pages/owner-verify/owner-verify.component').then(m => m.OwnerVerifyComponent) },
+  { path: '**', redirectTo: '' },
+];
