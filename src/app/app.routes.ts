@@ -14,6 +14,7 @@ export const routes: Routes = [
   { path: 'company/new', loadComponent: () => import('./pages/add-company/add-company.component').then(m => m.AddCompanyComponent) },
   { path: 'application/:id/status', loadComponent: () => import('./pages/submitted/submitted.component').then(m => m.SubmittedComponent) },
   { path: 'application/:id/term-sheet', loadComponent: () => import('./pages/offer/offer.component').then(m => m.OfferComponent) },
+  { path: 'application/:id/activity', loadComponent: () => import('./pages/activity-log/activity-log.component').then(m => m.ActivityLogComponent) },
   { path: 'application/:id/accepted', loadComponent: () => import('./pages/offer-result/offer-result.component').then(m => m.OfferResultComponent), data: { accepted: true } },
   { path: 'application/:id/declined', loadComponent: () => import('./pages/offer-result/offer-result.component').then(m => m.OfferResultComponent), data: { accepted: false } },
   { path: 'profile', loadComponent: () => import('./pages/profile/profile.component').then(m => m.ProfileComponent) },
