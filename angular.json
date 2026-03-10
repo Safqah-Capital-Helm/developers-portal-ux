@@ -53,6 +53,9 @@
             "styles": [
               "src/styles.css"
             ],
+            "polyfills": [
+              "zone.js"
+            ],
             "optimization": {
               "scripts": true,
               "styles": {
@@ -77,6 +80,22 @@
                 }
               ],
               "outputHashing": "all"
+            },
+            "github-pages": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kB",
+                  "maximumError": "1MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kB",
+                  "maximumError": "12kB"
+                }
+              ],
+              "outputHashing": "all",
+              "baseHref": "/developers-portal-ux/"
             },
             "development": {
               "optimization": false,

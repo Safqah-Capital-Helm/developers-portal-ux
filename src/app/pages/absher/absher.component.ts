@@ -33,7 +33,7 @@ type Step = 'id' | 'otp' | 'verifying' | 'ownerCheck' | 'ownerFail' | 'delegate'
         <div class="header-bar">
           <app-logo [size]="32"></app-logo>
           <span class="header-right" *ngIf="mode === 'login'" [style.color]="C.g500" [style.font-size.px]="13" [style.font-weight]="600">Sign in</span>
-          <span class="header-right" *ngIf="mode === 'register'" [style.color]="C.g500" [style.font-size.px]="13" [style.font-weight]="600">Step 1 of 3</span>
+          <span class="header-right" *ngIf="mode === 'register'" [style.color]="C.g500" [style.font-size.px]="13" [style.font-weight]="600">Step 1 of 2</span>
         </div>
 
         <!-- Progress steps (register mode only, not on pending) -->
@@ -311,7 +311,7 @@ export class AbsherComponent implements OnInit, OnDestroy {
   copied = false;
   shareLink = 'https://portal.safqah.com/verify/owner/abc123';
 
-  progressSteps = ['Identity', 'Company', 'Done'];
+  progressSteps = ['Verify identity', 'Invite team'];
   private timers: ReturnType<typeof setTimeout>[] = [];
 
   constructor(
@@ -391,7 +391,7 @@ export class AbsherComponent implements OnInit, OnDestroy {
         if (this.nid.startsWith('200')) {
           this.step = 'ownerFail';
         } else {
-          this.router.navigate(['/onboarding/project']);
+          this.router.navigate(['/onboarding/team']);
         }
       }, 1200);
       this.timers.push(t);

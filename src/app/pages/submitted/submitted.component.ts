@@ -51,11 +51,103 @@ import { BadgeComponent } from '../../shared/components/badge/badge.component';
           </ng-container>
         </div>
 
-        <!-- Demo ready toggle -->
+        <!-- Demo controls -->
         <div class="demo-bar">
           <button class="demo-toggle" (click)="toggleReady()">
-            {{ ready ? 'Reset to Initial State' : 'Demo: Skip to Term-sheet Ready' }}
+            {{ allReviewsDone ? 'Reset to Initial State' : 'Demo: Skip to Term-sheet Ready' }}
           </button>
+          <button class="demo-toggle" (click)="simulateInfoRequest()" *ngIf="infoRequests.length === 0 && !infoRequestSubmitted">
+            Simulate: Request Information
+          </button>
+          <button class="demo-toggle" (click)="resetInfoRequest()" *ngIf="infoRequests.length > 0 || infoRequestSubmitted">
+            Reset Info Request
+          </button>
+        </div>
+
+        <!-- ===================== INFORMATION REQUEST ===================== -->
+        <div *ngIf="infoRequests.length > 0 && !infoRequestSubmitted" class="section ir-section">
+          <div class="section-header">
+            <div>
+              <h2 class="section-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${C.amber600}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                Action Required
+              </h2>
+              <p class="section-sub">The review team has requested additional information</p>
+            </div>
+            <app-badge color="amber">{{ infoRequests.length }} item{{ infoRequests.length > 1 ? 's' : '' }}</app-badge>
+          </div>
+
+          <div class="ir-items">
+            <div *ngFor="let req of infoRequests; let i = index" class="ir-item">
+              <div class="ir-item-header">
+                <div class="ir-type-icon" [ngSwitch]="req.type">
+                  <!-- clarification -->
+                  <svg *ngSwitchCase="'clarification'" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="${C.amber600}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                  <!-- document -->
+                  <svg *ngSwitchCase="'document'" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="${C.amber600}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                  <!-- information -->
+                  <svg *ngSwitchDefault width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="${C.amber600}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                </div>
+                <div class="ir-item-text">
+                  <span class="ir-item-title">{{ req.title }}</span>
+                  <span class="ir-item-desc">{{ req.description }}</span>
+                </div>
+              </div>
+
+              <!-- Response area: text -->
+              <div *ngIf="req.type !== 'document'" class="ir-response">
+                <textarea [(ngModel)]="req.response" [placeholder]="'Type your response...'" class="ir-textarea" rows="3"></textarea>
+              </div>
+
+              <!-- Response area: primary file upload (document type) -->
+              <div *ngIf="req.type === 'document'" class="ir-response">
+                <div *ngIf="!req.fileUploaded" class="ir-upload-box" (click)="req.fileUploaded = true; req.fileName = 'bank_statement_2026.pdf'">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${C.g400}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+                  <span>Click to upload document</span>
+                </div>
+                <div *ngIf="req.fileUploaded" class="ir-uploaded">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="${C.green}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                  <span class="ir-file-name">{{ req.fileName }}</span>
+                  <button class="ir-remove" (click)="req.fileUploaded = false; req.fileName = ''">&times;</button>
+                </div>
+              </div>
+
+              <!-- Supporting files (all types) -->
+              <div class="ir-response ir-attachments">
+                <div class="ir-attach-label">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="${C.g400}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>
+                  <span>Supporting files</span>
+                  <span class="ir-attach-opt">(optional)</span>
+                </div>
+                <!-- Uploaded files list -->
+                <div *ngFor="let f of req.files; let fi = index" class="ir-uploaded ir-attach-file">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="${C.green}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                  <span class="ir-file-name">{{ f }}</span>
+                  <button class="ir-remove" (click)="removeFile(req, fi)">&times;</button>
+                </div>
+                <!-- Add file button -->
+                <button class="ir-add-file" (click)="addSupportingFile(req)">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="${C.g500}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  Add file
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="ir-actions">
+            <app-btn variant="primary" size="md" [disabled]="!canSubmitInfoResponse()" (clicked)="submitInfoResponse()">Submit Response</app-btn>
+          </div>
+        </div>
+
+        <!-- Info request submitted confirmation -->
+        <div *ngIf="infoRequestSubmitted" class="ir-confirmed">
+          <div class="ir-confirmed-inner">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${C.green}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <div>
+              <strong>Response submitted</strong>
+              <span>Your response has been sent to the review team. Processing will continue shortly.</span>
+            </div>
+          </div>
         </div>
 
         <!-- ===================== PROJECT REVIEW ===================== -->
@@ -181,51 +273,6 @@ import { BadgeComponent } from '../../shared/components/badge/badge.component';
             <div class="alert-body">
               <strong>Company review was not approved</strong>
               <p>The company did not meet the required criteria. Contact support for further assistance.</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- ===================== SUBMIT / CANCEL ===================== -->
-        <div *ngIf="!ready && tsStatus !== 'accepted'" class="section">
-          <!-- All reviews approved: submit -->
-          <div *ngIf="allReviewsDone" class="submit-box">
-            <div class="submit-icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="${C.green}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-            </div>
-            <h3 class="submit-title">All reviews are complete</h3>
-            <p class="submit-desc">Both project and company reviews have been approved. You may now submit your request to proceed.</p>
-            <label class="checkbox-row">
-              <input type="checkbox" [(ngModel)]="accuracy" />
-              <span>I confirm all information provided is accurate and complete</span>
-            </label>
-            <app-btn variant="primary" size="md" [disabled]="!accuracy" (clicked)="submitRequest()">Submit Request &rarr;</app-btn>
-          </div>
-
-          <!-- Reviews pending: waiting -->
-          <div *ngIf="!allReviewsDone" class="waiting-box">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${C.g400}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            <div>
-              <span class="waiting-title">Awaiting review completion</span>
-              <span class="waiting-sub">Both project and company reviews must be approved before you can proceed.</span>
-            </div>
-          </div>
-
-          <!-- Cancel request -->
-          <div class="cancel-section">
-            <button class="cancel-toggle" (click)="showCancel = !showCancel">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="${C.g400}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline *ngIf="!showCancel" points="6 9 12 15 18 9"/>
-                <polyline *ngIf="showCancel" points="18 15 12 9 6 15"/>
-              </svg>
-              Cancel this request
-            </button>
-            <div *ngIf="showCancel" class="cancel-body">
-              <p class="cancel-prompt">Please let us know why you'd like to cancel:</p>
-              <label *ngFor="let r of cancelReasons" class="radio-row">
-                <input type="radio" name="cancelReason" [value]="r" [(ngModel)]="cancelReason" />
-                <span>{{ r }}</span>
-              </label>
-              <app-btn variant="danger" size="sm" [disabled]="!cancelReason" (clicked)="confirmCancel()">Confirm Cancellation</app-btn>
             </div>
           </div>
         </div>
@@ -444,6 +491,25 @@ import { BadgeComponent } from '../../shared/components/badge/badge.component';
               <p class="celebration-desc">Al Noor Residential is now live on the Safqah platform. Investors can begin participating in this financing opportunity.</p>
               <app-btn variant="secondary" size="md" (clicked)="go('/dashboard')">Back to Dashboard</app-btn>
             </div>
+          </div>
+        </div>
+
+        <!-- ===================== CANCEL REQUEST ===================== -->
+        <div *ngIf="tsStatus !== 'accepted' && !allLaunched" class="cancel-footer">
+          <button class="cancel-toggle" (click)="showCancel = !showCancel">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="${C.g400}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline *ngIf="!showCancel" points="6 9 12 15 18 9"/>
+              <polyline *ngIf="showCancel" points="18 15 12 9 6 15"/>
+            </svg>
+            Cancel this request
+          </button>
+          <div *ngIf="showCancel" class="cancel-body">
+            <p class="cancel-prompt">Please let us know why you'd like to cancel:</p>
+            <label *ngFor="let r of cancelReasons" class="radio-row">
+              <input type="radio" name="cancelReason" [value]="r" [(ngModel)]="cancelReason" />
+              <span>{{ r }}</span>
+            </label>
+            <app-btn variant="danger" size="sm" [disabled]="!cancelReason" (clicked)="confirmCancel()">Confirm Cancellation</app-btn>
           </div>
         </div>
 
@@ -672,34 +738,7 @@ import { BadgeComponent } from '../../shared/components/badge/badge.component';
       line-height: 1.5;
     }
 
-    /* ---- Submit/Waiting ---- */
-    .submit-box {
-      text-align: center; padding: 8px 0;
-    }
-
-    .submit-icon { margin-bottom: 12px; }
-
-    .submit-title {
-      font-size: 16px; font-weight: 800; color: ${C.g900};
-      margin: 0 0 6px 0;
-    }
-
-    .submit-desc {
-      font-size: 13px; color: ${C.g500}; margin: 0 0 16px 0;
-      line-height: 1.5;
-    }
-
-    .checkbox-row {
-      display: flex; align-items: center; gap: 8px;
-      font-size: 13px; color: ${C.g600}; cursor: pointer;
-      margin-bottom: 16px; justify-content: center;
-    }
-
-    .checkbox-row input[type="checkbox"] {
-      width: 16px; height: 16px; accent-color: ${C.green};
-      cursor: pointer;
-    }
-
+    /* ---- Waiting ---- */
     .waiting-box {
       display: flex; gap: 14px; align-items: flex-start;
       padding: 16px; background: ${C.g50}; border-radius: 12px;
@@ -715,10 +754,143 @@ import { BadgeComponent } from '../../shared/components/badge/badge.component';
       font-size: 13px; color: ${C.g500}; display: block; margin-top: 2px;
     }
 
+    /* ---- Information Request ---- */
+    .ir-section {
+      border-color: ${C.amber100};
+      background: ${C.amber50};
+    }
+
+    .ir-items {
+      display: flex; flex-direction: column; gap: 12px;
+    }
+
+    .ir-item {
+      background: ${C.white}; border: 1px solid ${C.g200};
+      border-radius: 12px; padding: 16px;
+    }
+
+    .ir-item-header {
+      display: flex; gap: 10px; align-items: flex-start;
+    }
+
+    .ir-type-icon {
+      width: 32px; height: 32px; min-width: 32px;
+      border-radius: 8px; background: ${C.amber100};
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .ir-item-text { flex: 1; }
+
+    .ir-item-title {
+      font-size: 14px; font-weight: 700; color: ${C.g800};
+      display: block;
+    }
+
+    .ir-item-desc {
+      font-size: 13px; color: ${C.g500}; display: block;
+      margin-top: 2px; line-height: 1.4;
+    }
+
+    .ir-response {
+      margin-top: 12px; padding-left: 42px;
+    }
+
+    .ir-textarea {
+      width: 100%; border: 1px solid ${C.g200};
+      border-radius: 10px; padding: 10px 12px;
+      font-size: 13px; font-family: inherit;
+      color: ${C.g800}; background: ${C.white};
+      resize: vertical; outline: none;
+      transition: border-color 0.15s;
+    }
+    .ir-textarea:focus { border-color: ${C.amber500}; }
+    .ir-textarea::placeholder { color: ${C.g400}; }
+
+    .ir-upload-box {
+      border: 2px dashed ${C.g300}; border-radius: 10px;
+      padding: 20px; text-align: center; cursor: pointer;
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+      color: ${C.g400}; font-size: 13px; font-weight: 600;
+      transition: all 0.15s;
+    }
+    .ir-upload-box:hover {
+      border-color: ${C.amber500}; color: ${C.amber600};
+      background: ${C.amber50};
+    }
+
+    .ir-uploaded {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 12px; background: ${C.greenLt};
+      border-radius: 10px; font-size: 13px; color: ${C.g700};
+    }
+
+    .ir-file-name { font-weight: 600; flex: 1; }
+
+    .ir-remove {
+      background: none; border: none; cursor: pointer;
+      font-size: 18px; color: ${C.g400}; padding: 0 4px;
+      font-family: inherit; line-height: 1;
+    }
+    .ir-remove:hover { color: ${C.red500}; }
+
+    .ir-attachments {
+      margin-top: 8px;
+    }
+
+    .ir-attach-label {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 12px; font-weight: 600; color: ${C.g500};
+      margin-bottom: 8px;
+    }
+
+    .ir-attach-opt {
+      font-weight: 400; color: ${C.g400};
+    }
+
+    .ir-attach-file {
+      margin-bottom: 6px; padding: 8px 10px;
+    }
+
+    .ir-add-file {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: none; border: 1px dashed ${C.g300};
+      border-radius: 8px; padding: 6px 14px;
+      font-size: 12px; font-weight: 600; color: ${C.g500};
+      cursor: pointer; font-family: inherit;
+      transition: all 0.15s;
+    }
+    .ir-add-file:hover {
+      border-color: ${C.amber500}; color: ${C.amber600};
+      background: ${C.amber50};
+    }
+
+    .ir-actions {
+      margin-top: 16px; display: flex; justify-content: flex-end;
+    }
+
+    .ir-confirmed {
+      margin-bottom: 16px;
+    }
+
+    .ir-confirmed-inner {
+      display: flex; gap: 12px; align-items: flex-start;
+      padding: 16px 20px; background: ${C.greenLt};
+      border: 1px solid ${C.greenMd};
+      border-radius: 12px;
+    }
+
+    .ir-confirmed-inner strong {
+      font-size: 14px; color: ${C.greenDk}; display: block;
+    }
+
+    .ir-confirmed-inner span {
+      font-size: 13px; color: ${C.g600}; display: block; margin-top: 2px;
+    }
+
     /* ---- Cancel ---- */
-    .cancel-section {
-      margin-top: 20px; border-top: 1px solid ${C.g200};
-      padding-top: 16px;
+    .cancel-footer {
+      margin-top: 8px; padding: 16px 0 0;
+      text-align: center;
     }
 
     .cancel-toggle {
@@ -927,8 +1099,10 @@ export class SubmittedComponent {
   launchMarketing: 'pending' | 'approved' = 'pending';
   showCancel = false;
   cancelReason = '';
-  accuracy = false;
-  ready = false;
+
+  // Information request
+  infoRequests: { type: 'clarification' | 'document' | 'information'; title: string; description: string; response: string; fileUploaded: boolean; fileName: string; files: string[] }[] = [];
+  infoRequestSubmitted = false;
 
   // --- Static data ---
   pipelineSteps = ['Review', 'Term-sheet', 'Signing', 'Launch', 'Completed'];
@@ -1073,13 +1247,6 @@ export class SubmittedComponent {
     }
   }
 
-  submitRequest() {
-    if (this.accuracy && this.allReviewsDone) {
-      this.tsStatus = 'ready';
-      this.ready = true;
-    }
-  }
-
   confirmCancel() {
     if (this.cancelReason) {
       this.go('/dashboard');
@@ -1087,14 +1254,13 @@ export class SubmittedComponent {
   }
 
   toggleReady() {
-    if (!this.ready) {
+    if (!this.allReviewsDone) {
       // Skip to ready state
       this.ps = this.projectStages.length;
       this.cs = this.companyStages.length;
       this.pReview = 'approved';
       this.cReview = 'approved';
       this.tsStatus = 'ready';
-      this.ready = true;
     } else {
       // Reset all
       this.ps = 0;
@@ -1108,9 +1274,66 @@ export class SubmittedComponent {
       this.launchMarketing = 'pending';
       this.showCancel = false;
       this.cancelReason = '';
-      this.accuracy = false;
-      this.ready = false;
+      this.infoRequests = [];
+      this.infoRequestSubmitted = false;
     }
+  }
+
+  // --- Information Request ---
+  simulateInfoRequest() {
+    this.infoRequests = [
+      {
+        type: 'clarification',
+        title: 'Source of equity',
+        description: 'Please clarify the source of equity contribution for this project and provide supporting documentation if available.',
+        response: '', fileUploaded: false, fileName: '', files: []
+      },
+      {
+        type: 'document',
+        title: 'Recent bank statement',
+        description: 'Upload a bank statement for the company\'s primary account from the last 3 months.',
+        response: '', fileUploaded: false, fileName: '', files: []
+      },
+      {
+        type: 'information',
+        title: 'Construction timeline',
+        description: 'Provide the expected construction start date and estimated completion date for the project.',
+        response: '', fileUploaded: false, fileName: '', files: []
+      },
+    ];
+    this.infoRequestSubmitted = false;
+  }
+
+  canSubmitInfoResponse(): boolean {
+    return this.infoRequests.every(req => {
+      if (req.type === 'document') return req.fileUploaded;
+      return req.response.trim().length > 0;
+    });
+  }
+
+  submitInfoResponse() {
+    if (this.canSubmitInfoResponse()) {
+      this.infoRequests = [];
+      this.infoRequestSubmitted = true;
+    }
+  }
+
+  resetInfoRequest() {
+    this.infoRequests = [];
+    this.infoRequestSubmitted = false;
+  }
+
+  private fileCounter = 0;
+  private mockFileNames = ['supporting_doc.pdf', 'screenshot_evidence.png', 'financial_summary.xlsx', 'contract_copy.pdf', 'site_photo.jpg'];
+
+  addSupportingFile(req: typeof this.infoRequests[0]) {
+    const name = this.mockFileNames[this.fileCounter % this.mockFileNames.length];
+    req.files.push(name);
+    this.fileCounter++;
+  }
+
+  removeFile(req: typeof this.infoRequests[0], index: number) {
+    req.files.splice(index, 1);
   }
 
   go(path: string) { this.router.navigateByUrl(path); }

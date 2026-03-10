@@ -128,10 +128,31 @@ import { NavComponent, ButtonComponent, CardComponent, BadgeComponent, ModalComp
                   </svg>
                 </div>
                 <span class="section-title">Projects</span>
-                <span class="section-count">{{ projects.length }}</span>
+                <span class="section-count">{{ filteredProjects.length }}<span *ngIf="isFiltered"> / {{ projects.length }}</span></span>
               </div>
 
-              <div *ngFor="let p of projects"
+              <!-- Filters -->
+              <div class="filter-bar">
+                <div class="filter-group">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g400" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+                  <select class="filter-select" [(ngModel)]="filterCompany">
+                    <option value="">All Companies</option>
+                    <option *ngFor="let c of uniqueCompanies" [value]="c">{{ c }}</option>
+                  </select>
+                </div>
+                <div class="filter-group">
+                  <select class="filter-select" [(ngModel)]="filterStatus">
+                    <option value="">All Statuses</option>
+                    <option *ngFor="let s of uniqueStatuses" [value]="s">{{ s }}</option>
+                  </select>
+                </div>
+                <button *ngIf="isFiltered" class="filter-clear" (click)="filterCompany = ''; filterStatus = ''">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  Clear
+                </button>
+              </div>
+
+              <div *ngFor="let p of filteredProjects"
                    class="project-card"
                    [class.draft]="p.sc === 'gray'"
                    [class.dead]="p.sc === 'red'"
@@ -426,6 +447,47 @@ import { NavComponent, ButtonComponent, CardComponent, BadgeComponent, ModalComp
       padding: 2px 8px;
       border-radius: 10px;
     }
+
+    /* Filter bar */
+    .filter-bar {
+      display: flex; align-items: center; gap: 8px;
+      margin-bottom: 14px; flex-wrap: wrap;
+    }
+
+    .filter-group {
+      display: flex; align-items: center; gap: 6px;
+      position: relative;
+    }
+
+    .filter-select {
+      appearance: none;
+      background: ${C.white};
+      border: 1px solid ${C.g200};
+      border-radius: 8px;
+      padding: 6px 28px 6px 10px;
+      font-size: 12px; font-weight: 600;
+      color: ${C.g700};
+      font-family: inherit;
+      cursor: pointer;
+      outline: none;
+      transition: border-color 0.15s;
+      background-image: url("data:image/svg+xml,%3Csvg width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 8px center;
+    }
+    .filter-select:hover { border-color: ${C.g300}; }
+    .filter-select:focus { border-color: ${C.green}; }
+
+    .filter-clear {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: none; border: none;
+      font-size: 11px; font-weight: 700;
+      color: ${C.g400}; cursor: pointer;
+      font-family: inherit; padding: 4px 6px;
+      border-radius: 6px;
+      transition: all 0.15s;
+    }
+    .filter-clear:hover { color: ${C.red500}; background: ${C.red50}; }
 
     /* Company cards */
     .company-card {
@@ -1004,6 +1066,30 @@ export class DashboardComponent {
   ];
 
   roles = ['Admin', 'Editor', 'Contributor', 'Viewer'];
+
+  // ========== FILTER STATE ==========
+  filterCompany = '';
+  filterStatus = '';
+
+  get uniqueCompanies(): string[] {
+    return [...new Set(this.projects.map(p => p.compShort))];
+  }
+
+  get uniqueStatuses(): string[] {
+    return [...new Set(this.projects.map(p => p.status))];
+  }
+
+  get isFiltered(): boolean {
+    return this.filterCompany !== '' || this.filterStatus !== '';
+  }
+
+  get filteredProjects(): any[] {
+    return this.projects.filter(p => {
+      if (this.filterCompany && p.compShort !== this.filterCompany) return false;
+      if (this.filterStatus && p.status !== this.filterStatus) return false;
+      return true;
+    });
+  }
 
   // ========== MODAL STATE ==========
   showCompanyModal = false;

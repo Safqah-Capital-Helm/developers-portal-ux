@@ -19,7 +19,6 @@ type Step =
   | 'verify'
   | 'otp'
   | 'checking'
-  | 'ownerFail'
   | 'delegate'
   | 'smsSent'
   | 'pending'
@@ -129,7 +128,7 @@ type Step =
                 placeholder="Enter your 10-digit ID"
                 [value]="nid"
                 (valueChange)="nid = $event"
-                helper="Use an ID starting with '200' to test owner-not-found flow."
+                helper="Enter 0000000000 to test the owner-not-found flow."
               ></app-input>
               <app-btn variant="primary" [full]="true" size="lg" [disabled]="nid.length < 10" (clicked)="step = 'otp'">
                 Send Verification Code
@@ -172,62 +171,91 @@ type Step =
           </app-card>
         </div>
 
-        <!-- ═══════ Step: ownerFail ═══════ -->
-        <div *ngIf="step === 'ownerFail'">
-          <app-card [padding]="32">
+        <!-- ═══════ Step: delegate (owner not found + request authorization) ═══════ -->
+        <div *ngIf="step === 'delegate'">
+          <!-- Alert banner -->
+          <div class="delegate-alert">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${C.amber500}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;">
+              <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+              <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+            <div>
+              <span class="delegate-alert-title">You're not listed as a registered owner</span>
+              <span class="delegate-alert-desc">ID {{ nid.substring(0, 3) }}****{{ nid.substring(nid.length - 3) }} was not found as an owner of CR {{ cr }}. Ask the company owner to verify instead.</span>
+            </div>
+          </div>
+
+          <app-card [padding]="32" style="margin-top: 16px;">
             <div class="text-center" style="margin-bottom: 20px;">
-              <div class="icon-circle red-gradient" style="width: 56px; height: 56px; margin: 0 auto 16px;">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                  <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+              <div class="icon-circle" style="width: 56px; height: 56px; margin: 0 auto 16px; background: linear-gradient(135deg, ${C.blue500}, #1570ef);">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                  <polyline points="22,6 12,13 2,6"/>
                 </svg>
               </div>
-              <h2 class="card-title">Not a registered owner</h2>
-              <p class="card-desc" style="margin-top: 4px;">
-                ID {{ nid.substring(0, 3) }}****{{ nid.substring(nid.length - 3) }} is not listed as an owner of CR {{ cr }}.
+              <h2 class="card-title">Request owner verification</h2>
+              <p class="card-desc" style="margin-top: 6px;">
+                Share the secure link below with the company owner so they can verify their identity via Absher.
               </p>
             </div>
 
-            <app-btn variant="primary" [full]="true" size="lg" (clicked)="step = 'delegate'">
-              Request Owner Authorization &rarr;
-            </app-btn>
-
-            <div style="display: flex; gap: 10px; margin-top: 12px;">
-              <app-btn variant="ghost" [full]="true" size="md" (clicked)="go('/dashboard')">Dashboard</app-btn>
-              <app-btn variant="ghost" [full]="true" size="md" (clicked)="go('/support')">Support</app-btn>
+            <!-- How it works -->
+            <div class="delegate-steps">
+              <div class="delegate-step">
+                <div class="delegate-step-num">1</div>
+                <div class="delegate-step-text">Share the link below with the company owner</div>
+              </div>
+              <div class="delegate-step">
+                <div class="delegate-step-num">2</div>
+                <div class="delegate-step-text">The owner verifies their identity via Absher</div>
+              </div>
+              <div class="delegate-step">
+                <div class="delegate-step-num">3</div>
+                <div class="delegate-step-text">You'll be notified once verification is complete</div>
+              </div>
             </div>
           </app-card>
-        </div>
 
-        <!-- ═══════ Step: delegate ═══════ -->
-        <div *ngIf="step === 'delegate'">
-          <app-card [padding]="32">
-            <h2 class="card-title" style="margin-bottom: 16px;">Share verification link</h2>
-
-            <div class="share-link-box">
+          <!-- Option 1: Copy link -->
+          <app-card [padding]="24" style="margin-top: 12px;">
+            <div class="delegate-option-header">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/>
+                <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/>
+              </svg>
+              <span class="delegate-option-label">Option 1: Copy &amp; share the link</span>
+            </div>
+            <div class="share-link-box" style="margin-top: 12px;">
               <span class="share-link-text">{{ shareLink }}</span>
               <button class="copy-btn" (click)="copyLink()">{{ copied ? 'Copied!' : 'Copy' }}</button>
             </div>
-
-            <div class="divider-row">
-              <div class="divider-line"></div>
-              <span class="divider-text">or send via SMS</span>
-              <div class="divider-line"></div>
-            </div>
-
-            <app-input
-              label="Owner's mobile number"
-              placeholder="+966 5x xxx xxxx"
-              [value]="ownerPhone"
-              (valueChange)="ownerPhone = $event"
-            ></app-input>
-            <app-btn variant="primary" [full]="true" size="lg" [disabled]="ownerPhone.length < 10" (clicked)="sendSms()">
-              Send SMS
-            </app-btn>
           </app-card>
 
-          <p class="form-footer">
-            <span class="link" (click)="step = 'ownerFail'">Back</span>
-          </p>
+          <!-- Option 2: Send SMS -->
+          <app-card [padding]="24" style="margin-top: 12px;">
+            <div class="delegate-option-header">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+              </svg>
+              <span class="delegate-option-label">Option 2: Send the link via SMS</span>
+            </div>
+            <div style="margin-top: 12px;">
+              <app-input
+                label="Owner's mobile number"
+                placeholder="+966 5x xxx xxxx"
+                [value]="ownerPhone"
+                (valueChange)="ownerPhone = $event"
+              ></app-input>
+              <app-btn variant="primary" [full]="true" size="lg" [disabled]="ownerPhone.length < 10" (clicked)="sendSms()">
+                Send SMS to Owner
+              </app-btn>
+            </div>
+          </app-card>
+
+          <div style="display: flex; gap: 10px; margin-top: 20px;">
+            <app-btn variant="ghost" [full]="true" size="md" (clicked)="go('/dashboard')">Dashboard</app-btn>
+            <app-btn variant="ghost" [full]="true" size="md" (clicked)="go('/support')">Support</app-btn>
+          </div>
         </div>
 
         <!-- ═══════ Step: smsSent ═══════ -->
@@ -247,34 +275,43 @@ type Step =
 
         <!-- ═══════ Step: pending ═══════ -->
         <div *ngIf="step === 'pending'">
-          <div class="text-center" style="margin-bottom: 24px;">
-            <svg width="52" height="52" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.amber500" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"/>
-              <polyline points="12 6 12 12 16 14"/>
+          <!-- Confirmation banner -->
+          <div class="pending-confirm">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.green" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;">
+              <polyline points="20 6 9 17 4 12"/>
             </svg>
+            <span *ngIf="delegateMethod === 'sms'">Verification link sent to {{ ownerPhone }}</span>
+            <span *ngIf="delegateMethod === 'link'">Verification link copied to clipboard</span>
           </div>
 
-          <app-card [padding]="32">
+          <app-card [padding]="32" style="margin-top: 16px;">
             <div class="text-center">
+              <div style="margin-bottom: 16px;">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.amber500" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"/>
+                  <polyline points="12 6 12 12 16 14"/>
+                </svg>
+              </div>
               <app-badge color="amber">Pending owner verification</app-badge>
               <p [style.color]="C.g600" [style.font-size.px]="14" [style.line-height]="'1.6'" [style.margin-top.px]="16">
-                We are waiting for the company owner to complete identity verification. You will be notified once it's done.
+                We're waiting for the company owner to verify their identity. You'll receive a notification once it's complete.
               </p>
             </div>
-
-            <div style="display: flex; gap: 10px; margin-top: 24px;">
-              <app-btn variant="secondary" [full]="true" size="md" (clicked)="step = 'delegate'">
-                Resend / Change
-              </app-btn>
-              <app-btn variant="primary" [full]="true" size="md" (clicked)="go('/verify/owner/abc123')">
-                Demo: Owner View &rarr;
-              </app-btn>
-            </div>
           </app-card>
+
+          <div style="margin-top: 20px;">
+            <app-btn variant="secondary" [full]="true" size="md" (clicked)="step = 'delegate'">
+              Resend / Change
+            </app-btn>
+          </div>
 
           <p class="form-footer" style="margin-top: 20px;">
             <span class="link" (click)="go('/dashboard')">Back to Dashboard</span>
           </p>
+
+          <div class="demo-bar">
+            <button class="demo-advance" (click)="go('/verify/owner/abc123')">Demo: Owner View &rarr;</button>
+          </div>
         </div>
 
         <!-- ═══════ Step: details ═══════ -->
@@ -379,7 +416,7 @@ type Step =
             <app-btn variant="secondary" [full]="true" size="lg" (clicked)="go('/dashboard')">
               &larr; Dashboard
             </app-btn>
-            <app-btn variant="primary" [full]="true" size="lg" (clicked)="go('/add-project')">
+            <app-btn variant="primary" [full]="true" size="lg" (clicked)="go('/project/new')">
               Add a Project &rarr;
             </app-btn>
           </div>
@@ -540,7 +577,7 @@ type Step =
     .share-link-box {
       display: flex;
       align-items: center;
-      background: ${C.white};
+      background: ${C.g50};
       border: 1.5px solid ${C.g200};
       border-radius: 10px;
       padding: 10px 14px;
@@ -554,6 +591,7 @@ type Step =
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+      font-family: 'SF Mono', 'Fira Code', monospace;
     }
 
     .copy-btn {
@@ -569,24 +607,90 @@ type Step =
       white-space: nowrap;
     }
 
-    /* Divider */
-    .divider-row {
+    /* Delegate steps */
+    .delegate-steps {
+      background: ${C.g50};
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .delegate-step {
       display: flex;
       align-items: center;
       gap: 12px;
-      margin: 20px 0;
     }
 
-    .divider-line {
-      flex: 1;
-      height: 1px;
-      background: ${C.g200};
-    }
-
-    .divider-text {
+    .delegate-step-num {
+      width: 24px;
+      height: 24px;
+      min-width: 24px;
+      border-radius: 50%;
+      background: ${C.green};
+      color: #fff;
       font-size: 12px;
-      color: ${C.g400};
-      white-space: nowrap;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .delegate-step-text {
+      font-size: 13px;
+      font-weight: 600;
+      color: ${C.g700};
+    }
+
+    .delegate-option-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .delegate-option-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: ${C.g700};
+    }
+
+    .pending-confirm {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      background: ${C.greenLt};
+      border: 1px solid ${C.green};
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      color: ${C.g800};
+    }
+
+    .delegate-alert {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 16px;
+      background: #fffcf5;
+      border: 1px solid #fec84b;
+      border-radius: 12px;
+    }
+
+    .delegate-alert-title {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      color: ${C.g900};
+    }
+
+    .delegate-alert-desc {
+      display: block;
+      font-size: 12px;
+      color: ${C.g500};
+      line-height: 1.5;
+      margin-top: 2px;
     }
 
     /* SMS sent icon */
@@ -678,6 +782,19 @@ type Step =
     .link:hover {
       text-decoration: underline;
     }
+
+    /* ---- Demo buttons ---- */
+    .demo-bar {
+      text-align: center; margin-top: 16px;
+    }
+
+    .demo-advance {
+      background: none; border: 1px dashed ${C.g300};
+      border-radius: 6px; padding: 4px 10px;
+      font-size: 11px; font-weight: 600; color: ${C.g500};
+      cursor: pointer; font-family: inherit;
+    }
+    .demo-advance:hover { background: ${C.g50}; color: ${C.g700}; }
   `]
 })
 export class AddCompanyComponent implements OnDestroy {
@@ -686,10 +803,11 @@ export class AddCompanyComponent implements OnDestroy {
   step: Step = 'cr';
   cr = '';
   crRes = '';
-  nid = '1063622662';
+  nid = '';
   otp = '';
   ownerPhone = '';
   copied = false;
+  delegateMethod: 'link' | 'sms' = 'link';
   website = '';
   consent = false;
 
@@ -727,10 +845,8 @@ export class AddCompanyComponent implements OnDestroy {
         return 'Verify Ownership';
       case 'checking':
         return 'Checking Ownership';
-      case 'ownerFail':
-        return 'Owner Verification Failed';
       case 'delegate':
-        return 'Request Authorization';
+        return 'Request Owner Verification';
       case 'smsSent':
         return 'SMS Sent';
       case 'pending':
@@ -745,7 +861,7 @@ export class AddCompanyComponent implements OnDestroy {
   }
 
   get showProgress(): boolean {
-    return !['ownerFail', 'delegate', 'smsSent', 'pending'].includes(this.step);
+    return !['delegate', 'smsSent', 'pending'].includes(this.step);
   }
 
   get progressCurrent(): number {
@@ -777,8 +893,8 @@ export class AddCompanyComponent implements OnDestroy {
   onOtpConfirm(): void {
     this.step = 'checking';
     const t = setTimeout(() => {
-      if (this.nid.startsWith('200')) {
-        this.step = 'ownerFail';
+      if (this.nid === '0000000000') {
+        this.step = 'delegate';
       } else {
         // Update CR Number in companyFields
         this.companyFields[2][1] = this.cr || '1020304050607';
@@ -791,11 +907,16 @@ export class AddCompanyComponent implements OnDestroy {
   copyLink(): void {
     navigator.clipboard.writeText(this.shareLink);
     this.copied = true;
-    const t = setTimeout(() => { this.copied = false; }, 2000);
+    this.delegateMethod = 'link';
+    const t = setTimeout(() => {
+      this.copied = false;
+      this.step = 'pending';
+    }, 1500);
     this.timers.push(t);
   }
 
   sendSms(): void {
+    this.delegateMethod = 'sms';
     this.step = 'smsSent';
     const t = setTimeout(() => { this.step = 'pending'; }, 2000);
     this.timers.push(t);
