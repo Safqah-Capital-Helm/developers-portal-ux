@@ -7,9 +7,9 @@ import {
   BackLinkComponent,
   ButtonComponent,
   CardComponent,
-  BadgeComponent,
   InputComponent,
   ProgressStepsComponent,
+  ReviewGridComponent,
 } from '../../shared';
 
 @Component({
@@ -21,9 +21,9 @@ import {
     BackLinkComponent,
     ButtonComponent,
     CardComponent,
-    BadgeComponent,
     InputComponent,
     ProgressStepsComponent,
+    ReviewGridComponent,
   ],
   template: `
     <div class="page">
@@ -145,16 +145,7 @@ import {
                 <span class="review-label">Financing Request</span>
                 <button class="edit-link" (click)="step = 1">Edit</button>
               </div>
-              <div class="review-grid">
-                <div class="review-item">
-                  <span class="review-item-label">Product</span>
-                  <span class="review-item-value">{{ getProductName() }}</span>
-                </div>
-                <div class="review-item">
-                  <span class="review-item-label">Amount</span>
-                  <span class="review-item-value">{{ +financingAmount | number }} SAR</span>
-                </div>
-              </div>
+              <app-review-grid [items]="reviewFinancingItems"></app-review-grid>
             </div>
           </app-card>
 
@@ -434,32 +425,6 @@ import {
       color: ${C.g500};
     }
 
-    .review-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px 20px;
-    }
-
-    .review-item {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .review-item-label {
-      font-size: 11px;
-      font-weight: 700;
-      color: ${C.g400};
-      text-transform: uppercase;
-      letter-spacing: 0.3px;
-    }
-
-    .review-item-value {
-      font-size: 14px;
-      font-weight: 600;
-      color: ${C.g800};
-    }
-
     /* Submit section */
     .submit-section {
       margin-top: 20px;
@@ -516,9 +481,6 @@ import {
     }
 
     @media (max-width: 600px) {
-      .review-grid {
-        grid-template-columns: 1fr;
-      }
       .product-grid {
         grid-template-columns: 1fr;
       }
@@ -595,6 +557,14 @@ export class AddApplicationComponent {
 
   go(path: string): void {
     this.router.navigateByUrl(path);
+  }
+
+  // Review computed items
+  get reviewFinancingItems(): Array<{ label: string; value: string }> {
+    return [
+      { label: 'Product', value: this.getProductName() },
+      { label: 'Amount', value: (+this.financingAmount).toLocaleString() + ' SAR' },
+    ];
   }
 
   // Helpers

@@ -34,5 +34,6 @@ export const routes: Routes = [
   { path: 'profile', loadComponent: () => import('./pages/profile/profile.component').then(m => m.ProfileComponent) },
   { path: 'support', loadComponent: () => import('./pages/support/support.component').then(m => m.SupportComponent) },
   { path: 'verify/owner/:token', loadComponent: () => import('./pages/owner-verify/owner-verify.component').then(m => m.OwnerVerifyComponent) },
+  { path: 'design-system', loadComponent: () => import('./pages/design-system/design-system.component').then(m => m.DesignSystemComponent) },
   { path: '**', redirectTo: '' },
 ];

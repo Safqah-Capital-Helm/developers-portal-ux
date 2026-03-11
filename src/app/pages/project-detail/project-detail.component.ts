@@ -2,13 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { C } from '../../shared/theme';
-import { BadgeComponent, BackLinkComponent, CardComponent } from '../../shared';
+import { C, borderColorForStatus } from '../../shared/theme';
+import { BadgeComponent, BackLinkComponent, ReviewGridComponent, EmptyStateComponent } from '../../shared';
 
 @Component({
   selector: 'app-project-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink, BadgeComponent, BackLinkComponent, CardComponent],
+  imports: [CommonModule, RouterLink, BadgeComponent, BackLinkComponent, ReviewGridComponent, EmptyStateComponent],
   template: `
     <div class="container" *ngIf="project">
       <app-back-link to="/dashboard/projects" label="Back to Projects"></app-back-link>
@@ -46,63 +46,13 @@ import { BadgeComponent, BackLinkComponent, CardComponent } from '../../shared';
       <!-- Project Details -->
       <div class="section">
         <h2 class="section-title">Project Details</h2>
-        <div class="review-grid">
-          <div class="review-item">
-            <div class="review-label">Project Name</div>
-            <div class="review-value">{{ project.name }}</div>
-          </div>
-          <div class="review-item">
-            <div class="review-label">Project Type</div>
-            <div class="review-value">{{ project.type }}</div>
-          </div>
-          <div class="review-item">
-            <div class="review-label">Stage</div>
-            <div class="review-value">{{ project.stage }}</div>
-          </div>
-          <div class="review-item">
-            <div class="review-label">Location</div>
-            <div class="review-value">{{ project.loc }}</div>
-          </div>
-          <div class="review-item">
-            <div class="review-label">Expected Units</div>
-            <div class="review-value">{{ project.expectedUnits }}</div>
-          </div>
-          <div class="review-item">
-            <div class="review-label">Building Area</div>
-            <div class="review-value">{{ project.buildingArea }}</div>
-          </div>
-          <div class="review-item">
-            <div class="review-label">Selling Area</div>
-            <div class="review-value">{{ project.sellingArea }}</div>
-          </div>
-          <div class="review-item">
-            <div class="review-label">Project Period</div>
-            <div class="review-value">{{ project.period }}</div>
-          </div>
-        </div>
+        <app-review-grid [items]="projectDetailItems"></app-review-grid>
       </div>
 
       <!-- Project Financials -->
       <div class="section">
         <h2 class="section-title">Project Financials</h2>
-        <div class="review-grid">
-          <div class="review-item">
-            <div class="review-label">Estimated Total Cost</div>
-            <div class="review-value">{{ project.cost }}</div>
-          </div>
-          <div class="review-item">
-            <div class="review-label">Land Cost</div>
-            <div class="review-value">{{ project.landCost }}</div>
-          </div>
-          <div class="review-item">
-            <div class="review-label">Development Cost</div>
-            <div class="review-value">{{ project.devCost }}</div>
-          </div>
-          <div class="review-item">
-            <div class="review-label">Expected Revenue</div>
-            <div class="review-value">{{ project.expectedRevenue }}</div>
-          </div>
-        </div>
+        <app-review-grid [items]="projectFinancialItems"></app-review-grid>
       </div>
 
       <!-- Financing Applications -->
@@ -115,12 +65,7 @@ import { BadgeComponent, BackLinkComponent, CardComponent } from '../../shared';
           </a>
         </div>
 
-        <div *ngIf="applications.length === 0" class="empty-state">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g300" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/>
-          </svg>
-          <span>No financing applications yet</span>
-        </div>
+        <app-empty-state *ngIf="applications.length === 0" message="No financing applications yet"></app-empty-state>
 
         <div *ngFor="let app of applications"
              class="app-card"
@@ -206,25 +151,6 @@ import { BadgeComponent, BackLinkComponent, CardComponent } from '../../shared';
       transition: background 0.15s;
     }
     .new-app-link:hover { background: ${C.greenLt}; }
-
-    /* Review grid */
-    .review-grid {
-      display: grid; grid-template-columns: 1fr 1fr;
-      gap: 0; border-top: 1px solid ${C.g100};
-    }
-    .review-item {
-      padding: 12px 0; border-bottom: 1px solid ${C.g100};
-      padding-right: 16px;
-    }
-    .review-item:nth-child(even) { padding-left: 16px; padding-right: 0; }
-    .review-label { font-size: 11px; font-weight: 600; color: ${C.g400}; margin-bottom: 2px; }
-    .review-value { font-size: 14px; font-weight: 700; color: ${C.g800}; }
-
-    /* Empty state */
-    .empty-state {
-      display: flex; align-items: center; gap: 10px;
-      padding: 20px; color: ${C.g400}; font-size: 13px; font-weight: 600;
-    }
 
     /* Application cards */
     .app-card {
@@ -376,11 +302,30 @@ export class ProjectDetailComponent implements OnInit {
     });
   }
 
-  borderColor(sc: string): string {
-    const map: Record<string, string> = {
-      green: C.green, amber: C.amber500, blue: C.blue500, red: C.red500, gray: C.g300
-    };
-    return map[sc] || C.g300;
+  borderColor = borderColorForStatus;
+
+  get projectDetailItems() {
+    if (!this.project) return [];
+    return [
+      { label: 'Project Name', value: this.project.name },
+      { label: 'Project Type', value: this.project.type },
+      { label: 'Stage', value: this.project.stage },
+      { label: 'Location', value: this.project.loc },
+      { label: 'Expected Units', value: this.project.expectedUnits },
+      { label: 'Building Area', value: this.project.buildingArea },
+      { label: 'Selling Area', value: this.project.sellingArea },
+      { label: 'Project Period', value: this.project.period },
+    ];
+  }
+
+  get projectFinancialItems() {
+    if (!this.project) return [];
+    return [
+      { label: 'Estimated Total Cost', value: this.project.cost },
+      { label: 'Land Cost', value: this.project.landCost },
+      { label: 'Development Cost', value: this.project.devCost },
+      { label: 'Expected Revenue', value: this.project.expectedRevenue },
+    ];
   }
 
   go(path: string) { this.router.navigateByUrl(path); }

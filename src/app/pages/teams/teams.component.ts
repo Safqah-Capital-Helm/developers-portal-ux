@@ -3,33 +3,19 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { C } from '../../shared/theme';
-import { ButtonComponent, BadgeComponent, ModalComponent, InputComponent } from '../../shared';
+import { ButtonComponent, BadgeComponent, ModalComponent, InputComponent, AvatarComponent, DashedButtonComponent, PageHeaderComponent } from '../../shared';
 
 @Component({
   selector: 'app-teams-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, ButtonComponent, BadgeComponent, ModalComponent, InputComponent],
+  imports: [CommonModule, FormsModule, ButtonComponent, BadgeComponent, ModalComponent, InputComponent, AvatarComponent, DashedButtonComponent, PageHeaderComponent],
   template: `
     <div class="container">
-      <!-- Header -->
-      <div class="page-header">
-        <div class="page-header-left">
-          <div class="section-icon" [style.background]="C.amber50">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.amber500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/>
-              <path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>
-            </svg>
-          </div>
-          <h1 class="page-title">Team</h1>
-          <span class="section-count">{{ team.length }}</span>
-        </div>
-      </div>
+      <app-page-header title="Team" [count]="team.length"></app-page-header>
 
       <!-- Member cards -->
       <div *ngFor="let m of team" class="member-card" (click)="openMemberModal(m)">
-        <div class="member-avatar" [style.background]="m.active ? C.greenLt : C.g100" [style.color]="m.active ? C.green : C.g400">
-          {{ m.name.charAt(0) }}
-        </div>
+        <app-avatar [initials]="m.name.charAt(0)" [color]="m.active ? 'green' : 'gray'"></app-avatar>
         <div class="member-info">
           <div class="member-name-row">
             <span class="member-name">{{ m.name }}</span>
@@ -43,10 +29,7 @@ import { ButtonComponent, BadgeComponent, ModalComponent, InputComponent } from 
         </div>
       </div>
 
-      <div class="dashed-btn" (click)="openInviteModal()">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g400" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        <span>Invite member</span>
-      </div>
+      <app-dashed-btn label="Invite member" [fullWidth]="true" (clicked)="openInviteModal()"></app-dashed-btn>
 
       <!-- Member Detail Modal -->
       <app-modal *ngIf="showMemberModal && selectedMember" [title]="selectedMember.name" [wide]="true" (closed)="showMemberModal = false">
@@ -140,20 +123,6 @@ import { ButtonComponent, BadgeComponent, ModalComponent, InputComponent } from 
       padding: 28px 40px 60px;
     }
 
-    .page-header {
-      display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;
-    }
-    .page-header-left { display: flex; align-items: center; gap: 10px; }
-    .page-title { font-size: 20px; font-weight: 900; color: ${C.g900}; margin: 0; }
-    .section-icon {
-      width: 34px; height: 34px; border-radius: 10px;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .section-count {
-      font-size: 12px; font-weight: 700; color: ${C.g400};
-      background: ${C.g100}; padding: 2px 8px; border-radius: 10px;
-    }
-
     /* Member cards */
     .member-card {
       display: flex; align-items: center; gap: 12px;
@@ -162,11 +131,6 @@ import { ButtonComponent, BadgeComponent, ModalComponent, InputComponent } from 
       margin-bottom: 8px; cursor: pointer; transition: box-shadow 0.2s;
     }
     .member-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.07); }
-    .member-avatar {
-      width: 36px; height: 36px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 14px; font-weight: 800; flex-shrink: 0;
-    }
     .member-info { flex: 1; min-width: 0; }
     .member-name-row { display: flex; align-items: center; gap: 5px; }
     .member-name {
@@ -183,18 +147,6 @@ import { ButtonComponent, BadgeComponent, ModalComponent, InputComponent } from 
     }
     .member-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
     .active-dot { width: 8px; height: 8px; border-radius: 50%; }
-
-    /* Dashed button */
-    .dashed-btn {
-      border: 2px dashed ${C.g300};
-      border-radius: 12px; padding: 14px;
-      display: flex; align-items: center; justify-content: center;
-      gap: 8px; cursor: pointer;
-      font-size: 13px; font-weight: 700; color: ${C.g500};
-      transition: border-color 0.2s, background 0.2s; margin-top: 4px;
-    }
-    .dashed-btn:hover { border-color: ${C.green}; background: ${C.greenLt}; color: ${C.green}; }
-    .dashed-btn:hover svg { stroke: ${C.green}; }
 
     /* Member modal */
     .member-modal-top { display: flex; gap: 18px; margin-bottom: 24px; }

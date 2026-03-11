@@ -102,6 +102,7 @@ export class AppComponent {
         { path: '/profile', label: 'Profile' },
         { path: '/support', label: 'Support' },
         { path: '/verify/owner/demo', label: 'Owner Verify' },
+        { path: '/design-system', label: 'Design System' },
       ]
     },
   ];

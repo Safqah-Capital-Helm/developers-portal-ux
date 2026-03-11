@@ -12,6 +12,7 @@ import {
   ProjectFormComponent,
   ProgressStepsComponent,
   InputComponent,
+  ReviewGridComponent,
 } from '../../shared';
 
 @Component({
@@ -28,6 +29,7 @@ import {
     ProjectFormComponent,
     ProgressStepsComponent,
     InputComponent,
+    ReviewGridComponent,
   ],
   template: `
     <div class="page">
@@ -227,36 +229,7 @@ import {
                 <span class="review-label">Project Details</span>
                 <button class="edit-link" (click)="step = 1">Edit</button>
               </div>
-              <div class="review-grid">
-                <div class="review-item">
-                  <span class="review-item-label">Name</span>
-                  <span class="review-item-value">{{ name }}</span>
-                </div>
-                <div class="review-item">
-                  <span class="review-item-label">Type</span>
-                  <span class="review-item-value">{{ getTypeName() }}</span>
-                </div>
-                <div class="review-item">
-                  <span class="review-item-label">Stage</span>
-                  <span class="review-item-value">{{ getStageName() }}</span>
-                </div>
-                <div class="review-item" *ngIf="expectedUnits">
-                  <span class="review-item-label">Expected Units</span>
-                  <span class="review-item-value">{{ expectedUnits }}</span>
-                </div>
-                <div class="review-item" *ngIf="totalBuildingArea">
-                  <span class="review-item-label">Building Area</span>
-                  <span class="review-item-value">{{ totalBuildingArea }} m&sup2;</span>
-                </div>
-                <div class="review-item" *ngIf="totalSellingArea">
-                  <span class="review-item-label">Selling Area</span>
-                  <span class="review-item-value">{{ totalSellingArea }} m&sup2;</span>
-                </div>
-                <div class="review-item" *ngIf="projectPeriod">
-                  <span class="review-item-label">Period</span>
-                  <span class="review-item-value">{{ projectPeriod }} months</span>
-                </div>
-              </div>
+              <app-review-grid [items]="reviewProjectItems"></app-review-grid>
             </div>
 
             <!-- Project Financials -->
@@ -265,20 +238,7 @@ import {
                 <span class="review-label">Project Financials</span>
                 <button class="edit-link" (click)="step = 2">Edit</button>
               </div>
-              <div class="review-grid">
-                <div class="review-item">
-                  <span class="review-item-label">Total Cost</span>
-                  <span class="review-item-value">{{ +totalCost | number }} SAR</span>
-                </div>
-                <div class="review-item">
-                  <span class="review-item-label">Land / Dev Split</span>
-                  <span class="review-item-value">{{ landCostPct }}% / {{ 100 - landCostPct }}%</span>
-                </div>
-                <div class="review-item" *ngIf="expectedRevenue">
-                  <span class="review-item-label">Expected Revenue</span>
-                  <span class="review-item-value">{{ +expectedRevenue | number }} SAR</span>
-                </div>
-              </div>
+              <app-review-grid [items]="reviewFinancialItems"></app-review-grid>
             </div>
 
           </app-card>
@@ -535,32 +495,6 @@ import {
       color: ${C.g500};
     }
 
-    .review-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px 20px;
-    }
-
-    .review-item {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .review-item-label {
-      font-size: 11px;
-      font-weight: 700;
-      color: ${C.g400};
-      text-transform: uppercase;
-      letter-spacing: 0.3px;
-    }
-
-    .review-item-value {
-      font-size: 14px;
-      font-weight: 600;
-      color: ${C.g800};
-    }
-
     /* Submit section */
     .submit-section {
       margin-top: 20px;
@@ -753,9 +687,6 @@ import {
     }
 
     @media (max-width: 600px) {
-      .review-grid {
-        grid-template-columns: 1fr;
-      }
       .draft-indicator {
         position: static;
         transform: none;
@@ -922,6 +853,29 @@ export class AddProjectComponent implements OnInit, OnDestroy {
 
   fmt(n: number): string {
     return n.toLocaleString('en-US');
+  }
+
+  // Review computed items
+  get reviewProjectItems(): Array<{ label: string; value: string }> {
+    const items = [
+      { label: 'Name', value: this.name },
+      { label: 'Type', value: this.getTypeName() },
+      { label: 'Stage', value: this.getStageName() },
+    ];
+    if (this.expectedUnits) items.push({ label: 'Expected Units', value: this.expectedUnits });
+    if (this.totalBuildingArea) items.push({ label: 'Building Area', value: this.totalBuildingArea + ' m²' });
+    if (this.totalSellingArea) items.push({ label: 'Selling Area', value: this.totalSellingArea + ' m²' });
+    if (this.projectPeriod) items.push({ label: 'Period', value: this.projectPeriod + ' months' });
+    return items;
+  }
+
+  get reviewFinancialItems(): Array<{ label: string; value: string }> {
+    const items = [
+      { label: 'Total Cost', value: (+this.totalCost).toLocaleString() + ' SAR' },
+      { label: 'Land / Dev Split', value: this.landCostPct + '% / ' + (100 - this.landCostPct) + '%' },
+    ];
+    if (this.expectedRevenue) items.push({ label: 'Expected Revenue', value: (+this.expectedRevenue).toLocaleString() + ' SAR' });
+    return items;
   }
 
   // Review helpers

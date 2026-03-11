@@ -3,12 +3,12 @@ import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { C } from '../../shared/theme';
-import { NavComponent, BackLinkComponent, CardComponent, InputComponent, ButtonComponent } from '../../shared';
+import { NavComponent, BackLinkComponent, CardComponent, InputComponent, ButtonComponent, AvatarComponent } from '../../shared';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, FormsModule, NavComponent, BackLinkComponent, CardComponent, InputComponent, ButtonComponent],
+  imports: [CommonModule, FormsModule, NavComponent, BackLinkComponent, CardComponent, InputComponent, ButtonComponent, AvatarComponent],
   template: `
     <div class="page">
       <app-nav></app-nav>
@@ -22,7 +22,7 @@ import { NavComponent, BackLinkComponent, CardComponent, InputComponent, ButtonC
           <!-- Avatar area -->
           <div class="avatar-section">
             <div class="avatar-wrapper">
-              <div class="avatar-circle">A</div>
+              <app-avatar initials="A" size="xl" color="green"></app-avatar>
               <div class="camera-overlay">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
@@ -155,19 +155,6 @@ import { NavComponent, BackLinkComponent, CardComponent, InputComponent, ButtonC
     .avatar-wrapper {
       position: relative;
       cursor: pointer;
-    }
-
-    .avatar-circle {
-      width: 64px;
-      height: 64px;
-      border-radius: 50%;
-      background: ${C.greenLt};
-      color: ${C.green};
-      font-size: 22px;
-      font-weight: 800;
-      display: flex;
-      align-items: center;
-      justify-content: center;
     }
 
     .camera-overlay {

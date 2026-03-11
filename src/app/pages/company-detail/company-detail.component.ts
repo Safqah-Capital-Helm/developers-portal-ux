@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { C } from '../../shared/theme';
-import { BadgeComponent, BackLinkComponent } from '../../shared';
+import { C, borderColorForStatus } from '../../shared/theme';
+import { BadgeComponent, BackLinkComponent, AvatarComponent, EmptyStateComponent } from '../../shared';
 
 @Component({
   selector: 'app-company-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink, BadgeComponent, BackLinkComponent],
+  imports: [CommonModule, RouterLink, BadgeComponent, BackLinkComponent, AvatarComponent, EmptyStateComponent],
   template: `
     <div class="container" *ngIf="company">
       <app-back-link to="/dashboard/companies" label="Back to Companies"></app-back-link>
@@ -46,10 +46,7 @@ import { BadgeComponent, BackLinkComponent } from '../../shared';
           </a>
         </div>
 
-        <div *ngIf="companyProjects.length === 0" class="empty-state">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g300" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h7l2 2h9v16H3z"/></svg>
-          <span>No projects yet</span>
-        </div>
+        <app-empty-state *ngIf="companyProjects.length === 0" message="No projects yet"></app-empty-state>
 
         <div *ngFor="let p of companyProjects; let i = index"
              class="list-card"
@@ -74,12 +71,7 @@ import { BadgeComponent, BackLinkComponent } from '../../shared';
           </a>
         </div>
 
-        <div *ngIf="companyApplications.length === 0" class="empty-state">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g300" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/>
-          </svg>
-          <span>No financing applications yet</span>
-        </div>
+        <app-empty-state *ngIf="companyApplications.length === 0" message="No financing applications yet"></app-empty-state>
 
         <div *ngFor="let app of companyApplications"
              class="app-card"
@@ -115,7 +107,7 @@ import { BadgeComponent, BackLinkComponent } from '../../shared';
 
         <div *ngFor="let m of team" class="member-row">
           <div class="member-left">
-            <div class="avatar" [style.background]="C.greenLt" [style.color]="C.green">{{ m.name.charAt(0) }}</div>
+            <app-avatar [initials]="m.name.charAt(0)" color="green"></app-avatar>
             <div>
               <div class="member-name">{{ m.name }}</div>
               <div class="member-email">{{ m.email }}</div>
@@ -174,12 +166,6 @@ import { BadgeComponent, BackLinkComponent } from '../../shared';
     }
     .new-link:hover { background: ${C.greenLt}; }
 
-    /* Empty state */
-    .empty-state {
-      display: flex; align-items: center; gap: 10px;
-      padding: 16px; color: ${C.g400}; font-size: 13px; font-weight: 600;
-    }
-
     /* List cards (projects) */
     .list-card {
       background: ${C.g50}; border: 1px solid ${C.g200};
@@ -226,11 +212,6 @@ import { BadgeComponent, BackLinkComponent } from '../../shared';
       margin-bottom: 6px;
     }
     .member-left { display: flex; align-items: center; gap: 10px; }
-    .avatar {
-      width: 34px; height: 34px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 13px; font-weight: 800; flex-shrink: 0;
-    }
     .member-name { font-size: 13px; font-weight: 700; color: ${C.g900}; }
     .member-email { font-size: 11px; color: ${C.g400}; }
 
@@ -300,12 +281,7 @@ export class CompanyDetailComponent implements OnInit {
     });
   }
 
-  borderColor(sc: string): string {
-    const map: Record<string, string> = {
-      green: C.green, amber: C.amber500, blue: C.blue500, red: C.red500, gray: C.g300
-    };
-    return map[sc] || C.g300;
-  }
+  borderColor = borderColorForStatus;
 
   roleBadgeColor(role: string): 'green' | 'amber' | 'gray' | 'blue' | 'red' {
     const map: Record<string, 'green' | 'amber' | 'gray' | 'blue' | 'red'> = {

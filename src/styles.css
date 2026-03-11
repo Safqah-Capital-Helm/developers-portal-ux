@@ -1,10 +1,14 @@
 /* Fonts loaded via index.html link tag */
 
 :root {
-  --green: #00a15a;
-  --green-dk: #007a44;
-  --green-lt: #e6f7ee;
-  --green-md: #b3e6cc;
+  --green: #00af3d;
+  --green-dk: #008a30;
+  --green-lt: #e6f9ed;
+  --green-md: #b3eacc;
+  --purple: #5034fa;
+  --purple-lt: #ede9fe;
+  --orange: #ff825c;
+  --orange-lt: #fff2ee;
   --bg: #fafbfc;
   --white: #fff;
   --g50: #f8f9fa;

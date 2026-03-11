@@ -83,15 +83,15 @@ import { CommonModule } from '@angular/common';
       }
 
       .step-circle.done {
-        background: #00a15a;
-        border-color: #00a15a;
+        background: #00af3d;
+        border-color: #00af3d;
         color: #fff;
       }
 
       .step-circle.active {
         background: #fff;
-        border-color: #00a15a;
-        color: #00a15a;
+        border-color: #00af3d;
+        color: #00af3d;
       }
 
       .step-text {
@@ -102,7 +102,7 @@ import { CommonModule } from '@angular/common';
       }
 
       .step-text.done {
-        color: #00a15a;
+        color: #00af3d;
       }
 
       .step-text.active {
@@ -119,7 +119,7 @@ import { CommonModule } from '@angular/common';
       }
 
       .connector.done {
-        background: #00a15a;
+        background: #00af3d;
       }
     `,
   ],

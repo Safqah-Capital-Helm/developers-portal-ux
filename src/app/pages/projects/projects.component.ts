@@ -2,27 +2,16 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { C } from '../../shared/theme';
-import { ButtonComponent, BadgeComponent } from '../../shared';
+import { C, borderColorForStatus } from '../../shared/theme';
+import { BadgeComponent, PageHeaderComponent, DashedButtonComponent } from '../../shared';
 
 @Component({
   selector: 'app-projects-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, ButtonComponent, BadgeComponent],
+  imports: [CommonModule, FormsModule, BadgeComponent, PageHeaderComponent, DashedButtonComponent],
   template: `
     <div class="container">
-      <!-- Header -->
-      <div class="page-header">
-        <div class="page-header-left">
-          <div class="section-icon" [style.background]="C.greenLt">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.green" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M3 3h7l2 2h9v16H3z"/>
-            </svg>
-          </div>
-          <h1 class="page-title">Projects</h1>
-          <span class="section-count">{{ filteredProjects.length }}<span *ngIf="isFiltered"> / {{ projects.length }}</span></span>
-        </div>
-      </div>
+      <app-page-header title="Projects" [count]="filteredProjects.length"></app-page-header>
 
       <!-- Filters -->
       <div class="filter-bar">
@@ -50,7 +39,7 @@ import { ButtonComponent, BadgeComponent } from '../../shared';
            class="project-card"
            [class.draft]="p.sc === 'gray'"
            [class.dead]="p.sc === 'red'"
-           [style.border-left-color]="borderColor(p.sc)"
+           [style.border-left-color]="borderColorForStatus(p.sc)"
            (click)="onProjectClick(p)">
         <div class="proj-top">
           <span class="proj-name">{{ p.name }}</span>
@@ -94,18 +83,7 @@ import { ButtonComponent, BadgeComponent } from '../../shared';
         </div>
       </div>
 
-      <!-- New project dashed button -->
-      <div class="dashed-btn project-dashed" (click)="go('/project/new')">
-        <div class="project-dashed-inner">
-          <div class="project-dashed-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g400" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          </div>
-          <div>
-            <div class="project-dashed-title">Create a new project</div>
-            <div class="project-dashed-sub">Start a financing application for a new development</div>
-          </div>
-        </div>
-      </div>
+      <app-dashed-btn label="Create a new project" [fullWidth]="true" (clicked)="go('/project/new')"></app-dashed-btn>
     </div>
   `,
   styles: [`
@@ -115,20 +93,6 @@ import { ButtonComponent, BadgeComponent } from '../../shared';
       max-width: 900px;
       margin: 0 auto;
       padding: 28px 40px 60px;
-    }
-
-    .page-header {
-      display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;
-    }
-    .page-header-left { display: flex; align-items: center; gap: 10px; }
-    .page-title { font-size: 20px; font-weight: 900; color: ${C.g900}; margin: 0; }
-    .section-icon {
-      width: 34px; height: 34px; border-radius: 10px;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .section-count {
-      font-size: 12px; font-weight: 700; color: ${C.g400};
-      background: ${C.g100}; padding: 2px 8px; border-radius: 10px;
     }
 
     /* Filter bar */
@@ -199,25 +163,7 @@ import { ButtonComponent, BadgeComponent } from '../../shared';
     .cell-value { font-size: 13px; font-weight: 700; color: ${C.g700}; }
     .proj-cta { margin-top: 12px; cursor: pointer; }
 
-    /* Dashed button */
-    .dashed-btn {
-      border: 2px dashed ${C.g300};
-      border-radius: 12px; padding: 14px;
-      display: flex; align-items: center; justify-content: center;
-      gap: 8px; cursor: pointer;
-      font-size: 13px; font-weight: 700; color: ${C.g500};
-      transition: border-color 0.2s, background 0.2s; margin-top: 4px;
-    }
-    .dashed-btn:hover { border-color: ${C.green}; background: ${C.greenLt}; color: ${C.green}; }
-    .dashed-btn:hover svg { stroke: ${C.green}; }
-    .project-dashed { padding: 20px; }
-    .project-dashed-inner { display: flex; align-items: center; gap: 14px; }
-    .project-dashed-icon {
-      width: 40px; height: 40px; border-radius: 12px;
-      background: ${C.g100}; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-    }
-    .project-dashed-title { font-size: 14px; font-weight: 700; color: ${C.g700}; margin-bottom: 2px; }
-    .project-dashed-sub { font-size: 12px; color: ${C.g400}; font-weight: 500; }
+    app-dashed-btn { display: block; margin-top: 4px; }
 
     @media (max-width: 900px) {
       .container { padding: 20px 16px 40px; }
@@ -264,12 +210,7 @@ export class ProjectsPageComponent {
     });
   }
 
-  borderColor(sc: string): string {
-    const map: Record<string, string> = {
-      green: C.green, amber: C.amber500, blue: C.blue500, red: C.red500, gray: C.g300
-    };
-    return map[sc] || C.g300;
-  }
+  borderColorForStatus = borderColorForStatus;
 
   go(path: string) { this.router.navigateByUrl(path); }
 
