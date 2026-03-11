@@ -7,6 +7,8 @@ export { BackLinkComponent } from './components/back-link/back-link.component';
 export { InputComponent } from './components/input/input.component';
 export { ProgressStepsComponent } from './components/progress-steps/progress-steps.component';
 export { ModalComponent } from './components/modal/modal.component';
+export { CompanyVerifyFormComponent } from './components/company-verify-form/company-verify-form.component';
+export { SidebarComponent } from './components/sidebar/sidebar.component';
 export { MapPickerComponent } from './components/map-picker/map-picker.component';
 export { ProjectFormComponent } from './components/project-form/project-form.component';
 export { FinancingFormComponent } from './components/financing-form/financing-form.component';

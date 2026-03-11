@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -9,7 +9,7 @@ import { CommonModule } from '@angular/common';
     <div class="progress-steps">
       <ng-container *ngFor="let step of steps; let i = index; let last = last">
         <div class="step-wrapper" [class.has-connector]="!last">
-          <div class="step-label">
+          <div class="step-label" [style.cursor]="i < current ? 'pointer' : 'default'" (click)="onStepClick(i)">
             <div
               class="step-circle"
               [class.done]="i < current"
@@ -127,4 +127,11 @@ import { CommonModule } from '@angular/common';
 export class ProgressStepsComponent {
   @Input() steps: string[] = [];
   @Input() current: number = 0;
+  @Output() stepClick = new EventEmitter<number>();
+
+  onStepClick(i: number): void {
+    if (i < this.current) {
+      this.stepClick.emit(i);
+    }
+  }
 }

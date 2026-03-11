@@ -272,8 +272,13 @@ type Step = 'intro' | 'id' | 'otp' | 'verifying' | 'grant' | 'done';
           </app-card>
 
           <div style="margin-top: 24px;">
-            <app-btn variant="primary" [full]="true" size="lg" (clicked)="go('/dashboard')">
-              Go to Dashboard &rarr;
+            <app-btn variant="primary" [full]="true" size="lg" (clicked)="goToCompanyVerify()">
+              Complete Company Verification &rarr;
+            </app-btn>
+          </div>
+          <div style="margin-top: 12px;">
+            <app-btn variant="secondary" [full]="true" size="md" (clicked)="go('/dashboard')">
+              &larr; Back to Dashboard
             </app-btn>
           </div>
         </div>
@@ -641,6 +646,10 @@ export class OwnerVerifyComponent implements OnDestroy {
       this.step = 'grant';
     }, 2000);
     this.timers.push(t);
+  }
+
+  goToCompanyVerify(): void {
+    this.router.navigate(['/onboarding/company-verify'], { queryParams: { from: 'owner-verify' } });
   }
 
   go(path: string): void {

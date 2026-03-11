@@ -412,12 +412,14 @@ type Step =
             </div>
           </app-card>
 
-          <div style="display: flex; gap: 12px; margin-top: 24px;">
-            <app-btn variant="secondary" [full]="true" size="lg" (clicked)="go('/dashboard')">
-              &larr; Dashboard
+          <div style="margin-top: 24px;">
+            <app-btn variant="primary" [full]="true" size="lg" (clicked)="goToCompanyVerify()">
+              Complete Company Verification &rarr;
             </app-btn>
-            <app-btn variant="primary" [full]="true" size="lg" (clicked)="go('/project/new')">
-              Add a Project &rarr;
+          </div>
+          <div style="margin-top: 12px;">
+            <app-btn variant="secondary" [full]="true" size="md" (clicked)="go('/dashboard')">
+              &larr; Back to Dashboard
             </app-btn>
           </div>
         </div>
@@ -924,6 +926,10 @@ export class AddCompanyComponent implements OnDestroy {
 
   onRegister(): void {
     this.step = 'success';
+  }
+
+  goToCompanyVerify(): void {
+    this.router.navigate(['/onboarding/company-verify'], { queryParams: { from: 'add-company' } });
   }
 
   go(path: string): void {

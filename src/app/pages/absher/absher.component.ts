@@ -11,7 +11,7 @@ import {
   CardComponent,
 } from '../../shared';
 
-type Step = 'id' | 'otp' | 'verifying' | 'ownerCheck' | 'ownerFail' | 'delegate' | 'smsSent' | 'pending';
+type IdentityStep = 'id' | 'otp' | 'verifying' | 'ownerCheck' | 'ownerFail' | 'delegate' | 'smsSent' | 'pending';
 
 @Component({
   selector: 'app-absher',
@@ -33,158 +33,164 @@ type Step = 'id' | 'otp' | 'verifying' | 'ownerCheck' | 'ownerFail' | 'delegate'
         <div class="header-bar">
           <app-logo [size]="32"></app-logo>
           <span class="header-right" *ngIf="mode === 'login'" [style.color]="C.g500" [style.font-size.px]="13" [style.font-weight]="600">Sign in</span>
-          <span class="header-right" *ngIf="mode === 'register'" [style.color]="C.g500" [style.font-size.px]="13" [style.font-weight]="600">Step 1 of 2</span>
+          <span class="header-right" *ngIf="mode === 'register'" [style.color]="C.g500" [style.font-size.px]="13" [style.font-weight]="600">Step {{ currentStepDisplay }} of 2</span>
         </div>
 
         <!-- Progress steps (register mode only, not on pending) -->
         <app-progress-steps
-          *ngIf="mode === 'register' && step !== 'pending'"
+          *ngIf="mode === 'register' && identityStep !== 'pending'"
           [steps]="progressSteps"
           [current]="progressCurrent"
         ></app-progress-steps>
 
-        <!-- Icon header area -->
-        <div class="icon-header" *ngIf="showIconHeader">
-          <div class="icon-circle" [ngStyle]="iconCircleStyle">
-            <!-- Shield check icon (success states) -->
-            <svg *ngIf="!isErrorStep" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-              <polyline points="9 12 11 14 15 10"/>
-            </svg>
-            <!-- X icon (error states) -->
-            <svg *ngIf="isErrorStep" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="18" y1="6" x2="6" y2="18"/>
-              <line x1="6" y1="6" x2="18" y2="18"/>
-            </svg>
-          </div>
-        </div>
+        <!-- ═══════ IDENTITY PHASE ═══════ -->
+        <div *ngIf="phase === 'identity'" class="identity-wrap">
 
-        <!-- Title / Subtitle -->
-        <div class="text-center" style="margin-bottom: 24px;" *ngIf="title">
-          <h1 class="absher-title">{{ title }}</h1>
-          <p class="absher-subtitle" *ngIf="subtitle">{{ subtitle }}</p>
-        </div>
-
-        <!-- Step: id -->
-        <div *ngIf="step === 'id'">
-          <div class="form-area">
-            <app-input
-              label="National ID / Iqama Number"
-              placeholder="Enter your 10-digit ID"
-              [value]="nid"
-              (valueChange)="nid = $event"
-            ></app-input>
-            <app-btn variant="primary" [full]="true" size="lg" [disabled]="nid.length < 10" (clicked)="onIdSubmit()">
-              Verify with Absher
-            </app-btn>
-          </div>
-          <p class="form-footer">
-            You will be redirected to Absher to verify your identity.
-          </p>
-        </div>
-
-        <!-- Step: otp -->
-        <div *ngIf="step === 'otp'">
-          <div class="form-area">
-            <app-input
-              label="Absher OTP Code"
-              placeholder="Enter 6-digit code"
-              [value]="otp"
-              (valueChange)="otp = $event"
-              helper="Check your Absher-registered mobile for the code."
-            ></app-input>
-            <app-btn variant="primary" [full]="true" size="lg" [disabled]="otp.length < 4" (clicked)="onOtpConfirm()">
-              Confirm
-            </app-btn>
-          </div>
-          <p class="form-footer">
-            <span class="link" (click)="step = 'id'">Back to ID entry</span>
-          </p>
-        </div>
-
-        <!-- Step: verifying (spinner) -->
-        <div *ngIf="step === 'verifying'" class="text-center" style="padding: 40px 0;">
-          <div class="spinner" style="margin: 0 auto 16px;"></div>
-          <p [style.color]="C.g500" [style.font-size.px]="14">Verifying your identity...</p>
-        </div>
-
-        <!-- Step: ownerCheck (spinner) -->
-        <div *ngIf="step === 'ownerCheck'" class="text-center" style="padding: 40px 0;">
-          <div class="spinner" style="margin: 0 auto 16px;"></div>
-          <p [style.color]="C.g500" [style.font-size.px]="14">Checking company ownership...</p>
-        </div>
-
-        <!-- Step: ownerFail -->
-        <div *ngIf="step === 'ownerFail'">
-          <div class="form-area">
-            <p [style.color]="C.g600" [style.font-size.px]="14" [style.line-height]="'1.6'" [style.margin-bottom.px]="20">
-              Our records show you are not the registered owner of the commercial registration linked to this ID. Only the owner can register the account.
-            </p>
-            <app-btn variant="primary" [full]="true" size="lg" (clicked)="step = 'delegate'">
-              Request Owner Verification
-            </app-btn>
-            <div style="margin-top: 12px;">
-              <app-btn variant="secondary" [full]="true" size="md" (clicked)="step = 'id'">
-                Try a Different ID
-              </app-btn>
-            </div>
-          </div>
-        </div>
-
-        <!-- Step: delegate -->
-        <div *ngIf="step === 'delegate'">
-          <div class="form-area">
-            <p [style.color]="C.g600" [style.font-size.px]="14" [style.line-height]="'1.6'" [style.margin-bottom.px]="20">
-              Share this link with the company owner. They must complete verification to activate your account.
-            </p>
-
-            <div class="share-link-box">
-              <span class="share-link-text">{{ shareLink }}</span>
-              <button class="copy-btn" (click)="copyLink()">{{ copied ? 'Copied!' : 'Copy' }}</button>
-            </div>
-
-            <div style="margin-top: 20px;">
-              <app-input
-                label="Owner's mobile number"
-                placeholder="+966 5x xxx xxxx"
-                [value]="ownerPhone"
-                (valueChange)="ownerPhone = $event"
-              ></app-input>
-              <app-btn variant="primary" [full]="true" size="lg" [disabled]="ownerPhone.length < 10" (clicked)="sendSms()">
-                Send SMS to Owner
-              </app-btn>
-            </div>
-          </div>
-        </div>
-
-        <!-- Step: smsSent -->
-        <div *ngIf="step === 'smsSent'" class="text-center" style="padding: 40px 0;">
-          <div class="sms-sent-icon">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#00a15a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="20 6 9 17 4 12"/>
-            </svg>
-          </div>
-          <p [style.color]="C.g900" [style.font-weight]="700" [style.font-size.px]="16" [style.margin-bottom.px]="6">SMS Sent!</p>
-          <p [style.color]="C.g500" [style.font-size.px]="14">The owner will receive a verification link shortly.</p>
-        </div>
-
-        <!-- Step: pending -->
-        <div *ngIf="step === 'pending'">
-          <div class="form-area">
-            <div class="pending-icon-wrap text-center" style="margin-bottom: 20px;">
-              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#f79009" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"/>
-                <polyline points="12 6 12 12 16 14"/>
+          <!-- Icon header area -->
+          <div class="icon-header" *ngIf="showIconHeader">
+            <div class="icon-circle" [ngStyle]="iconCircleStyle">
+              <!-- Shield check icon (success states) -->
+              <svg *ngIf="!isErrorStep" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                <polyline points="9 12 11 14 15 10"/>
+              </svg>
+              <!-- X icon (error states) -->
+              <svg *ngIf="isErrorStep" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"/>
+                <line x1="6" y1="6" x2="18" y2="18"/>
               </svg>
             </div>
-            <p [style.color]="C.g600" [style.font-size.px]="14" [style.line-height]="'1.6'" [style.margin-bottom.px]="20" [style.text-align]="'center'">
-              We are waiting for the company owner to verify their identity. You will be notified once verification is complete.
-            </p>
-            <app-btn variant="secondary" [full]="true" size="md" (clicked)="router.navigate(['/verify/owner/abc123'])">
-              Demo: Open Owner Verification
-            </app-btn>
           </div>
+
+          <!-- Title / Subtitle -->
+          <div class="text-center" style="margin-bottom: 24px;" *ngIf="identityTitle">
+            <h1 class="absher-title">{{ identityTitle }}</h1>
+            <p class="absher-subtitle" *ngIf="identitySubtitle">{{ identitySubtitle }}</p>
+          </div>
+
+          <!-- Step: id -->
+          <div *ngIf="identityStep === 'id'">
+            <div class="form-area">
+              <app-input
+                label="National ID / Iqama Number"
+                placeholder="Enter your 10-digit ID"
+                [value]="nid"
+                (valueChange)="nid = $event"
+              ></app-input>
+              <app-btn variant="primary" [full]="true" size="lg" [disabled]="nid.length < 10" (clicked)="onIdSubmit()">
+                Verify with Absher
+              </app-btn>
+            </div>
+            <p class="form-footer">
+              You will be redirected to Absher to verify your identity.
+            </p>
+          </div>
+
+          <!-- Step: otp -->
+          <div *ngIf="identityStep === 'otp'">
+            <div class="form-area">
+              <app-input
+                label="Absher OTP Code"
+                placeholder="Enter 6-digit code"
+                [value]="otp"
+                (valueChange)="otp = $event"
+                helper="Check your Absher-registered mobile for the code."
+              ></app-input>
+              <app-btn variant="primary" [full]="true" size="lg" [disabled]="otp.length < 4" (clicked)="onOtpConfirm()">
+                Confirm
+              </app-btn>
+            </div>
+            <p class="form-footer">
+              <span class="link" (click)="identityStep = 'id'">Back to ID entry</span>
+            </p>
+          </div>
+
+          <!-- Step: verifying (spinner) -->
+          <div *ngIf="identityStep === 'verifying'" class="text-center" style="padding: 40px 0;">
+            <div class="spinner" style="margin: 0 auto 16px;"></div>
+            <p [style.color]="C.g500" [style.font-size.px]="14">Verifying your identity...</p>
+          </div>
+
+          <!-- Step: ownerCheck (spinner) -->
+          <div *ngIf="identityStep === 'ownerCheck'" class="text-center" style="padding: 40px 0;">
+            <div class="spinner" style="margin: 0 auto 16px;"></div>
+            <p [style.color]="C.g500" [style.font-size.px]="14">Checking company ownership...</p>
+          </div>
+
+          <!-- Step: ownerFail -->
+          <div *ngIf="identityStep === 'ownerFail'">
+            <div class="form-area">
+              <p [style.color]="C.g600" [style.font-size.px]="14" [style.line-height]="'1.6'" [style.margin-bottom.px]="20">
+                Our records show you are not the registered owner of the commercial registration linked to this ID. Only the owner can register the account.
+              </p>
+              <app-btn variant="primary" [full]="true" size="lg" (clicked)="identityStep = 'delegate'">
+                Request Owner Verification
+              </app-btn>
+              <div style="margin-top: 12px;">
+                <app-btn variant="secondary" [full]="true" size="md" (clicked)="identityStep = 'id'">
+                  Try a Different ID
+                </app-btn>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step: delegate -->
+          <div *ngIf="identityStep === 'delegate'">
+            <div class="form-area">
+              <p [style.color]="C.g600" [style.font-size.px]="14" [style.line-height]="'1.6'" [style.margin-bottom.px]="20">
+                Share this link with the company owner. They must complete verification to activate your account.
+              </p>
+
+              <div class="share-link-box">
+                <span class="share-link-text">{{ shareLink }}</span>
+                <button class="copy-btn" (click)="copyLink()">{{ copied ? 'Copied!' : 'Copy' }}</button>
+              </div>
+
+              <div style="margin-top: 20px;">
+                <app-input
+                  label="Owner's mobile number"
+                  placeholder="+966 5x xxx xxxx"
+                  [value]="ownerPhone"
+                  (valueChange)="ownerPhone = $event"
+                ></app-input>
+                <app-btn variant="primary" [full]="true" size="lg" [disabled]="ownerPhone.length < 10" (clicked)="sendSms()">
+                  Send SMS to Owner
+                </app-btn>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step: smsSent -->
+          <div *ngIf="identityStep === 'smsSent'" class="text-center" style="padding: 40px 0;">
+            <div class="sms-sent-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#00a15a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+            </div>
+            <p [style.color]="C.g900" [style.font-weight]="700" [style.font-size.px]="16" [style.margin-bottom.px]="6">SMS Sent!</p>
+            <p [style.color]="C.g500" [style.font-size.px]="14">The owner will receive a verification link shortly.</p>
+          </div>
+
+          <!-- Step: pending -->
+          <div *ngIf="identityStep === 'pending'">
+            <div class="form-area">
+              <div class="pending-icon-wrap text-center" style="margin-bottom: 20px;">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#f79009" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"/>
+                  <polyline points="12 6 12 12 16 14"/>
+                </svg>
+              </div>
+              <p [style.color]="C.g600" [style.font-size.px]="14" [style.line-height]="'1.6'" [style.margin-bottom.px]="20" [style.text-align]="'center'">
+                We are waiting for the company owner to verify their identity. You will be notified once verification is complete.
+              </p>
+              <app-btn variant="secondary" [full]="true" size="md" (clicked)="router.navigate(['/verify/owner/abc123'])">
+                Demo: Open Owner Verification
+              </app-btn>
+            </div>
+          </div>
+
         </div>
+
 
       </div>
     </div>
@@ -193,9 +199,14 @@ type Step = 'id' | 'otp' | 'verifying' | 'ownerCheck' | 'ownerFail' | 'delegate'
     :host { display: block; }
 
     .absher-container {
-      max-width: 420px;
+      max-width: 620px;
       margin: 0 auto;
       padding: 32px 24px;
+    }
+
+    .identity-wrap {
+      max-width: 420px;
+      margin: 0 auto;
     }
 
     .header-bar {
@@ -304,14 +315,19 @@ export class AbsherComponent implements OnInit, OnDestroy {
   readonly C = C;
 
   mode: 'register' | 'login' = 'register';
-  step: Step = 'id';
+  phase: 'identity' = 'identity';
+  identityStep: IdentityStep = 'id';
+
   nid = '';
   otp = '';
   ownerPhone = '';
   copied = false;
   shareLink = 'https://portal.safqah.com/verify/owner/abc123';
 
-  progressSteps = ['Verify identity', 'Invite team'];
+  progressSteps = [
+    'Verify Identity',
+    'Invite Team',
+  ];
   private timers: ReturnType<typeof setTimeout>[] = [];
 
   constructor(
@@ -329,17 +345,19 @@ export class AbsherComponent implements OnInit, OnDestroy {
   }
 
   get progressCurrent(): number {
-    if (this.step === 'id' || this.step === 'otp') return 0;
-    if (this.step === 'verifying' || this.step === 'ownerCheck') return 1;
-    return 1;
+    return 0;
+  }
+
+  get currentStepDisplay(): number {
+    return this.progressCurrent + 1;
   }
 
   get showIconHeader(): boolean {
-    return ['id', 'otp', 'ownerFail', 'delegate', 'smsSent'].includes(this.step);
+    return ['id', 'otp', 'ownerFail', 'delegate', 'smsSent'].includes(this.identityStep);
   }
 
   get isErrorStep(): boolean {
-    return this.step === 'ownerFail';
+    return this.identityStep === 'ownerFail';
   }
 
   get iconCircleStyle(): Record<string, string> {
@@ -349,8 +367,8 @@ export class AbsherComponent implements OnInit, OnDestroy {
     return { background: 'linear-gradient(135deg, #00a15a, #007a44)' };
   }
 
-  get title(): string {
-    switch (this.step) {
+  get identityTitle(): string {
+    switch (this.identityStep) {
       case 'id': return 'Verify Your Identity';
       case 'otp': return 'Enter Absher OTP';
       case 'verifying': return 'Verifying...';
@@ -363,8 +381,8 @@ export class AbsherComponent implements OnInit, OnDestroy {
     }
   }
 
-  get subtitle(): string {
-    switch (this.step) {
+  get identitySubtitle(): string {
+    switch (this.identityStep) {
       case 'id': return 'We need to confirm your identity through Absher (National SSO).';
       case 'otp': return 'Enter the one-time password sent to your registered mobile.';
       case 'ownerFail': return 'You can request the owner to verify on your behalf.';
@@ -375,22 +393,23 @@ export class AbsherComponent implements OnInit, OnDestroy {
   }
 
   onIdSubmit(): void {
-    this.step = 'otp';
+    this.identityStep = 'otp';
   }
 
   onOtpConfirm(): void {
     if (this.mode === 'login') {
-      this.step = 'verifying';
+      this.identityStep = 'verifying';
       const t = setTimeout(() => {
         this.router.navigate(['/dashboard']);
       }, 1500);
       this.timers.push(t);
     } else {
-      this.step = 'ownerCheck';
+      this.identityStep = 'ownerCheck';
       const t = setTimeout(() => {
         if (this.nid.startsWith('200')) {
-          this.step = 'ownerFail';
+          this.identityStep = 'ownerFail';
         } else {
+          // Navigate to team invite
           this.router.navigate(['/onboarding/team']);
         }
       }, 1200);
@@ -406,8 +425,8 @@ export class AbsherComponent implements OnInit, OnDestroy {
   }
 
   sendSms(): void {
-    this.step = 'smsSent';
-    const t = setTimeout(() => { this.step = 'pending'; }, 2000);
+    this.identityStep = 'smsSent';
+    const t = setTimeout(() => { this.identityStep = 'pending'; }, 2000);
     this.timers.push(t);
   }
 }

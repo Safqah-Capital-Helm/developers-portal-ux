@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { LogoComponent } from '../logo/logo.component';
@@ -27,7 +27,8 @@ const TYPE_COLORS: Record<string, { bg: string; fg: string }> = {
   imports: [LogoComponent, CommonModule],
   template: `
     <nav class="top-nav">
-      <app-logo [size]="28"></app-logo>
+      <app-logo *ngIf="showLogo" [size]="28"></app-logo>
+      <div *ngIf="!showLogo" class="nav-spacer"></div>
 
       <div class="nav-right">
         <!-- Bell icon -->
@@ -108,10 +109,6 @@ const TYPE_COLORS: Record<string, { bg: string; fg: string }> = {
             <div class="dd-item" (click)="go('/profile')">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g400" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
               Profile Settings
-            </div>
-            <div class="dd-item" (click)="go('/application/1/activity')">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g400" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-              Activity Log
             </div>
             <div class="dd-item" (click)="go('/support')">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g400" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
@@ -214,6 +211,7 @@ const TYPE_COLORS: Record<string, { bg: string; fg: string }> = {
   `]
 })
 export class NavComponent {
+  @Input() showLogo = true;
   C = C;
   open = false;
   notifOpen = false;

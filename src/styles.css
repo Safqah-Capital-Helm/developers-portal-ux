@@ -86,21 +86,70 @@ a { text-decoration: none; color: inherit; }
 /* Proto nav bar */
 .proto-nav {
   position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
-  background: rgba(16,24,40,0.96); backdrop-filter: blur(12px);
-  padding: 8px 12px; border-top: 1px solid rgba(255,255,255,0.08);
+  background: rgba(16,24,40,0.97); backdrop-filter: blur(16px);
+  border-top: 1px solid rgba(255,255,255,0.06);
+  transition: max-height 0.3s cubic-bezier(.16,1,.3,1);
+  max-height: 400px;
 }
-.proto-nav-inner {
-  display: flex; align-items: center; justify-content: center;
-  gap: 3px; flex-wrap: wrap;
+.proto-nav.collapsed {
+  max-height: 40px;
 }
-.proto-nav-label {
-  font-size: 9px; color: rgba(255,255,255,0.3); margin-right: 6px;
-  font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+
+/* Toggle button */
+.proto-toggle {
+  display: flex; align-items: center; gap: 6px;
+  width: 100%; padding: 10px 16px;
+  background: none; border: none; border-bottom: 1px solid rgba(255,255,255,0.05);
+  cursor: pointer; font-family: inherit; color: rgba(255,255,255,0.35);
 }
+.proto-toggle:hover { color: rgba(255,255,255,0.6); }
+.proto-toggle-label {
+  font-size: 9px; font-weight: 800; text-transform: uppercase;
+  letter-spacing: 1.2px;
+}
+.proto-toggle-path {
+  margin-left: auto; font-size: 9px; font-weight: 600;
+  color: var(--green); opacity: 0.7; font-family: 'IBM Plex Mono', monospace;
+}
+
+/* Body */
+.proto-body {
+  display: flex; gap: 4px; padding: 10px 14px 12px;
+  overflow-x: auto; overflow-y: hidden;
+  scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent;
+}
+.proto-body::-webkit-scrollbar { height: 4px; }
+.proto-body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+
+/* Groups */
+.proto-group {
+  flex-shrink: 0; display: flex; flex-direction: column; gap: 5px;
+  padding: 0 10px; border-right: 1px solid rgba(255,255,255,0.06);
+}
+.proto-group:last-child { border-right: none; }
+.proto-group-label {
+  font-size: 8px; font-weight: 800; text-transform: uppercase;
+  letter-spacing: 1px; color: rgba(255,255,255,0.2);
+  padding-bottom: 2px; white-space: nowrap;
+}
+.proto-group-items {
+  display: flex; flex-wrap: wrap; gap: 3px;
+}
+
+/* Buttons */
 .proto-btn {
-  padding: 4px 8px; border-radius: 5px; border: none;
-  font-size: 10px; cursor: pointer; text-transform: capitalize;
-  font-family: inherit;
+  padding: 4px 9px; border-radius: 6px; border: none;
+  font-size: 10px; cursor: pointer; font-family: inherit;
+  font-weight: 600; white-space: nowrap;
+  transition: all 0.15s;
 }
-.proto-btn.active { background: var(--green); color: #fff; font-weight: 700; }
-.proto-btn:not(.active) { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.4); }
+.proto-btn.active {
+  background: var(--green); color: #fff; font-weight: 700;
+  box-shadow: 0 2px 8px rgba(0,161,90,0.3);
+}
+.proto-btn:not(.active) {
+  background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.4);
+}
+.proto-btn:not(.active):hover {
+  background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.7);
+}
