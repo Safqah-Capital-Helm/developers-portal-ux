@@ -370,7 +370,7 @@ import {
 
             <h3 class="group-title" style="margin-top: 24px">Back Link</h3>
             <app-card [padding]="24">
-              <app-back-link to="/design-system" label="Back to Dashboard"></app-back-link>
+              <app-back-link to="/dashboard" label="Back to Dashboard"></app-back-link>
             </app-card>
 
             <h3 class="group-title" style="margin-top: 24px">Modal</h3>
@@ -384,6 +384,75 @@ import {
                 <app-btn variant="secondary" size="sm" (clicked)="showDemoModal = false">Cancel</app-btn>
               </div>
             </app-modal>
+          </div>
+
+          <!-- ===== 8: PROTOTYPING ===== -->
+          <div *ngIf="activeTab === 8" class="tab-panel">
+            <h2 class="panel-title">Prototyping</h2>
+            <p class="panel-desc">Demo controls used across prototype pages to toggle states, advance flows, and simulate actions. All use dashed borders to visually separate them from real UI.</p>
+
+            <h3 class="group-title">Demo Toggle</h3>
+            <p class="group-desc">Primary action button for toggling a demo state. Used in status pages, application flows, etc.</p>
+            <div class="proto-demo-bar">
+              <button class="proto-demo-toggle" (click)="demoToggled = !demoToggled">
+                {{ demoToggled ? 'Reset to Initial State' : 'Demo: Skip to Ready' }}
+              </button>
+            </div>
+            <code class="usage">.demo-bar &gt; .demo-toggle — background: g50, border: 1px dashed g300, border-radius: 8px</code>
+
+            <h3 class="group-title" style="margin-top: 28px">Demo Segment</h3>
+            <p class="group-desc">Multiple toggle buttons for switching between demo modes. Active state uses darker background.</p>
+            <div class="proto-demo-bar">
+              <button class="proto-demo-toggle" [class.active]="demoSegment === 'a'" (click)="demoSegment = 'a'">With CR Owners</button>
+              <button class="proto-demo-toggle" [class.active]="demoSegment === 'b'" (click)="demoSegment = 'b'">No CR Owners</button>
+            </div>
+            <code class="usage">.demo-toggle.active — background: g200, color: g700, border-color: g400</code>
+
+            <h3 class="group-title" style="margin-top: 28px">Demo Advance</h3>
+            <p class="group-desc">Small inline button for advancing to the next stage in a timeline or flow.</p>
+            <div class="proto-demo-bar">
+              <button class="proto-demo-advance">Demo &darr;</button>
+              <button class="proto-demo-advance">Demo: Reset</button>
+              <button class="proto-demo-advance">Demo: Owner View &rarr;</button>
+            </div>
+            <code class="usage">.demo-advance — border: 1px dashed g300, border-radius: 6px, padding: 4px 10px, font-size: 11px</code>
+
+            <h3 class="group-title" style="margin-top: 28px">Demo Action Pair</h3>
+            <p class="group-desc">Success/failure simulation buttons, wrapped in a dashed container. Used for signing flows, API simulations, etc.</p>
+            <div class="proto-demo-container">
+              <div class="proto-demo-container-label">Demo: Simulate signing result</div>
+              <div class="proto-demo-container-row">
+                <button class="proto-demo-action proto-success">&#10003; Sign Successfully</button>
+                <button class="proto-demo-action proto-fail">&#10007; Signing Failed</button>
+              </div>
+            </div>
+            <code class="usage">.decl-demo — border: 2px dashed g300, border-radius: 12px</code>
+
+            <h3 class="group-title" style="margin-top: 28px">Guidelines</h3>
+            <app-card [padding]="24">
+              <div class="proto-guidelines">
+                <div class="proto-guideline-item">
+                  <strong>Always use dashed borders</strong>
+                  <span>All demo controls use <code>border: 1px dashed</code> to clearly distinguish them from real UI elements.</span>
+                </div>
+                <div class="proto-guideline-item">
+                  <strong>Gray tones only</strong>
+                  <span>Demo buttons use neutral colors (g50 bg, g300 border, g500 text) — never brand green or other semantic colors.</span>
+                </div>
+                <div class="proto-guideline-item">
+                  <strong>Container class: <code>.demo-bar</code></strong>
+                  <span>Centered flex container with gap: 8px. Use <code>text-align: center</code> for single-button layouts.</span>
+                </div>
+                <div class="proto-guideline-item">
+                  <strong>Button class: <code>.demo-toggle</code></strong>
+                  <span>8px 16px padding, 12px font, 600 weight, 8px border-radius. Add <code>.active</code> for segment selection.</span>
+                </div>
+                <div class="proto-guideline-item">
+                  <strong>Inline class: <code>.demo-advance</code></strong>
+                  <span>4px 10px padding, 11px font, 6px border-radius. For small contextual actions inside cards.</span>
+                </div>
+              </div>
+            </app-card>
           </div>
 
         </div>
@@ -517,6 +586,115 @@ import {
       gap: 14px;
     }
 
+    /* Prototyping tab */
+    .proto-demo-bar {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+
+    .proto-demo-toggle {
+      background: ${C.g50};
+      border: 1px dashed ${C.g300};
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-size: 12px;
+      font-weight: 600;
+      color: ${C.g500};
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.15s;
+    }
+    .proto-demo-toggle:hover { background: ${C.g100}; color: ${C.g700}; }
+    .proto-demo-toggle.active { background: ${C.g200}; color: ${C.g700}; border-color: ${C.g400}; }
+
+    .proto-demo-advance {
+      background: none;
+      border: 1px dashed ${C.g300};
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      color: ${C.g500};
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.15s;
+    }
+    .proto-demo-advance:hover { background: ${C.g50}; color: ${C.g700}; }
+
+    .proto-demo-container {
+      border: 2px dashed ${C.g300};
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+      margin-bottom: 12px;
+    }
+
+    .proto-demo-container-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: ${C.g400};
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+
+    .proto-demo-container-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .proto-demo-action {
+      flex: 1;
+      padding: 10px 14px;
+      border: none;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      cursor: pointer;
+      font-family: inherit;
+      transition: opacity 0.15s;
+    }
+    .proto-demo-action:hover { opacity: 0.85; }
+    .proto-success { background: ${C.green}; }
+    .proto-fail { background: ${C.red500}; }
+
+    .proto-guidelines {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .proto-guideline-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .proto-guideline-item strong {
+      font-size: 13px;
+      font-weight: 700;
+      color: ${C.g800};
+    }
+
+    .proto-guideline-item span {
+      font-size: 13px;
+      color: ${C.g500};
+      line-height: 1.5;
+    }
+
+    .proto-guideline-item code {
+      font-size: 11px;
+      font-weight: 600;
+      color: ${C.g600};
+      background: ${C.g100};
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+    }
+
     @media (max-width: 768px) {
       .ds-body { padding: 16px 16px 60px; }
       .ds-header { padding: 14px 16px; }
@@ -531,7 +709,7 @@ import {
 export class DesignSystemComponent {
   C = C;
   activeTab = 0;
-  tabs = ['Colors', 'Buttons', 'Cards', 'Badges', 'Forms', 'Avatar', 'Data Display', 'Navigation'];
+  tabs = ['Colors', 'Buttons', 'Cards', 'Badges', 'Forms', 'Avatar', 'Data Display', 'Navigation', 'Prototyping'];
 
   // Color swatches
   neutralSwatches = [
@@ -579,4 +757,8 @@ export class DesignSystemComponent {
 
   // Modal demo
   showDemoModal = false;
+
+  // Prototyping demo
+  demoToggled = false;
+  demoSegment = 'a';
 }

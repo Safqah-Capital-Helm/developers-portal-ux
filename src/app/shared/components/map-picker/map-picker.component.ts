@@ -1,6 +1,22 @@
-import { Component, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, ElementRef, ViewChild, AfterViewInit, Output, EventEmitter } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { C } from '../../theme';
+
+export interface MapLocation {
+  lat: number;
+  lng: number;
+  city: string;
+  district: string;
+}
+
+const LOCATIONS: Array<{ minX: number; maxX: number; minY: number; maxY: number; city: string; district: string }> = [
+  { minX: 0, maxX: 180, minY: 0, maxY: 110, city: 'Riyadh', district: 'Al Malqa' },
+  { minX: 180, maxX: 360, minY: 0, maxY: 110, city: 'Riyadh', district: 'Al Yasmin' },
+  { minX: 360, maxX: 540, minY: 0, maxY: 110, city: 'Jeddah', district: 'Al Rawdah' },
+  { minX: 0, maxX: 180, minY: 110, maxY: 220, city: 'Dammam', district: 'Al Shatea' },
+  { minX: 180, maxX: 360, minY: 110, maxY: 220, city: 'Dammam', district: 'Al Faisaliyah' },
+  { minX: 360, maxX: 540, minY: 110, maxY: 220, city: 'Jeddah', district: 'Obhur' },
+];
 
 @Component({
   selector: 'app-map-picker',
@@ -42,13 +58,18 @@ import { C } from '../../theme';
 })
 export class MapPickerComponent implements AfterViewInit {
   @ViewChild('mapCanvas') canvasRef!: ElementRef<HTMLCanvasElement>;
+  @Output() locationChange = new EventEmitter<MapLocation>();
+
   search = '';
   addr = 'Dammam, Eastern Province';
   pin = { x: 250, y: 140 };
   dragging = false;
   g500 = C.g500;
 
-  ngAfterViewInit() { this.draw(); }
+  ngAfterViewInit() {
+    this.draw();
+    this.emitLocation();
+  }
 
   draw() {
     const canvas = this.canvasRef?.nativeElement;
@@ -87,11 +108,11 @@ export class MapPickerComponent implements AfterViewInit {
     const y = (e.clientY - rect.top) * scaleY;
     if (type === 'down') {
       if (Math.sqrt((x - this.pin.x) ** 2 + (y - this.pin.y) ** 2) < 30) { this.dragging = true; }
-      else { this.pin = { x, y }; this.updateAddr(y, x); this.draw(); }
+      else { this.pin = { x, y }; this.updateAddr(y, x); this.draw(); this.emitLocation(); }
     }
     if (type === 'move' && this.dragging) {
       this.pin = { x: Math.max(0, Math.min(canvas.width, x)), y: Math.max(0, Math.min(canvas.height, y)) };
-      this.updateAddr(y, x); this.draw();
+      this.updateAddr(y, x); this.draw(); this.emitLocation();
     }
     if (type === 'up') { this.dragging = false; }
   }
@@ -100,9 +121,23 @@ export class MapPickerComponent implements AfterViewInit {
     this.pin = { x: 180 + Math.random() * 150, y: 100 + Math.random() * 80 };
     this.addr = this.search || 'Dammam, Eastern Province';
     this.draw();
+    this.emitLocation();
   }
 
   private updateAddr(y: number, x: number) {
     this.addr = `${(24.4 + y / 1000).toFixed(4)}°N, ${(39.6 + x / 1000).toFixed(4)}°E`;
+  }
+
+  private emitLocation() {
+    const loc = LOCATIONS.find(l =>
+      this.pin.x >= l.minX && this.pin.x < l.maxX &&
+      this.pin.y >= l.minY && this.pin.y < l.maxY
+    ) || LOCATIONS[3]; // default Dammam
+    this.locationChange.emit({
+      lat: 24.4 + this.pin.y / 1000,
+      lng: 39.6 + this.pin.x / 1000,
+      city: loc.city,
+      district: loc.district,
+    });
   }
 }

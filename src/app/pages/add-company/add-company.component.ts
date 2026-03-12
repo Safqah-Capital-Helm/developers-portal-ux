@@ -1,5 +1,5 @@
-import { Component, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { C } from '../../shared/theme';
@@ -11,6 +11,7 @@ import {
   InputComponent,
   BadgeComponent,
   ProgressStepsComponent,
+  PrevCredentialsFormComponent,
 } from '../../shared';
 
 type Step =
@@ -23,6 +24,8 @@ type Step =
   | 'smsSent'
   | 'pending'
   | 'details'
+  | 'prevProjects'
+  | 'uploadDocs'
   | 'success';
 
 @Component({
@@ -38,12 +41,13 @@ type Step =
     InputComponent,
     BadgeComponent,
     ProgressStepsComponent,
+    PrevCredentialsFormComponent,
   ],
   template: `
     <div class="page">
       <app-nav></app-nav>
       <div class="container">
-        <app-back-link to="/dashboard" label="Back to Dashboard"></app-back-link>
+        <app-back-link to="/dashboard/companies" label="Back to Companies"></app-back-link>
 
         <!-- Title -->
         <h1 class="page-title">{{ title }}</h1>
@@ -128,11 +132,13 @@ type Step =
                 placeholder="Enter your 10-digit ID"
                 [value]="nid"
                 (valueChange)="nid = $event"
-                helper="Enter 0000000000 to test the owner-not-found flow."
               ></app-input>
               <app-btn variant="primary" [full]="true" size="lg" [disabled]="nid.length < 10" (clicked)="step = 'otp'">
                 Send Verification Code
               </app-btn>
+              <div class="demo-bar" style="margin-top: 12px;">
+                <button class="demo-advance" (click)="step = 'delegate'">Demo: Owner not found &rarr;</button>
+              </div>
             </div>
 
             <!-- otp: verification code input -->
@@ -358,31 +364,92 @@ type Step =
             </div>
           </app-card>
 
-          <!-- Credit Bureau Authorization -->
-          <app-card [padding]="28" style="margin-top: 16px;">
-            <div class="consent-card">
-              <div style="display: flex; align-items: flex-start; gap: 12px;">
-                <input
-                  type="checkbox"
-                  class="consent-checkbox"
-                  [checked]="consent"
-                  (change)="consent = !consent"
-                />
-                <div>
-                  <p [style.font-size.px]="14" [style.font-weight]="700" [style.color]="C.g900" [style.margin-bottom.px]="4">
-                    Credit Bureau Authorization
-                  </p>
-                  <p [style.font-size.px]="13" [style.color]="C.g500" [style.line-height]="'1.5'">
-                    I authorize Safqah to obtain the company's credit report from SIMAH (Saudi Credit Bureau) for the purpose of evaluating financing eligibility.
-                  </p>
+          <div style="margin-top: 24px;">
+            <app-btn variant="primary" [full]="true" size="lg" (clicked)="onRegister()">
+              Confirm &amp; Register Company &rarr;
+            </app-btn>
+          </div>
+        </div>
+
+        <!-- ═══════ Step: prevProjects ═══════ -->
+        <div *ngIf="step === 'prevProjects'">
+          <app-prev-credentials-form
+            [showHeader]="true"
+            [initialData]="credentialsInitial"
+          ></app-prev-credentials-form>
+
+          <div style="display: flex; gap: 12px; margin-top: 24px;">
+            <app-btn variant="ghost" [full]="true" size="lg" (clicked)="step = 'details'">&larr; Back</app-btn>
+            <app-btn variant="primary" [full]="true" size="lg" (clicked)="step = 'uploadDocs'">
+              Next: Upload Documents &rarr;
+            </app-btn>
+          </div>
+        </div>
+
+        <!-- ═══════ Step: uploadDocs ═══════ -->
+        <div *ngIf="step === 'uploadDocs'">
+          <app-card [padding]="32">
+            <div class="section-header">
+              <div class="section-icon" [style.background]="C.amber50">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.amber500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+                  <polyline points="17 8 12 3 7 8"/>
+                  <line x1="12" y1="3" x2="12" y2="15"/>
+                </svg>
+              </div>
+              <h2 class="card-title" style="margin: 0;">Company Documents</h2>
+            </div>
+
+            <p class="card-desc" style="margin: 16px 0 20px;">Upload the required company documents. These are necessary for verifying your company's eligibility.</p>
+
+            <div class="doc-list">
+              <div *ngFor="let doc of companyDocSlots" class="doc-row" [class.doc-uploaded]="doc.uploaded">
+                <div class="doc-icon" [style.background]="doc.uploaded ? C.greenLt : C.g100">
+                  <svg *ngIf="!doc.uploaded" width="16" height="16" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g400" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/>
+                  </svg>
+                  <svg *ngIf="doc.uploaded" width="16" height="16" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.green" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                </div>
+                <div class="doc-info">
+                  <div class="doc-name">
+                    {{ doc.name }}
+                    <app-badge *ngIf="doc.required" color="red" style="margin-left: 6px;">Required</app-badge>
+                    <app-badge *ngIf="!doc.required" color="gray" style="margin-left: 6px;">Optional</app-badge>
+                  </div>
+                  <div class="doc-desc">{{ doc.desc }}</div>
+                  <div *ngIf="doc.uploaded" class="doc-file">{{ doc.fileName }}</div>
+                </div>
+                <div class="doc-actions">
+                  <button *ngIf="!doc.uploaded" class="doc-upload-btn" (click)="simulateUpload(doc)">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+                    </svg>
+                    Upload
+                  </button>
+                  <button *ngIf="doc.uploaded" class="doc-view-btn">View</button>
+                  <button *ngIf="doc.uploaded" class="doc-remove-btn" (click)="removeDoc(doc)">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+                    </svg>
+                  </button>
                 </div>
               </div>
             </div>
+
+            <div class="doc-hint">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g400" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
+              </svg>
+              <span>Accepted formats: PDF, PNG, JPG. Max file size: 10MB.</span>
+            </div>
           </app-card>
 
-          <div style="margin-top: 24px;">
-            <app-btn variant="primary" [full]="true" size="lg" [disabled]="!consent" (clicked)="onRegister()">
-              Confirm &amp; Register Company &rarr;
+          <div style="display: flex; gap: 12px; margin-top: 24px;">
+            <app-btn variant="ghost" [full]="true" size="lg" (clicked)="step = 'prevProjects'">&larr; Back</app-btn>
+            <app-btn variant="primary" [full]="true" size="lg" [disabled]="!companyRequiredDocsDone" (clicked)="step = 'success'">
+              Complete Registration &rarr;
             </app-btn>
           </div>
         </div>
@@ -739,20 +806,60 @@ type Step =
       align-items: center;
     }
 
-    /* Consent card */
-    .consent-card {
-      background: ${C.blue50};
-      border-radius: 12px;
-      padding: 16px;
+    /* Section header for new steps */
+    .section-header {
+      display: flex; align-items: center; gap: 12px; margin-bottom: 4px;
+    }
+    .section-icon {
+      width: 36px; height: 36px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
     }
 
-    .consent-checkbox {
-      width: 18px;
-      height: 18px;
-      margin-top: 2px;
-      accent-color: ${C.green};
-      cursor: pointer;
-      flex-shrink: 0;
+    /* Document upload */
+    .doc-list { display: flex; flex-direction: column; gap: 8px; }
+    .doc-row {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 16px; background: ${C.g50}; border-radius: 12px;
+      border: 1.5px solid ${C.g100}; transition: all 0.15s;
+    }
+    .doc-row.doc-uploaded { background: ${C.greenLt}; border-color: ${C.greenMd}; }
+    .doc-icon {
+      width: 36px; height: 36px; min-width: 36px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .doc-info { flex: 1; min-width: 0; }
+    .doc-name {
+      font-size: 13px; font-weight: 700; color: ${C.g800};
+      display: flex; align-items: center;
+    }
+    .doc-desc { font-size: 11.5px; color: ${C.g400}; margin-top: 3px; line-height: 1.45; }
+    .doc-file {
+      font-size: 11px; color: ${C.g500}; margin-top: 2px;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .doc-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+    .doc-upload-btn {
+      display: flex; align-items: center; gap: 5px;
+      padding: 7px 14px; border: 1.5px solid ${C.green}; border-radius: 8px;
+      background: #fff; color: ${C.green}; font-size: 12px; font-weight: 700;
+      cursor: pointer; transition: all 0.15s; font-family: inherit;
+    }
+    .doc-upload-btn:hover { background: ${C.greenLt}; }
+    .doc-view-btn {
+      padding: 7px 12px; border: 1.5px solid ${C.g200}; border-radius: 8px;
+      background: #fff; color: ${C.g600}; font-size: 12px; font-weight: 700;
+      cursor: pointer; font-family: inherit; transition: all 0.15s;
+    }
+    .doc-view-btn:hover { border-color: ${C.g300}; }
+    .doc-remove-btn {
+      padding: 7px 8px; border: 1.5px solid ${C.g200}; border-radius: 8px;
+      background: #fff; color: ${C.g400}; cursor: pointer; font-family: inherit;
+      display: flex; align-items: center; justify-content: center; transition: all 0.15s;
+    }
+    .doc-remove-btn:hover { border-color: ${C.red500}; color: ${C.red500}; }
+    .doc-hint {
+      display: flex; align-items: center; gap: 8px; margin-top: 14px;
+      font-size: 12px; color: ${C.g400};
     }
 
     /* Success circle */
@@ -799,7 +906,7 @@ type Step =
     .demo-advance:hover { background: ${C.g50}; color: ${C.g700}; }
   `]
 })
-export class AddCompanyComponent implements OnDestroy {
+export class AddCompanyComponent implements OnInit, OnDestroy {
   readonly C = C;
 
   step: Step = 'cr';
@@ -811,11 +918,24 @@ export class AddCompanyComponent implements OnDestroy {
   copied = false;
   delegateMethod: 'link' | 'sms' = 'link';
   website = '';
-  consent = false;
+
+  // Previous projects
+  hasPrevProjects = true;
+  prevCount = '';
+  prevValue = '';
+  finBank = 40;
+  finFintech = 20;
+  finFriends = 15;
+
+  // Documents
+  companyDocSlots = [
+    { name: 'Owner ID', desc: 'National ID or Iqama of the company owner.', required: true, uploaded: false, fileName: '' },
+    { name: 'Owner Credit History Report', desc: 'Recent credit report from SIMAH (within last 3 months).', required: true, uploaded: false, fileName: '' },
+  ];
 
   shareLink = 'https://portal.safqah.com/verify/owner/def456';
 
-  progressSteps = ['Verify CR', 'Verify ownership', 'Review & register'];
+  progressSteps = ['Verify CR', 'Verify ownership', 'Review & register', 'Credentials', 'Documents'];
 
   companyFields: string[][] = [
     ['Legal Name (EN)', 'Al Jazeera Development Co.'],
@@ -831,7 +951,14 @@ export class AddCompanyComponent implements OnDestroy {
 
   private timers: ReturnType<typeof setTimeout>[] = [];
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private route: ActivatedRoute) {}
+
+  ngOnInit(): void {
+    const startStep = this.route.snapshot.queryParamMap.get('step');
+    if (startStep === 'prevProjects' || startStep === 'uploadDocs') {
+      this.step = startStep;
+    }
+  }
 
   ngOnDestroy(): void {
     this.timers.forEach(t => clearTimeout(t));
@@ -855,6 +982,10 @@ export class AddCompanyComponent implements OnDestroy {
         return 'Waiting for owner verification';
       case 'details':
         return 'Review & Register';
+      case 'prevProjects':
+        return 'Previous Credentials';
+      case 'uploadDocs':
+        return 'Upload Company Documents';
       case 'success':
         return 'Registration Complete';
       default:
@@ -870,7 +1001,9 @@ export class AddCompanyComponent implements OnDestroy {
     if (this.step === 'cr' || this.step === 'crVerifying') return 0;
     if (this.step === 'verify' || this.step === 'otp' || this.step === 'checking') return 1;
     if (this.step === 'details') return 2;
-    if (this.step === 'success') return 3;
+    if (this.step === 'prevProjects') return 3;
+    if (this.step === 'uploadDocs') return 4;
+    if (this.step === 'success') return 5;
     return 0;
   }
 
@@ -895,13 +1028,9 @@ export class AddCompanyComponent implements OnDestroy {
   onOtpConfirm(): void {
     this.step = 'checking';
     const t = setTimeout(() => {
-      if (this.nid === '0000000000') {
-        this.step = 'delegate';
-      } else {
-        // Update CR Number in companyFields
-        this.companyFields[2][1] = this.cr || '1020304050607';
-        this.step = 'details';
-      }
+      // Update CR Number in companyFields
+      this.companyFields[2][1] = this.cr || '1020304050607';
+      this.step = 'details';
     }, 1500);
     this.timers.push(t);
   }
@@ -925,7 +1054,32 @@ export class AddCompanyComponent implements OnDestroy {
   }
 
   onRegister(): void {
-    this.step = 'success';
+    this.step = 'prevProjects';
+  }
+
+  get credentialsInitial() {
+    return {
+      hasPrevProjects: this.hasPrevProjects,
+      prevCount: this.prevCount,
+      prevValue: this.prevValue,
+      finBank: this.finBank,
+      finFintech: this.finFintech,
+      finFriends: this.finFriends,
+    };
+  }
+
+  get companyRequiredDocsDone(): boolean {
+    return this.companyDocSlots.filter(d => d.required).every(d => d.uploaded);
+  }
+
+  simulateUpload(doc: any): void {
+    doc.uploaded = true;
+    doc.fileName = doc.name.toLowerCase().replace(/\s+/g, '_') + '.pdf';
+  }
+
+  removeDoc(doc: any): void {
+    doc.uploaded = false;
+    doc.fileName = '';
   }
 
   goToCompanyVerify(): void {

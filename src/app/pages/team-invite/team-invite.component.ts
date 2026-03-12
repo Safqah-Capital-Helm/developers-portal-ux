@@ -46,74 +46,78 @@ import {
         <div class="welcome-section">
           <p class="welcome-name">Welcome, Ahmed Al-Salem</p>
           <h1 class="welcome-title">Invite your team</h1>
-          <p class="welcome-subtitle">
+          <p class="welcome-subtitle" *ngIf="crOwners.length > 0">
             We found the registered owners from your company's CR.
             Add their contact details so they can access the portal.
           </p>
+          <p class="welcome-subtitle" *ngIf="crOwners.length === 0">
+            Add your team members' email addresses and assign roles
+            so they can access the portal.
+          </p>
+        </div>
+
+        <!-- Demo toggle -->
+        <div class="demo-bar">
+          <button class="demo-toggle" [class.active]="!noCrMode" (click)="setMode(false)">With CR Owners</button>
+          <button class="demo-toggle" [class.active]="noCrMode" (click)="setMode(true)">No CR Owners</button>
         </div>
 
         <!-- CR Owners Section -->
-        <div class="list-section-label">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.blue500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/>
-          </svg>
-          <span>Owners from CR <strong>1551515151516515</strong></span>
-          <span class="cr-badge">Auto-detected</span>
-        </div>
+        <ng-container *ngIf="crOwners.length > 0">
+          <div class="list-section-label">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.blue500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/>
+            </svg>
+            <span>Owners from CR <strong>1551515151516515</strong></span>
+            <span class="cr-badge">Auto-detected</span>
+          </div>
 
-        <app-card [padding]="28">
-          <div class="invite-list">
-            <div *ngFor="let owner of crOwners; let i = index" class="invite-row">
-              <div class="invite-num">{{ i + 1 }}</div>
-              <div class="invite-fields">
-                <div class="invite-field full-width">
-                  <label class="field-label">Full Name</label>
-                  <div class="field-locked">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g400" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>
-                    </svg>
-                    {{ owner.name }}
-                    <span class="owner-role-tag">{{ owner.crRole }}</span>
+          <app-card [padding]="28">
+            <div class="invite-list">
+              <div *ngFor="let owner of crOwners; let i = index" class="invite-row">
+                <div class="invite-num">{{ i + 1 }}</div>
+                <div class="invite-fields">
+                  <div class="invite-field full-width">
+                    <div class="field-locked">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g400" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>
+                      </svg>
+                      {{ owner.name }}
+                      <span class="owner-role-tag">{{ owner.crRole }}</span>
+                    </div>
+                  </div>
+                  <div class="invite-field">
+                    <label class="field-label">Email Address</label>
+                    <input class="field-input" [placeholder]="'e.g. ' + owner.name.split(' ')[0].toLowerCase() + '@company.com'" [(ngModel)]="owner.email" />
+                  </div>
+                  <div class="invite-field">
+                    <label class="field-label">Portal Role</label>
+                    <select class="field-select" [(ngModel)]="owner.role">
+                      <option value="">Select role...</option>
+                      <option value="Admin">Admin</option>
+                      <option value="Editor">Editor</option>
+                      <option value="Viewer">Viewer</option>
+                    </select>
                   </div>
                 </div>
-                <div class="invite-field">
-                  <label class="field-label">Email Address</label>
-                  <input class="field-input" [placeholder]="'e.g. ' + owner.name.split(' ')[0].toLowerCase() + '@company.com'" [(ngModel)]="owner.email" />
-                </div>
-                <div class="invite-field">
-                  <label class="field-label">Phone Number</label>
-                  <input class="field-input" placeholder="+966 5x xxx xxxx" [(ngModel)]="owner.phone" />
-                </div>
-                <div class="invite-field full-width">
-                  <label class="field-label">Portal Role</label>
-                  <select class="field-select" [(ngModel)]="owner.role">
-                    <option value="">Select role...</option>
-                    <option value="Admin">Admin</option>
-                    <option value="Editor">Editor</option>
-                    <option value="Viewer">Viewer</option>
-                  </select>
-                </div>
+                <button class="remove-btn" (click)="removeCrOwner(i)">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                  </svg>
+                </button>
               </div>
-              <button class="remove-btn" (click)="removeCrOwner(i)">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-                </svg>
-              </button>
             </div>
-            <div *ngIf="crOwners.length === 0" class="empty-cr">
-              <span>All CR owners removed. You can still add members below.</span>
-            </div>
-          </div>
-        </app-card>
+          </app-card>
+        </ng-container>
 
-        <!-- Additional Members Section -->
-        <div class="list-section-label" style="margin-top: 24px;">
+        <!-- Invite Members Section -->
+        <div class="list-section-label" [style.margin-top.px]="crOwners.length > 0 ? 24 : 0">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/>
             <line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/>
           </svg>
-          <span>Additional members</span>
-          <span class="optional-tag">Optional</span>
+          <span>{{ crOwners.length > 0 ? 'Additional members' : 'Invite members' }}</span>
+          <span *ngIf="crOwners.length > 0" class="optional-tag">Optional</span>
         </div>
 
         <app-card [padding]="28">
@@ -121,19 +125,11 @@ import {
             <div *ngFor="let inv of additionalInvites; let i = index" class="invite-row">
               <div class="invite-num extra">{{ crOwners.length + i + 1 }}</div>
               <div class="invite-fields">
-                <div class="invite-field full-width">
-                  <label class="field-label">Full Name</label>
-                  <input class="field-input" placeholder="e.g. Omar Al-Harbi" [(ngModel)]="inv.name" />
-                </div>
                 <div class="invite-field">
                   <label class="field-label">Email Address</label>
                   <input class="field-input" placeholder="e.g. omar@company.com" [(ngModel)]="inv.email" />
                 </div>
                 <div class="invite-field">
-                  <label class="field-label">Phone Number</label>
-                  <input class="field-input" placeholder="+966 5x xxx xxxx" [(ngModel)]="inv.phone" />
-                </div>
-                <div class="invite-field full-width">
                   <label class="field-label">Role</label>
                   <select class="field-select" [(ngModel)]="inv.role">
                     <option value="Admin">Admin</option>
@@ -172,6 +168,11 @@ import {
             <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
           </svg>
           <span>Team members will receive an email invitation to join your workspace.</span>
+        </div>
+
+        <!-- Demo: view invite acceptance page -->
+        <div class="demo-bar" style="margin-top: 28px">
+          <button class="demo-toggle" (click)="goToInviteAccept()">Demo: View Invite Acceptance Page &rarr;</button>
         </div>
 
       </div>
@@ -298,6 +299,29 @@ import {
     .invite-row:first-child { padding-top: 0; }
     .invite-row:last-of-type { border-bottom: none; }
 
+    /* Demo controls */
+    .demo-bar {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .demo-toggle {
+      background: ${C.g50};
+      border: 1px dashed ${C.g300};
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-size: 12px;
+      font-weight: 600;
+      color: ${C.g500};
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.15s;
+    }
+    .demo-toggle:hover { background: ${C.g100}; color: ${C.g700}; }
+    .demo-toggle.active { background: ${C.g200}; color: ${C.g700}; border-color: ${C.g400}; }
+
     .invite-num {
       width: 24px;
       height: 24px;
@@ -310,7 +334,7 @@ import {
       font-size: 11px;
       font-weight: 800;
       flex-shrink: 0;
-      margin-top: 20px;
+      margin-top: 2px;
     }
 
     .invite-num.extra {
@@ -412,7 +436,7 @@ import {
       cursor: pointer;
       padding: 8px;
       border-radius: 8px;
-      margin-top: 20px;
+      margin-top: 2px;
       transition: all 0.15s;
       display: flex;
       align-items: center;
@@ -472,23 +496,37 @@ import {
 })
 export class TeamInviteComponent {
   C = C;
+  noCrMode = false;
 
-  // Pre-populated from CR API — names are locked, user fills email, phone & role
+  // Pre-populated from CR API — names are locked, user fills email & role
   crOwners = [
-    { name: 'Mohammad Al-Omran', crRole: 'Partner', email: '', phone: '', role: '' },
-    { name: 'Khalid Al-Salem', crRole: 'Partner', email: '', phone: '', role: '' },
-    { name: 'Faisal Al-Rajhi', crRole: 'Authorized Signatory', email: '', phone: '', role: '' },
+    { name: 'Mohammad Al-Omran', crRole: 'Partner', email: '', role: '' },
+    { name: 'Khalid Al-Salem', crRole: 'Partner', email: '', role: '' },
+    { name: 'Faisal Al-Rajhi', crRole: 'Authorized Signatory', email: '', role: '' },
   ];
 
+  private savedCrOwners = [...this.crOwners.map(o => ({ ...o }))];
+
   // Additional members added manually
-  additionalInvites: { name: string; email: string; phone: string; role: string }[] = [];
+  additionalInvites: { email: string; role: string }[] = [];
 
   constructor(private router: Router) {}
 
   get hasValidInvite(): boolean {
-    const hasCR = this.crOwners.some(o => o.email.trim() !== '' || o.phone.trim() !== '');
-    const hasExtra = this.additionalInvites.some(inv => inv.name.trim() !== '' && inv.email.trim() !== '');
+    const hasCR = this.crOwners.some(o => o.email.trim() !== '');
+    const hasExtra = this.additionalInvites.some(inv => inv.email.trim() !== '');
     return hasCR || hasExtra;
+  }
+
+  setMode(noCr: boolean) {
+    this.noCrMode = noCr;
+    if (noCr) {
+      this.crOwners = [];
+      this.additionalInvites = [{ email: '', role: 'Viewer' }];
+    } else {
+      this.crOwners = this.savedCrOwners.map(o => ({ ...o }));
+      this.additionalInvites = [];
+    }
   }
 
   removeCrOwner(index: number) {
@@ -496,7 +534,7 @@ export class TeamInviteComponent {
   }
 
   addAdditional() {
-    this.additionalInvites.push({ name: '', email: '', phone: '', role: 'Viewer' });
+    this.additionalInvites.push({ email: '', role: 'Viewer' });
   }
 
   removeAdditional(index: number) {
@@ -504,10 +542,14 @@ export class TeamInviteComponent {
   }
 
   sendAndContinue() {
-    this.router.navigate(['/dashboard/welcome']);
+    this.router.navigate(['/dashboard'], { queryParams: { state: 'new' } });
   }
 
   skip() {
-    this.router.navigate(['/dashboard/welcome']);
+    this.router.navigate(['/dashboard'], { queryParams: { state: 'new' } });
+  }
+
+  goToInviteAccept() {
+    this.router.navigate(['/invite/accept']);
   }
 }

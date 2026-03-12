@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { C, BadgeColor, BADGE_STYLES } from '../../shared/theme';
 import { NavComponent, BackLinkComponent, BadgeComponent } from '../../shared';
 
@@ -24,7 +24,7 @@ interface ActivityEvent {
       <app-nav></app-nav>
 
       <div class="container">
-        <app-back-link [to]="'/application/' + appId + '/status'" label="Back to Application"></app-back-link>
+        <app-back-link to="/dashboard" label="Back to Dashboard"></app-back-link>
 
         <!-- Header -->
         <div class="header">
@@ -34,7 +34,48 @@ interface ActivityEvent {
             </svg>
           </div>
           <h1 class="title">Activity Log</h1>
-          <p class="subtitle">Al Noor Residential &middot; Al Omran Real Estate Dev Co.</p>
+        </div>
+
+        <!-- Context links -->
+        <div class="context-card">
+          <div class="ctx-row" (click)="go('/dashboard/company/1')">
+            <div class="ctx-icon" [style.background]="C.blue50">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.blue500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/>
+              </svg>
+            </div>
+            <div class="ctx-info">
+              <div class="ctx-label">Company</div>
+              <div class="ctx-value">Al Omran Real Estate Dev Co.</div>
+            </div>
+            <svg class="ctx-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g400" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+          <div class="ctx-divider"></div>
+          <div class="ctx-row" (click)="go('/dashboard/project/1')">
+            <div class="ctx-icon" [style.background]="C.greenLt">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.green" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 3h7l2 2h9v16H3z"/>
+              </svg>
+            </div>
+            <div class="ctx-info">
+              <div class="ctx-label">Project</div>
+              <div class="ctx-value">Al Noor Residential</div>
+            </div>
+            <svg class="ctx-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g400" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+          <div class="ctx-divider"></div>
+          <div class="ctx-row" (click)="go('/application/' + appId + '/status')">
+            <div class="ctx-icon" [style.background]="C.amber50">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.amber500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/>
+              </svg>
+            </div>
+            <div class="ctx-info">
+              <div class="ctx-label">Financing Application</div>
+              <div class="ctx-value">Development &middot; ~21M SAR</div>
+            </div>
+            <svg class="ctx-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g400" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
         </div>
 
         <!-- Timeline -->
@@ -122,9 +163,33 @@ interface ActivityEvent {
       font-size: 22px; font-weight: 900; color: ${C.g900};
       margin: 0 0 6px;
     }
-    .subtitle {
-      font-size: 14px; color: ${C.g500}; margin: 0;
+    /* Context card */
+    .context-card {
+      background: #fff;
+      border: 1px solid ${C.g200};
+      border-radius: 14px;
+      margin-bottom: 32px;
+      overflow: hidden;
     }
+    .ctx-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 18px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .ctx-row:hover { background: ${C.g50}; }
+    .ctx-icon {
+      width: 32px; height: 32px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .ctx-info { flex: 1; min-width: 0; }
+    .ctx-label { font-size: 11px; font-weight: 700; color: ${C.g400}; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 1px; }
+    .ctx-value { font-size: 13px; font-weight: 700; color: ${C.g800}; }
+    .ctx-arrow { flex-shrink: 0; }
+    .ctx-divider { height: 1px; background: ${C.g100}; margin: 0 18px; }
 
     /* Timeline */
     .timeline {
@@ -199,9 +264,11 @@ export class ActivityLogComponent {
   C = C;
   appId = '1';
 
-  constructor(private route: ActivatedRoute) {
+  constructor(private router: Router, private route: ActivatedRoute) {
     this.appId = this.route.snapshot.paramMap.get('id') || '1';
   }
+
+  go(path: string) { this.router.navigateByUrl(path); }
 
   events: ActivityEvent[] = [
     { id: 1,  type: 'termsheet',   title: 'Term Sheet Accepted',         description: 'Ahmed Al-Salem accepted the financing term sheet for Al Noor Residential.',                    actor: 'Ahmed Al-Salem',  time: 'Mar 8, 2026 at 2:15 PM',   badge: 'green', badgeLabel: 'Accepted' },

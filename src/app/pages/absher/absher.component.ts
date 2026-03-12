@@ -32,7 +32,6 @@ type IdentityStep = 'id' | 'otp' | 'verifying' | 'ownerCheck' | 'ownerFail' | 'd
         <!-- Header bar -->
         <div class="header-bar">
           <app-logo [size]="32"></app-logo>
-          <span class="header-right" *ngIf="mode === 'login'" [style.color]="C.g500" [style.font-size.px]="13" [style.font-weight]="600">Sign in</span>
           <span class="header-right" *ngIf="mode === 'register'" [style.color]="C.g500" [style.font-size.px]="13" [style.font-weight]="600">Step {{ currentStepDisplay }} of 2</span>
         </div>
 
@@ -99,6 +98,9 @@ type IdentityStep = 'id' | 'otp' | 'verifying' | 'ownerCheck' | 'ownerFail' | 'd
               <app-btn variant="primary" [full]="true" size="lg" [disabled]="otp.length < 4" (clicked)="onOtpConfirm()">
                 Confirm
               </app-btn>
+              <div *ngIf="mode === 'register'" class="demo-bar">
+                <button class="demo-advance" (click)="identityStep = 'ownerFail'">Demo: Owner not found &rarr;</button>
+              </div>
             </div>
             <p class="form-footer">
               <span class="link" (click)="identityStep = 'id'">Back to ID entry</span>
@@ -309,6 +311,18 @@ type IdentityStep = 'id' | 'otp' | 'verifying' | 'ownerCheck' | 'ownerFail' | 'd
       justify-content: center;
       margin: 0 auto 16px;
     }
+
+    /* Demo buttons */
+    .demo-bar {
+      text-align: center; margin-top: 16px;
+    }
+    .demo-advance {
+      background: none; border: 1px dashed ${C.g300};
+      border-radius: 6px; padding: 4px 10px;
+      font-size: 11px; font-weight: 600; color: ${C.g500};
+      cursor: pointer; font-family: inherit;
+    }
+    .demo-advance:hover { background: ${C.g50}; color: ${C.g700}; }
   `]
 })
 export class AbsherComponent implements OnInit, OnDestroy {
@@ -337,7 +351,7 @@ export class AbsherComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.mode = (this.route.snapshot.data as any)['mode'] || 'register';
-    this.nid = this.mode === 'register' ? '1063622662' : '';
+    this.nid = '';
   }
 
   ngOnDestroy(): void {

@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { C } from '../../shared/theme';
@@ -314,7 +314,7 @@ import { NavComponent, BackLinkComponent, CardComponent, InputComponent, ButtonC
     }
   `]
 })
-export class ProfileComponent {
+export class ProfileComponent implements OnInit {
   name = 'Ahmed Al-Salem';
   email = 'ahmed@alomran.com';
   phone = '+966 50 123 4567';
@@ -323,13 +323,24 @@ export class ProfileComponent {
   notifSms = true;
   notifWhatsapp = true;
   saved = false;
+  fromOnboarding = false;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private route: ActivatedRoute) {}
+
+  ngOnInit(): void {
+    this.fromOnboarding = this.route.snapshot.queryParamMap.get('from') === 'onboarding';
+  }
 
   go(path: string) { this.router.navigateByUrl(path); }
 
   save() {
     this.saved = true;
-    setTimeout(() => this.saved = false, 3000);
+    if (this.fromOnboarding) {
+      setTimeout(() => {
+        this.router.navigateByUrl('/dashboard?state=new');
+      }, 1000);
+    } else {
+      setTimeout(() => this.saved = false, 3000);
+    }
   }
 }

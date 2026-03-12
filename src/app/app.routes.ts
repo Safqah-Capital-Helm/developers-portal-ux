@@ -26,6 +26,7 @@ export const routes: Routes = [
   { path: 'project/new', loadComponent: () => import('./pages/add-project/add-project.component').then(m => m.AddProjectComponent) },
   { path: 'application/new', loadComponent: () => import('./pages/add-application/add-application.component').then(m => m.AddApplicationComponent) },
   { path: 'company/new', loadComponent: () => import('./pages/add-company/add-company.component').then(m => m.AddCompanyComponent) },
+  { path: 'company/:companyId/credentials', loadComponent: () => import('./pages/edit-credentials/edit-credentials.component').then(m => m.EditCredentialsComponent) },
   { path: 'application/:id/status', loadComponent: () => import('./pages/submitted/submitted.component').then(m => m.SubmittedComponent) },
   { path: 'application/:id/term-sheet', loadComponent: () => import('./pages/offer/offer.component').then(m => m.OfferComponent) },
   { path: 'application/:id/activity', loadComponent: () => import('./pages/activity-log/activity-log.component').then(m => m.ActivityLogComponent) },
@@ -34,6 +35,7 @@ export const routes: Routes = [
   { path: 'profile', loadComponent: () => import('./pages/profile/profile.component').then(m => m.ProfileComponent) },
   { path: 'support', loadComponent: () => import('./pages/support/support.component').then(m => m.SupportComponent) },
   { path: 'verify/owner/:token', loadComponent: () => import('./pages/owner-verify/owner-verify.component').then(m => m.OwnerVerifyComponent) },
+  { path: 'invite/accept', loadComponent: () => import('./pages/invite-accept/invite-accept.component').then(m => m.InviteAcceptComponent) },
   { path: 'design-system', loadComponent: () => import('./pages/design-system/design-system.component').then(m => m.DesignSystemComponent) },
   { path: '**', redirectTo: '' },
 ];

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { C } from '../../shared/theme';
 import { NavComponent } from '../../shared/components/nav/nav.component';
@@ -15,7 +15,7 @@ import { CardComponent } from '../../shared/components/card/card.component';
     <div class="page">
       <app-nav></app-nav>
       <div class="container">
-        <app-back-link to="/application/1/status" label="Back to Application Status"></app-back-link>
+        <app-back-link [to]="'/application/' + appId + '/status'" label="Back to Application Status"></app-back-link>
 
         <!-- Header -->
         <div class="header">
@@ -232,6 +232,11 @@ import { CardComponent } from '../../shared/components/card/card.component';
   `]
 })
 export class OfferComponent {
-  constructor(private router: Router) {}
+  appId = '1';
+
+  constructor(private router: Router, private route: ActivatedRoute) {
+    this.appId = this.route.snapshot.paramMap.get('id') || '1';
+  }
+
   go(path: string) { this.router.navigateByUrl(path); }
 }

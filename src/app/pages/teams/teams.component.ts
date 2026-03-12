@@ -3,15 +3,20 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { C } from '../../shared/theme';
-import { ButtonComponent, BadgeComponent, ModalComponent, InputComponent, AvatarComponent, DashedButtonComponent, PageHeaderComponent } from '../../shared';
+import { ButtonComponent, BadgeComponent, ModalComponent, InputComponent, AvatarComponent, PageHeaderComponent } from '../../shared';
 
 @Component({
   selector: 'app-teams-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, ButtonComponent, BadgeComponent, ModalComponent, InputComponent, AvatarComponent, DashedButtonComponent, PageHeaderComponent],
+  imports: [CommonModule, FormsModule, ButtonComponent, BadgeComponent, ModalComponent, InputComponent, AvatarComponent, PageHeaderComponent],
   template: `
     <div class="container">
-      <app-page-header title="Team" [count]="team.length"></app-page-header>
+      <app-page-header title="Team" [count]="team.length">
+        <app-btn variant="primary" size="sm" (clicked)="openInviteModal()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+          Invite Member
+        </app-btn>
+      </app-page-header>
 
       <!-- Member cards -->
       <div *ngFor="let m of team" class="member-card" (click)="openMemberModal(m)">
@@ -29,44 +34,82 @@ import { ButtonComponent, BadgeComponent, ModalComponent, InputComponent, Avatar
         </div>
       </div>
 
-      <app-dashed-btn label="Invite member" [fullWidth]="true" (clicked)="openInviteModal()"></app-dashed-btn>
-
       <!-- Member Detail Modal -->
-      <app-modal *ngIf="showMemberModal && selectedMember" [title]="selectedMember.name" [wide]="true" (closed)="showMemberModal = false">
-        <div class="member-modal-top">
-          <div class="member-modal-avatar" [style.background]="C.greenLt" [style.color]="C.green">
-            {{ selectedMember.name.charAt(0) }}
+      <app-modal *ngIf="showMemberModal && selectedMember" [title]="'Member Details'" [wide]="true" (closed)="showMemberModal = false">
+        <!-- Profile card -->
+        <div class="mm-profile">
+          <div class="mm-avatar-ring">
+            <app-avatar [initials]="selectedMember.name.charAt(0)" size="xl" color="green"></app-avatar>
+            <span class="mm-status-dot" [style.background]="selectedMember.active ? C.green : C.amber500"></span>
           </div>
-          <div class="member-modal-info">
-            <div class="member-modal-name">{{ selectedMember.name }} <span *ngIf="selectedMember.you" class="you-tag">(you)</span></div>
-            <div class="member-modal-email">{{ selectedMember.email }}</div>
-            <div class="member-modal-detail">Phone: +966 50 123 4567</div>
-            <div class="member-modal-detail">Joined: Jan 15, 2026</div>
-            <div class="member-modal-detail">Current role: <strong>{{ selectedMember.role }}</strong></div>
+          <div class="mm-profile-info">
+            <div class="mm-name">{{ selectedMember.name }} <span *ngIf="selectedMember.you" class="you-tag">(you)</span></div>
+            <div class="mm-email">{{ selectedMember.email }}</div>
           </div>
         </div>
 
-        <div class="modal-section-title">Role</div>
-        <div class="role-grid">
-          <div *ngFor="let r of roles" class="role-option"
-               [class.selected]="memberEditRole === r"
-               (click)="memberEditRole = r">
-            <div class="role-option-radio">
-              <div *ngIf="memberEditRole === r" class="role-option-dot"></div>
+        <div class="mm-meta-row">
+          <div class="mm-meta-item">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g400" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
+            <span>+966 50 123 4567</span>
+          </div>
+          <div class="mm-meta-item">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g400" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            <span>Joined Jan 15, 2026</span>
+          </div>
+          <div class="mm-meta-item">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g400" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span>{{ selectedMember.active ? 'Active now' : 'Inactive' }}</span>
+          </div>
+        </div>
+
+        <!-- Role selection -->
+        <div class="mm-section">
+          <div class="mm-section-header">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><polyline points="17 11 19 13 23 9"/></svg>
+            <span>Role & Permissions</span>
+          </div>
+          <div class="role-grid">
+            <div *ngFor="let r of roleOptions" class="role-option"
+                 [class.selected]="memberEditRole === r.name"
+                 (click)="memberEditRole = r.name">
+              <div class="role-option-left">
+                <div class="role-option-radio">
+                  <div *ngIf="memberEditRole === r.name" class="role-option-dot"></div>
+                </div>
+                <div class="role-option-text">
+                  <span class="role-option-name">{{ r.name }}</span>
+                  <span class="role-option-desc">{{ r.desc }}</span>
+                </div>
+              </div>
             </div>
-            {{ r }}
           </div>
         </div>
 
-        <div class="modal-section-title" style="margin-top: 20px;">Linked Companies</div>
-        <div *ngFor="let co of companies; let i = index" class="checkbox-row">
-          <input type="checkbox" [id]="'co-check-' + i" [(ngModel)]="memberCompanyAccess[i]" />
-          <label [for]="'co-check-' + i">{{ co.name }}</label>
+        <!-- Company access -->
+        <div class="mm-section">
+          <div class="mm-section-header">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><line x1="9" y1="10" x2="15" y2="10"/><line x1="9" y1="14" x2="15" y2="14"/></svg>
+            <span>Company Access</span>
+          </div>
+          <div class="mm-company-list">
+            <label *ngFor="let co of companies; let i = index" class="mm-company-item" [class.checked]="memberCompanyAccess[i]">
+              <input type="checkbox" [(ngModel)]="memberCompanyAccess[i]" />
+              <div class="mm-checkbox">
+                <svg *ngIf="memberCompanyAccess[i]" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <div class="mm-company-icon" [style.background]="C.blue50">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.blue500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><line x1="9" y1="10" x2="15" y2="10"/><line x1="9" y1="14" x2="15" y2="14"/></svg>
+              </div>
+              <span class="mm-company-name">{{ co.name }}</span>
+            </label>
+          </div>
         </div>
 
-        <div class="modal-actions">
-          <app-btn variant="primary" size="sm" (clicked)="showMemberModal = false">Save Changes</app-btn>
-          <app-btn *ngIf="!selectedMember.you" variant="dangerOutline" size="sm" (clicked)="showMemberModal = false">Remove Member</app-btn>
+        <!-- Actions -->
+        <div class="mm-actions">
+          <app-btn variant="primary" (clicked)="showMemberModal = false">Save Changes</app-btn>
+          <app-btn *ngIf="!selectedMember.you" variant="dangerOutline" (clicked)="showMemberModal = false">Remove Member</app-btn>
         </div>
       </app-modal>
 
@@ -76,22 +119,45 @@ import { ButtonComponent, BadgeComponent, ModalComponent, InputComponent, Avatar
           <app-input label="Full Name" placeholder="e.g. Omar Al-Harbi" [(value)]="inviteName"></app-input>
           <app-input label="Email Address" placeholder="e.g. omar@company.com" [(value)]="inviteEmail"></app-input>
 
-          <div class="modal-section-title">Role</div>
-          <div class="role-grid">
-            <div *ngFor="let r of roles" class="role-option"
-                 [class.selected]="inviteRole === r"
-                 (click)="inviteRole = r">
-              <div class="role-option-radio">
-                <div *ngIf="inviteRole === r" class="role-option-dot"></div>
+          <div class="mm-section" style="margin-top: 4px;">
+            <div class="mm-section-header">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><polyline points="17 11 19 13 23 9"/></svg>
+              <span>Role</span>
+            </div>
+            <div class="role-grid">
+              <div *ngFor="let r of roleOptions" class="role-option"
+                   [class.selected]="inviteRole === r.name"
+                   (click)="inviteRole = r.name">
+                <div class="role-option-left">
+                  <div class="role-option-radio">
+                    <div *ngIf="inviteRole === r.name" class="role-option-dot"></div>
+                  </div>
+                  <div class="role-option-text">
+                    <span class="role-option-name">{{ r.name }}</span>
+                    <span class="role-option-desc">{{ r.desc }}</span>
+                  </div>
+                </div>
               </div>
-              {{ r }}
             </div>
           </div>
 
-          <div class="modal-section-title" style="margin-top: 20px;">Company Access</div>
-          <div *ngFor="let co of companies; let i = index" class="checkbox-row">
-            <input type="checkbox" [id]="'inv-co-' + i" [(ngModel)]="inviteCompanyAccess[i]" />
-            <label [for]="'inv-co-' + i">{{ co.name }}</label>
+          <div class="mm-section">
+            <div class="mm-section-header">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><line x1="9" y1="10" x2="15" y2="10"/><line x1="9" y1="14" x2="15" y2="14"/></svg>
+              <span>Company Access</span>
+            </div>
+            <div class="mm-company-list">
+              <label *ngFor="let co of companies; let i = index" class="mm-company-item" [class.checked]="inviteCompanyAccess[i]">
+                <input type="checkbox" [(ngModel)]="inviteCompanyAccess[i]" />
+                <div class="mm-checkbox">
+                  <svg *ngIf="inviteCompanyAccess[i]" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+                <div class="mm-company-icon" [style.background]="C.blue50">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.blue500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><line x1="9" y1="10" x2="15" y2="10"/><line x1="9" y1="14" x2="15" y2="14"/></svg>
+                </div>
+                <span class="mm-company-name">{{ co.name }}</span>
+              </label>
+            </div>
           </div>
 
           <div style="margin-top: 24px;">
@@ -148,48 +214,93 @@ import { ButtonComponent, BadgeComponent, ModalComponent, InputComponent, Avatar
     .member-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
     .active-dot { width: 8px; height: 8px; border-radius: 50%; }
 
-    /* Member modal */
-    .member-modal-top { display: flex; gap: 18px; margin-bottom: 24px; }
-    .member-modal-avatar {
-      width: 56px; height: 56px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 22px; font-weight: 800; flex-shrink: 0;
+    /* Member modal — profile section */
+    .mm-profile {
+      display: flex; align-items: center; gap: 16px;
+      padding-bottom: 20px; margin-bottom: 20px;
+      border-bottom: 1px solid ${C.g100};
     }
-    .member-modal-info { flex: 1; }
-    .member-modal-name { font-size: 16px; font-weight: 800; color: ${C.g900}; margin-bottom: 2px; }
-    .member-modal-email { font-size: 13px; color: ${C.g500}; margin-bottom: 8px; }
-    .member-modal-detail { font-size: 12px; color: ${C.g500}; line-height: 1.7; }
+    .mm-avatar-ring { position: relative; flex-shrink: 0; }
+    .mm-status-dot {
+      position: absolute; bottom: 2px; right: 2px;
+      width: 12px; height: 12px; border-radius: 50%;
+      border: 2.5px solid #fff;
+    }
+    .mm-profile-info { flex: 1; min-width: 0; }
+    .mm-name { font-size: 17px; font-weight: 800; color: ${C.g900}; display: flex; align-items: center; gap: 6px; }
+    .mm-email { font-size: 13px; color: ${C.g500}; margin-top: 2px; }
 
-    .modal-section-title { font-size: 13px; font-weight: 800; color: ${C.g700}; margin-bottom: 10px; }
+    .mm-meta-row {
+      display: flex; flex-wrap: wrap; gap: 20px;
+      padding-bottom: 20px; margin-bottom: 4px;
+      border-bottom: 1px solid ${C.g100};
+    }
+    .mm-meta-item {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 12px; font-weight: 600; color: ${C.g500};
+    }
 
+    /* Sections */
+    .mm-section { margin-top: 20px; }
+    .mm-section-header {
+      display: flex; align-items: center; gap: 7px;
+      font-size: 13px; font-weight: 800; color: ${C.g700};
+      margin-bottom: 10px;
+    }
+
+    /* Role grid */
     .role-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     .role-option {
-      display: flex; align-items: center; gap: 10px;
+      display: flex; align-items: flex-start; gap: 10px;
       padding: 12px 14px; border: 1.5px solid ${C.g200};
-      border-radius: 10px; cursor: pointer;
-      font-size: 13px; font-weight: 700; color: ${C.g700};
-      transition: border-color 0.2s;
+      border-radius: 12px; cursor: pointer;
+      transition: all 0.15s ease;
     }
-    .role-option:hover { border-color: ${C.g300}; }
-    .role-option.selected { border-color: ${C.green}; background: ${C.greenLt}; color: ${C.green}; }
+    .role-option:hover { border-color: ${C.g300}; background: ${C.g50}; }
+    .role-option.selected { border-color: ${C.green}; background: ${C.greenLt}; }
+    .role-option-left { display: flex; align-items: flex-start; gap: 10px; }
     .role-option-radio {
       width: 18px; height: 18px; border-radius: 50%;
       border: 2px solid ${C.g300};
       display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+      margin-top: 1px;
     }
     .role-option.selected .role-option-radio { border-color: ${C.green}; }
     .role-option-dot { width: 10px; height: 10px; border-radius: 50%; background: ${C.green}; }
+    .role-option-text { display: flex; flex-direction: column; gap: 2px; }
+    .role-option-name { font-size: 13px; font-weight: 700; color: ${C.g700}; }
+    .role-option.selected .role-option-name { color: ${C.green}; }
+    .role-option-desc { font-size: 11px; color: ${C.g400}; line-height: 1.3; }
+    .role-option.selected .role-option-desc { color: ${C.greenDk}; opacity: 0.7; }
 
-    .checkbox-row {
-      display: flex; align-items: center; gap: 10px;
-      padding: 8px 0; font-size: 13px; color: ${C.g700}; font-weight: 600;
+    /* Company access checkboxes */
+    .mm-company-list { display: flex; flex-direction: column; gap: 8px; }
+    .mm-company-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 14px; border: 1.5px solid ${C.g200};
+      border-radius: 12px; cursor: pointer; transition: all 0.15s ease;
     }
-    .checkbox-row input[type="checkbox"] { width: 16px; height: 16px; accent-color: ${C.green}; cursor: pointer; }
-    .checkbox-row label { cursor: pointer; }
+    .mm-company-item:hover { border-color: ${C.g300}; background: ${C.g50}; }
+    .mm-company-item.checked { border-color: ${C.green}; background: ${C.greenLt}; }
+    .mm-company-item input[type="checkbox"] { position: absolute; opacity: 0; pointer-events: none; }
+    .mm-checkbox {
+      width: 20px; height: 20px; border-radius: 6px;
+      border: 2px solid ${C.g300}; background: #fff;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: all 0.15s ease;
+    }
+    .mm-company-item.checked .mm-checkbox { background: ${C.green}; border-color: ${C.green}; }
+    .mm-company-icon {
+      width: 32px; height: 32px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .mm-company-name { font-size: 13px; font-weight: 700; color: ${C.g700}; }
+    .mm-company-item.checked .mm-company-name { color: ${C.green}; }
 
-    .modal-actions {
-      display: flex; gap: 10px; margin-top: 28px;
-      padding-top: 18px; border-top: 1px solid ${C.g200};
+    /* Modal actions */
+    .mm-actions {
+      display: flex; gap: 10px; margin-top: 24px;
+      padding-top: 20px; border-top: 1px solid ${C.g100};
     }
 
     .invite-success { text-align: center; padding: 20px 0 8px; }
@@ -221,6 +332,12 @@ export class TeamsPageComponent {
   ];
 
   roles = ['Admin', 'Editor', 'Contributor', 'Viewer'];
+  roleOptions = [
+    { name: 'Admin', desc: 'Full access to all settings and data' },
+    { name: 'Editor', desc: 'Can edit projects and applications' },
+    { name: 'Contributor', desc: 'Can submit data but not edit others' },
+    { name: 'Viewer', desc: 'Read-only access to dashboards' },
+  ];
 
   showMemberModal = false;
   selectedMember: any = null;

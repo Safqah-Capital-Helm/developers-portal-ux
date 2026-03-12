@@ -107,7 +107,7 @@ export class SubmitSuccessComponent implements OnDestroy {
 
   constructor(private router: Router) {
     this.redirectTimer = setTimeout(() => {
-      this.router.navigateByUrl('/dashboard');
+      this.router.navigateByUrl('/dashboard?state=new');
     }, 4000);
   }
 

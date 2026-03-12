@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { C } from '../../theme';
 
 @Component({
@@ -7,7 +8,7 @@ import { C } from '../../theme';
   template: `
     <div class="stat-card">
       <div class="stat-icon" [style.background]="iconBg">
-        <span [innerHTML]="icon"></span>
+        <span [innerHTML]="safeIcon"></span>
       </div>
       <div class="stat-label">{{ label }}</div>
       <div class="stat-value">{{ value }}</div>
@@ -39,4 +40,10 @@ export class StatCardComponent {
   @Input() value: string | number = '';
   @Input() icon = '';
   @Input() iconBg: string = C.g100;
+
+  constructor(private sanitizer: DomSanitizer) {}
+
+  get safeIcon(): SafeHtml {
+    return this.sanitizer.bypassSecurityTrustHtml(this.icon);
+  }
 }

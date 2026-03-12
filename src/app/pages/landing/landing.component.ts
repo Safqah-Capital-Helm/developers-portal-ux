@@ -39,10 +39,10 @@ import { ButtonComponent } from '../../shared/components/button/button.component
               <div class="cr-prefix"><span>CR</span></div>
               <input [(ngModel)]="cr" placeholder="1010XXXXXX" (keydown.enter)="doCheck()" class="cr-input"/>
             </div>
-            <p class="hint">Enter 999... to test rejection</p>
             <app-btn variant="primary" [full]="true" size="lg" [disabled]="!cr || checking" (clicked)="doCheck()">
               {{ checking ? 'Verifying...' : 'Request your financing today →' }}
             </app-btn>
+            <button class="demo-reject" (click)="doReject()">Demo: Not Eligible</button>
             <div class="signin-link">
               <p>Already have an account? <a (click)="router.navigate(['/sign-in'])">Sign in</a></p>
             </div>
@@ -96,7 +96,13 @@ import { ButtonComponent } from '../../shared/components/button/button.component
       font-size: 15px; color: #101828; font-family: 'IBM Plex Mono', monospace;
       letter-spacing: 1px; font-weight: 600;
     }
-    .hint { font-size: 11px; color: #98a2b3; margin-bottom: 20px; }
+    .demo-reject {
+      display: block; width: 100%; margin-top: 10px; padding: 8px;
+      background: #f8f9fa; border: 1px dashed #ced4da; border-radius: 8px;
+      font-size: 12px; font-weight: 600; color: #98a2b3;
+      cursor: pointer; font-family: inherit; transition: all 0.15s;
+    }
+    .demo-reject:hover { background: #f1f3f5; color: #475467; }
     .signin-link {
       margin-top: 24px; text-align: center; padding-top: 20px;
       border-top: 1px solid #e2e5e9;
@@ -116,11 +122,11 @@ export class LandingComponent {
     this.checking = true;
     setTimeout(() => {
       this.checking = false;
-      if (this.cr.startsWith('999')) {
-        this.router.navigate(['/not-eligible']);
-      } else {
-        this.router.navigate(['/verify']);
-      }
+      this.router.navigate(['/verify']);
     }, 1500);
+  }
+
+  doReject() {
+    this.router.navigate(['/not-eligible']);
   }
 }

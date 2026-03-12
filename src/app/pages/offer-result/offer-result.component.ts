@@ -66,7 +66,7 @@ import { BadgeComponent } from '../../shared/components/badge/badge.component';
 
       <!-- Decline FORM -->
       <div class="container-declined" *ngIf="!submitted">
-        <app-back-link to="/application/1/term-sheet" label="Back to Term-sheet"></app-back-link>
+        <app-back-link [to]="'/application/' + appId + '/term-sheet'" label="Back to Term-sheet"></app-back-link>
 
         <div class="header-section">
           <div class="x-circle">
@@ -457,6 +457,7 @@ import { BadgeComponent } from '../../shared/components/badge/badge.component';
 })
 export class OfferResultComponent implements OnInit {
   accepted = true;
+  appId = '1';
   reason = '';
   extra = '';
   submitted = false;
@@ -474,6 +475,7 @@ export class OfferResultComponent implements OnInit {
 
   ngOnInit() {
     this.accepted = this.route.snapshot.data['accepted'] ?? true;
+    this.appId = this.route.snapshot.paramMap.get('id') || '1';
   }
 
   go(path: string) { this.router.navigateByUrl(path); }

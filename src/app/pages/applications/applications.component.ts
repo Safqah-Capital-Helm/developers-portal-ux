@@ -2,15 +2,20 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { C, borderColorForStatus } from '../../shared/theme';
-import { BadgeComponent, ListCardComponent, DashedButtonComponent, PageHeaderComponent } from '../../shared';
+import { BadgeComponent, ListCardComponent, ButtonComponent, PageHeaderComponent } from '../../shared';
 
 @Component({
   selector: 'app-applications',
   standalone: true,
-  imports: [CommonModule, BadgeComponent, ListCardComponent, DashedButtonComponent, PageHeaderComponent],
+  imports: [CommonModule, BadgeComponent, ListCardComponent, ButtonComponent, PageHeaderComponent],
   template: `
     <div class="container">
-      <app-page-header title="Financing Applications" [count]="applications.length"></app-page-header>
+      <app-page-header title="Financing Applications" [count]="applications.length">
+        <app-btn variant="primary" size="sm" (clicked)="go('/application/new')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          New Application
+        </app-btn>
+      </app-page-header>
 
       <!-- Application cards -->
       <app-list-card *ngFor="let app of applications"
@@ -43,8 +48,6 @@ import { BadgeComponent, ListCardComponent, DashedButtonComponent, PageHeaderCom
           </div>
         </div>
       </app-list-card>
-
-      <app-dashed-btn label="Create a new application" [fullWidth]="true" (clicked)="go('/application/new')"></app-dashed-btn>
     </div>
   `,
   styles: [`

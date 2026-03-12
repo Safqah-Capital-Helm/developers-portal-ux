@@ -59,11 +59,8 @@ export class AppComponent {
         { path: '/not-eligible', label: 'Not Eligible' },
         { path: '/verify', label: 'Absher Verify' },
         { path: '/sign-in', label: 'Sign In' },
-        { path: '/onboarding/company-verify', label: 'Company Verify' },
         { path: '/onboarding/team', label: 'Team Invite' },
-        { path: '/onboarding/project', label: 'Project Setup' },
-        { path: '/onboarding/financing', label: 'Financing Setup' },
-        { path: '/submit-success', label: 'Submit Success' },
+        { path: '/invite/accept', label: 'Invite Accept' },
       ]
     },
     {
