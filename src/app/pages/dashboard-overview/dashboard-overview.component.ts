@@ -3,20 +3,20 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { C } from '../../shared/theme';
-import { ButtonComponent, BadgeComponent, InputComponent, StatCardComponent, ListCardComponent, PageHeaderComponent } from '../../shared';
+import { ButtonComponent, BadgeComponent, InputComponent, StatCardComponent, ListCardComponent, PageHeaderComponent, TranslatePipe, I18nService } from '../../shared';
 
 @Component({
   selector: 'app-dashboard-overview',
   standalone: true,
-  imports: [CommonModule, ButtonComponent, BadgeComponent, InputComponent, StatCardComponent, ListCardComponent, PageHeaderComponent],
+  imports: [CommonModule, ButtonComponent, BadgeComponent, InputComponent, StatCardComponent, ListCardComponent, PageHeaderComponent, TranslatePipe],
   template: `
     <div class="container">
       <!-- Demo toggles -->
       <div class="demo-bar">
-        <button class="demo-toggle" [class.active]="demoMode === 'full'" (click)="setDemo('full')">With Actions</button>
-        <button class="demo-toggle" [class.active]="demoMode === 'clear'" (click)="setDemo('clear')">All Clear</button>
-        <button class="demo-toggle" [class.active]="demoMode === 'single'" (click)="setDemo('single')">Single Company</button>
-        <button class="demo-toggle" [class.active]="demoMode === 'new'" (click)="setDemo('new')">New User</button>
+        <button class="demo-toggle" [class.active]="demoMode === 'full'" (click)="setDemo('full')">{{ 'dashboard.demo_with_actions' | t }}</button>
+        <button class="demo-toggle" [class.active]="demoMode === 'clear'" (click)="setDemo('clear')">{{ 'dashboard.demo_all_clear' | t }}</button>
+        <button class="demo-toggle" [class.active]="demoMode === 'single'" (click)="setDemo('single')">{{ 'dashboard.demo_single' | t }}</button>
+        <button class="demo-toggle" [class.active]="demoMode === 'new'" (click)="setDemo('new')">{{ 'dashboard.demo_new_user' | t }}</button>
       </div>
 
       <app-page-header [title]="greeting" [subtitle]="subtitle"></app-page-header>
@@ -34,8 +34,8 @@ import { ButtonComponent, BadgeComponent, InputComponent, StatCardComponent, Lis
               <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
             </svg>
           </div>
-          <span class="section-title">Recent Applications</span>
-          <span class="view-all" (click)="go('/dashboard/applications')">View all &rarr;</span>
+          <span class="section-title">{{ 'dashboard.recent_apps' | t }}</span>
+          <span class="view-all" (click)="go('/dashboard/applications')">{{ 'common.view_all' | t }} &rarr;</span>
         </div>
 
         <app-list-card *ngFor="let app of activeApplications" [statusColor]="app.sc" (click)="onAppClick(app)">
@@ -56,8 +56,8 @@ import { ButtonComponent, BadgeComponent, InputComponent, StatCardComponent, Lis
           <div class="onboarding-header">
             <div class="onboarding-header-top">
               <div>
-                <div class="onboarding-title">Get started with Safqah</div>
-                <div class="onboarding-desc">Complete these steps to submit your first financing application.</div>
+                <div class="onboarding-title">{{ 'dashboard.get_started' | t }}</div>
+                <div class="onboarding-desc">{{ 'dashboard.get_started_desc' | t }}</div>
               </div>
               <div class="progress-pct" [style.color]="C.green">{{ getProgress(newUserSteps) }}%</div>
             </div>
@@ -79,8 +79,8 @@ import { ButtonComponent, BadgeComponent, InputComponent, StatCardComponent, Lis
               <div class="step-actions">
                 <app-btn *ngIf="!s.done && isStepUnlocked(newUserSteps, i)" variant="primary" size="sm" (clicked)="go(s.route)">{{ s.action }}</app-btn>
                 <app-badge *ngIf="s.done" color="green">Done</app-badge>
-                <button *ngIf="i < newUserSteps.length - 1 && !s.done && isStepUnlocked(newUserSteps, i)" class="demo-advance" (click)="toggleStep(newUserSteps, i)">Demo: Mark done</button>
-                <button *ngIf="i < newUserSteps.length - 1 && s.done" class="demo-advance" (click)="toggleStep(newUserSteps, i)">Demo: Undo</button>
+                <button *ngIf="i < newUserSteps.length - 1 && !s.done && isStepUnlocked(newUserSteps, i)" class="demo-advance" (click)="toggleStep(newUserSteps, i)">{{ 'dashboard.demo_mark_done' | t }}</button>
+                <button *ngIf="i < newUserSteps.length - 1 && s.done" class="demo-advance" (click)="toggleStep(newUserSteps, i)">{{ 'dashboard.demo_undo' | t }}</button>
               </div>
             </div>
           </div>
@@ -93,8 +93,8 @@ import { ButtonComponent, BadgeComponent, InputComponent, StatCardComponent, Lis
           <div class="onboarding-header">
             <div class="onboarding-header-top">
               <div>
-                <div class="onboarding-title">Get started with Safqah</div>
-                <div class="onboarding-desc">Complete these steps to submit your first financing application.</div>
+                <div class="onboarding-title">{{ 'dashboard.get_started' | t }}</div>
+                <div class="onboarding-desc">{{ 'dashboard.get_started_desc' | t }}</div>
               </div>
               <div class="progress-pct" [style.color]="C.green">{{ getProgress(singleUserSteps) }}%</div>
             </div>
@@ -132,7 +132,7 @@ import { ButtonComponent, BadgeComponent, InputComponent, StatCardComponent, Lis
               <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/>
             </svg>
           </div>
-          <span class="section-title">Action Required</span>
+          <span class="section-title">{{ 'dashboard.action_required' | t }}</span>
           <span class="notif-count" [style.background]="C.red500">{{ activeNotifications.length }}</span>
         </div>
 
@@ -159,29 +159,29 @@ import { ButtonComponent, BadgeComponent, InputComponent, StatCardComponent, Lis
       <!-- ===== Quick Actions (not new user) ===== -->
       <div *ngIf="demoMode !== 'new'" class="section">
         <div class="section-header">
-          <span class="section-title">Quick Actions</span>
+          <span class="section-title">{{ 'dashboard.quick_actions' | t }}</span>
         </div>
         <div class="actions-row">
           <div class="action-card" (click)="go('/application/new')">
             <div class="action-icon" [style.background]="C.greenLt">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.green" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             </div>
-            <div class="action-title">New Application</div>
-            <div class="action-sub">Submit a financing request</div>
+            <div class="action-title">{{ 'dashboard.new_application' | t }}</div>
+            <div class="action-sub">{{ 'dashboard.new_application_desc' | t }}</div>
           </div>
           <div class="action-card" (click)="go('/project/new')">
             <div class="action-icon" [style.background]="C.blue50">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.blue500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h7l2 2h9v16H3z"/></svg>
             </div>
-            <div class="action-title">Add Project</div>
-            <div class="action-sub">Create a new project</div>
+            <div class="action-title">{{ 'dashboard.add_project' | t }}</div>
+            <div class="action-sub">{{ 'dashboard.add_project_desc' | t }}</div>
           </div>
           <div class="action-card" (click)="go('/dashboard/teams')">
             <div class="action-icon" [style.background]="C.amber50">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.amber500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
             </div>
-            <div class="action-title">Invite Member</div>
-            <div class="action-sub">Add someone to your team</div>
+            <div class="action-title">{{ 'dashboard.invite_member' | t }}</div>
+            <div class="action-sub">{{ 'dashboard.invite_member_desc' | t }}</div>
           </div>
         </div>
       </div>
@@ -193,8 +193,8 @@ import { ButtonComponent, BadgeComponent, InputComponent, StatCardComponent, Lis
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.green" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
           </div>
           <div class="referral-text">
-            <div class="referral-title">How did you find Safqah?</div>
-            <div class="referral-desc">Help us improve by letting us know how you heard about us.</div>
+            <div class="referral-title">{{ 'dashboard.referral_title' | t }}</div>
+            <div class="referral-desc">{{ 'dashboard.referral_desc' | t }}</div>
           </div>
           <button class="referral-dismiss" (click)="showReferral = false">&times;</button>
         </div>
@@ -332,14 +332,39 @@ import { ButtonComponent, BadgeComponent, InputComponent, StatCardComponent, Lis
       .stats-row { grid-template-columns: repeat(2, 1fr); }
       .actions-row { grid-template-columns: 1fr; }
     }
+
+    @media (max-width: 768px) {
+      .stats-row { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+      .actions-row { grid-template-columns: 1fr; gap: 10px; }
+      .demo-bar { flex-wrap: wrap; }
+      .demo-toggle { padding: 6px 12px; font-size: 11px; }
+      .onboarding-card { padding: 16px; }
+      .step-card { padding: 12px; gap: 10px; }
+      .notif-card { padding: 12px 14px; gap: 10px; }
+      .notif-time { display: none; }
+      .referral-card { padding: 16px; }
+    }
+
+    @media (max-width: 480px) {
+      .container { padding: 16px 12px 32px; }
+      .stats-row { grid-template-columns: 1fr; gap: 10px; }
+      .step-card { flex-wrap: wrap; }
+      .step-actions { width: 100%; justify-content: flex-end; }
+      .recent-right { flex-direction: column; align-items: flex-end; gap: 4px; }
+      .recent-amount { font-size: 12px; }
+      .notif-card { flex-wrap: wrap; }
+      .notif-arrow { display: none; }
+      .referral-chips { gap: 6px; }
+      .referral-chip { padding: 6px 12px; font-size: 12px; }
+    }
   `]
 })
 export class DashboardOverviewComponent implements OnInit {
   C = C;
   demoMode: 'full' | 'clear' | 'single' | 'new' = 'full';
 
-  greeting = 'Welcome back, Ahmed';
-  subtitle = 'Track your financing applications and manage your portfolio.';
+  greeting = '';
+  subtitle = '';
 
   // --- Data sets ---
   fullApplications = [
@@ -447,13 +472,15 @@ export class DashboardOverviewComponent implements OnInit {
   referralSource = '';
   referralExtra = '';
 
-  constructor(private router: Router, private route: ActivatedRoute, private sanitizer: DomSanitizer) {}
+  constructor(private router: Router, private route: ActivatedRoute, private sanitizer: DomSanitizer, public i18n: I18nService) {}
 
   ngOnInit(): void {
     // Check if arriving from onboarding — land on "new" user state
     const state = this.route.snapshot.queryParamMap.get('state');
     if (state === 'new') {
       this.setDemo('new');
+    } else {
+      this.setDemo('full');
     }
   }
 
@@ -463,29 +490,29 @@ export class DashboardOverviewComponent implements OnInit {
     this.referralSource = '';
     switch (mode) {
       case 'full':
-        this.greeting = 'Welcome back, Ahmed';
-        this.subtitle = 'Track your financing applications and manage your portfolio.';
+        this.greeting = this.i18n.t('dashboard.welcome', { name: 'Ahmed' });
+        this.subtitle = this.i18n.t('dashboard.subtitle');
         this.activeStats = this.fullStats;
         this.activeApplications = this.fullApplications;
         this.activeNotifications = this.fullNotifications;
         break;
       case 'clear':
-        this.greeting = 'Welcome back, Ahmed';
-        this.subtitle = 'Track your financing applications and manage your portfolio.';
+        this.greeting = this.i18n.t('dashboard.welcome', { name: 'Ahmed' });
+        this.subtitle = this.i18n.t('dashboard.subtitle');
         this.activeStats = this.clearStats;
         this.activeApplications = this.clearApplications;
         this.activeNotifications = [];
         break;
       case 'single':
-        this.greeting = 'Welcome back, Ahmed';
-        this.subtitle = 'Complete the onboarding steps to submit your first financing application.';
+        this.greeting = this.i18n.t('dashboard.welcome', { name: 'Ahmed' });
+        this.subtitle = this.i18n.t('dashboard.subtitle_single');
         this.activeStats = this.singleStats;
         this.activeApplications = this.singleApplications;
         this.activeNotifications = [];
         break;
       case 'new':
-        this.greeting = 'Welcome, Ahmed!';
-        this.subtitle = 'Let\u2019s get your company set up on Safqah.';
+        this.greeting = this.i18n.t('dashboard.welcome_new', { name: 'Ahmed' });
+        this.subtitle = this.i18n.t('dashboard.subtitle_new');
         this.activeNotifications = [];
         break;
     }

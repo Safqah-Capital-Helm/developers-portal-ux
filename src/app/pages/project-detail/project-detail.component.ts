@@ -440,6 +440,28 @@ import { BadgeComponent, BackLinkComponent, EmptyStateComponent, ButtonComponent
       .metrics-grid { grid-template-columns: 1fr; }
       .stat-row { grid-template-columns: 1fr; }
     }
+    @media (max-width: 768px) {
+      .container { padding: 20px 16px 40px; }
+      .hero-img { height: 180px; border-radius: 12px; }
+      .detail-header-row { flex-direction: column; gap: 10px; }
+      .detail-actions { align-self: flex-start; }
+      .section { padding: 18px 18px; border-radius: 14px; }
+      .app-grid { grid-template-columns: 1fr 1fr; }
+      .delete-confirm { flex-wrap: wrap; }
+    }
+    @media (max-width: 480px) {
+      .container { padding: 16px 12px 32px; }
+      .hero-img { height: 140px; }
+      .detail-title { font-size: 20px; }
+      .cost-hero-value { font-size: 22px; }
+      .metric-card { padding: 12px 14px; }
+      .metric-value { font-size: 16px; }
+      .stat-box { padding: 12px 14px; }
+      .stat-val { font-size: 15px; }
+      .app-grid { grid-template-columns: 1fr; }
+      .revenue-row { flex-direction: column; align-items: flex-start; gap: 8px; }
+      .section { padding: 14px 14px; }
+    }
   `]
 })
 export class ProjectDetailComponent implements OnInit {

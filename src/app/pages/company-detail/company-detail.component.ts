@@ -3,34 +3,26 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { C } from '../../shared/theme';
-import { BadgeComponent, BackLinkComponent, ButtonComponent, AvatarComponent, EmptyStateComponent, getCompanyLogo } from '../../shared';
+import { BadgeComponent, BackLinkComponent, ButtonComponent, AvatarComponent, EmptyStateComponent, AlertBannerComponent, getCompanyLogo } from '../../shared';
 
 @Component({
   selector: 'app-company-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, BadgeComponent, BackLinkComponent, ButtonComponent, AvatarComponent, EmptyStateComponent],
+  imports: [CommonModule, FormsModule, RouterLink, BadgeComponent, BackLinkComponent, ButtonComponent, AvatarComponent, EmptyStateComponent, AlertBannerComponent],
   template: `
     <div class="container" *ngIf="company">
       <app-back-link to="/dashboard/companies" label="Back to Companies"></app-back-link>
 
       <!-- Verification Alert -->
-      <div *ngIf="!company.verified" class="verify-alert" (click)="go('/onboarding/company-verify?from=dashboard')">
-        <div class="verify-alert-left">
-          <div class="verify-alert-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-            </svg>
-          </div>
-          <div>
-            <div class="verify-alert-title">Company verification required</div>
-            <div class="verify-alert-desc">Complete verification to unlock financing applications.</div>
-          </div>
-        </div>
-        <div class="verify-alert-action">
-          Verify now
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-        </div>
-      </div>
+      <app-alert-banner
+        *ngIf="!company.verified"
+        type="warning"
+        title="Company Verification Required"
+        message="Complete company verification to unlock financing applications."
+        actionLabel="Verify Company"
+        (action)="go('/onboarding/company-verify?from=dashboard')"
+        style="display: block; margin-bottom: 16px;"
+      ></app-alert-banner>
 
       <!-- ═══ Hero Card ═══ -->
       <div class="hero-card">
@@ -250,28 +242,6 @@ import { BadgeComponent, BackLinkComponent, ButtonComponent, AvatarComponent, Em
       max-width: 880px;
       margin: 0 auto;
       padding: 28px 40px 60px;
-    }
-
-    /* Verification alert */
-    .verify-alert {
-      display: flex; align-items: center; justify-content: space-between;
-      gap: 14px; padding: 14px 18px;
-      background: ${C.amber50}; border: 1.5px solid ${C.amber500}30;
-      border-radius: 12px; margin-bottom: 16px;
-      cursor: pointer; transition: all 0.15s;
-    }
-    .verify-alert:hover { border-color: ${C.amber500}; }
-    .verify-alert-left { display: flex; align-items: center; gap: 12px; }
-    .verify-alert-icon {
-      width: 36px; height: 36px; border-radius: 10px;
-      background: ${C.amber500}15;
-      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-    }
-    .verify-alert-title { font-size: 13px; font-weight: 700; color: ${C.g900}; margin-bottom: 1px; }
-    .verify-alert-desc { font-size: 12px; color: ${C.g500}; }
-    .verify-alert-action {
-      display: flex; align-items: center; gap: 4px;
-      font-size: 13px; font-weight: 700; color: ${C.amber500}; white-space: nowrap;
     }
 
     /* ═══ Hero Card ═══ */
@@ -575,6 +545,28 @@ import { BadgeComponent, BackLinkComponent, ButtonComponent, AvatarComponent, Em
     @media (max-width: 600px) {
       .projects-grid { grid-template-columns: 1fr; }
       .hero-stats { flex-wrap: wrap; }
+    }
+    @media (max-width: 768px) {
+      .container { padding: 20px 16px 40px; }
+      .hero-card { padding: 20px 20px 0; border-radius: 16px; }
+      .section { padding: 18px 20px 16px; border-radius: 16px; }
+      .prev-stats-row { grid-template-columns: 1fr; }
+      .prev-fin-legend { gap: 10px; }
+      .domain-row { flex-wrap: wrap; gap: 8px; }
+    }
+    @media (max-width: 480px) {
+      .container { padding: 16px 12px 32px; }
+      .hero-card { padding: 16px 16px 0; }
+      .hero-name { font-size: 18px; }
+      .hero-left { gap: 12px; }
+      .company-logo { width: 48px; height: 48px; border-radius: 12px; }
+      .meta-chip { font-size: 11px; padding: 3px 8px; }
+      .section { padding: 14px 16px 12px; }
+      .hero-stats { padding: 0; }
+      .hero-stat { padding: 12px 8px; }
+      .hero-stat-value { font-size: 16px; }
+      .member-row { padding: 8px 10px; }
+      .prev-fin-legend { flex-direction: column; gap: 6px; }
     }
   `]
 })

@@ -117,7 +117,7 @@ import type { MapLocation } from '../../shared';
             <app-input
               label="Project Name"
               placeholder="e.g. Al Noor Residential Compound"
-              helper="Give your project a name that identifies it within your portfolio"
+              helper="Choose a descriptive name for your development project."
               [value]="name"
               (valueChange)="name = $event; onFieldChange()"
             ></app-input>
@@ -188,7 +188,7 @@ import type { MapLocation } from '../../shared';
               label="Development Period"
               placeholder="e.g. 24"
               suffix="months"
-              helper="Estimated total duration from project start to completion"
+              helper="Estimated duration from start to completion."
               [value]="projectPeriod"
               (valueChange)="projectPeriod = $event; onFieldChange()"
             ></app-input>
@@ -255,7 +255,7 @@ import type { MapLocation } from '../../shared';
             <app-input
               label="Number of Units"
               placeholder="e.g. 120"
-              helper="Total number of sellable units planned — apartments, villas, plots, or commercial units"
+              helper="Total number of sellable units in the project."
               [value]="expectedUnits"
               (valueChange)="expectedUnits = $event; onFieldChange()"
             ></app-input>
@@ -264,7 +264,7 @@ import type { MapLocation } from '../../shared';
               label="Building Area"
               placeholder="e.g. 15,000"
               suffix="m²"
-              helper="Gross floor area including common areas, corridors, parking, and service rooms"
+              helper="Total built-up area across all floors."
               [value]="totalBuildingArea"
               (valueChange)="totalBuildingArea = $event; onFieldChange()"
             ></app-input>
@@ -273,7 +273,7 @@ import type { MapLocation } from '../../shared';
               label="Selling Area"
               placeholder="e.g. 12,000"
               suffix="m²"
-              helper="Net sellable area — the portion buyers will actually own, excluding common spaces"
+              helper="Net sellable area available to buyers."
               [value]="totalSellingArea"
               (valueChange)="totalSellingArea = $event; onFieldChange()"
             ></app-input>
@@ -1029,6 +1029,17 @@ import type { MapLocation } from '../../shared';
       .stat-row { grid-template-columns: 1fr; }
       .type-grid { grid-template-columns: repeat(2, 1fr); }
       .two-col { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 768px) {
+      .container { padding: 24px 16px 48px; }
+      .page-title { font-size: 20px; }
+    }
+
+    @media (max-width: 480px) {
+      .container { padding: 16px 12px 32px; }
+      .page-title { font-size: 18px; }
+      .section-title { font-size: 15px; }
     }
   `],
 })

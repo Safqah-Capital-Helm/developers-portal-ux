@@ -1,25 +1,25 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { C } from '../../shared/theme';
+import { ResultScreenComponent } from '../../shared';
 
 @Component({
   selector: 'app-submit-success',
   standalone: true,
-  imports: [],
+  imports: [ResultScreenComponent],
   template: `
     <div class="success-page">
       <div class="content">
-        <div class="check-circle">
-          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="20 6 9 17 4 12"/>
-          </svg>
-        </div>
-        <h1 class="title">Application submitted!</h1>
-        <p class="subtitle">Your application is now under review. We'll notify you of any updates via email and SMS.</p>
-        <p class="redirect-text">Redirecting to your dashboard...</p>
-        <div class="progress-track">
-          <div class="progress-fill"></div>
-        </div>
+        <app-result-screen
+          type="success"
+          title="Application submitted!"
+          subtitle="Your application is now under review. We'll notify you of any updates via email and SMS."
+        >
+          <p class="redirect-text">Redirecting to your dashboard...</p>
+          <div class="progress-track">
+            <div class="progress-fill"></div>
+          </div>
+        </app-result-screen>
       </div>
     </div>
   `,
@@ -45,33 +45,6 @@ import { C } from '../../shared/theme';
     @keyframes fadeIn {
       from { opacity: 0; transform: scale(0.9); }
       to   { opacity: 1; transform: scale(1); }
-    }
-
-    .check-circle {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      background: ${C.green};
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 24px;
-      box-shadow: 0 8px 24px rgba(0, 161, 90, 0.25);
-    }
-
-    .title {
-      font-size: 28px;
-      font-weight: 900;
-      color: ${C.g900};
-      margin: 0 0 8px 0;
-    }
-
-    .subtitle {
-      font-size: 15px;
-      color: ${C.g500};
-      margin: 0 0 32px 0;
-      max-width: 360px;
-      line-height: 1.5;
     }
 
     .redirect-text {

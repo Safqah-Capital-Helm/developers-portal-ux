@@ -19,7 +19,13 @@ import {
   ProgressStepsComponent,
   BackLinkComponent,
   ModalComponent,
+  AlertBannerComponent,
+  ResultScreenComponent,
+  ConfirmDialogComponent,
+  TimelineComponent,
+  SelectGridComponent,
 } from '../../shared';
+import type { TimelineEvent, SelectOption } from '../../shared';
 
 @Component({
   selector: 'app-design-system',
@@ -43,6 +49,11 @@ import {
     ProgressStepsComponent,
     BackLinkComponent,
     ModalComponent,
+    AlertBannerComponent,
+    ResultScreenComponent,
+    ConfirmDialogComponent,
+    TimelineComponent,
+    SelectGridComponent,
   ],
   template: `
     <div class="ds-page">
@@ -455,6 +466,95 @@ import {
             </app-card>
           </div>
 
+          <!-- ===== 9: ALERTS & FEEDBACK ===== -->
+          <div *ngIf="activeTab === 9" class="tab-panel">
+            <h2 class="panel-title">Alerts & Feedback</h2>
+            <p class="panel-desc">Components for contextual alerts, result screens, and confirmation dialogs.</p>
+
+            <!-- Section: Alert Banner -->
+            <div class="ds-section">
+              <div class="ds-component-name">Alert Banner</div>
+              <div class="ds-desc">Contextual alert messages for notifications, warnings, errors, and success states.</div>
+              <div class="ds-grid-col-1">
+                <app-alert-banner type="info" title="Information" message="This is an informational message for the user."></app-alert-banner>
+                <app-alert-banner type="warning" title="Warning" message="This action requires your attention before proceeding." actionLabel="Take Action"></app-alert-banner>
+                <app-alert-banner type="error" title="Error" message="Something went wrong. Please try again or contact support."></app-alert-banner>
+                <app-alert-banner type="success" title="Success" message="Your changes have been saved successfully." [dismissible]="true"></app-alert-banner>
+              </div>
+            </div>
+
+            <!-- Section: Result Screen -->
+            <div class="ds-section">
+              <div class="ds-component-name">Result Screen</div>
+              <div class="ds-desc">Full-screen result states for success, error, warning, and info outcomes.</div>
+              <div class="ds-result-grid">
+                <div style="background: #f8f9fa; border-radius: 14px; padding: 24px;">
+                  <app-result-screen type="success" title="Success!" subtitle="Your application has been submitted.">
+                    <app-btn variant="primary" size="sm">Continue</app-btn>
+                  </app-result-screen>
+                </div>
+                <div style="background: #f8f9fa; border-radius: 14px; padding: 24px;">
+                  <app-result-screen type="error" title="Declined" subtitle="The term-sheet has been declined.">
+                    <app-btn variant="secondary" size="sm">Go Back</app-btn>
+                  </app-result-screen>
+                </div>
+              </div>
+            </div>
+
+            <!-- Section: Confirm Dialog -->
+            <div class="ds-section">
+              <div class="ds-component-name">Confirm Dialog</div>
+              <div class="ds-desc">Modal confirmation for destructive or important actions.</div>
+              <div class="ds-actions">
+                <app-btn variant="danger" size="sm" (clicked)="showConfirmDemo = true">Show Confirm Dialog</app-btn>
+              </div>
+              <app-confirm-dialog
+                title="Delete Project?"
+                message="This will permanently remove the project and all associated data. This cannot be undone."
+                confirmLabel="Delete"
+                confirmVariant="danger"
+                [visible]="showConfirmDemo"
+                (confirmed)="showConfirmDemo = false"
+                (cancelled)="showConfirmDemo = false"
+              ></app-confirm-dialog>
+            </div>
+          </div>
+
+          <!-- ===== 10: TIMELINE ===== -->
+          <div *ngIf="activeTab === 10" class="tab-panel">
+            <h2 class="panel-title">Timeline</h2>
+            <p class="panel-desc">Vertical timeline for displaying chronological events and activity logs.</p>
+
+            <div class="ds-section">
+              <div class="ds-component-name">Timeline</div>
+              <div class="ds-desc">Vertical timeline for displaying chronological events and activity logs.</div>
+              <app-timeline [events]="demoTimelineEvents"></app-timeline>
+            </div>
+          </div>
+
+          <!-- ===== 11: COMPLEX FORMS ===== -->
+          <div *ngIf="activeTab === 11" class="tab-panel">
+            <h2 class="panel-title">Complex Forms</h2>
+            <p class="panel-desc">Advanced form components for structured data entry and selection.</p>
+
+            <div class="ds-section">
+              <div class="ds-component-name">Select Grid</div>
+              <div class="ds-desc">Grid of selectable option cards for choosing between categories.</div>
+              <app-select-grid [options]="demoSelectOptions" [selected]="demoSelectedOption" [columns]="3" (selectedChange)="demoSelectedOption = $event"></app-select-grid>
+            </div>
+
+            <div class="ds-section">
+              <div class="ds-component-name">Form Helpers</div>
+              <div class="ds-desc">All form inputs should include helper text to guide users.</div>
+              <div style="max-width: 400px;">
+                <app-input label="Project Name" placeholder="e.g. Khobar Mixed-Use Tower" helper="Choose a descriptive name for your development project." [value]="''" (valueChange)="$event"></app-input>
+                <div style="margin-top: 16px;">
+                  <app-input label="Financing Amount" placeholder="e.g. 30,000,000" suffix="SAR" helper="Total estimated cost of the project in SAR." [value]="''" (valueChange)="$event"></app-input>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
@@ -695,6 +795,36 @@ import {
       font-family: 'SF Mono', 'Fira Code', monospace;
     }
 
+    /* New tab sections */
+    .ds-section {
+      margin-bottom: 32px;
+    }
+    .ds-component-name {
+      font-size: 16px;
+      font-weight: 800;
+      color: ${C.g800};
+      margin-bottom: 4px;
+    }
+    .ds-desc {
+      font-size: 13px;
+      color: ${C.g500};
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+    .ds-grid-col-1 {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .ds-actions {
+      margin-bottom: 12px;
+    }
+    .ds-result-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
     @media (max-width: 768px) {
       .ds-body { padding: 16px 16px 60px; }
       .ds-header { padding: 14px 16px; }
@@ -703,13 +833,14 @@ import {
       .stat-grid { grid-template-columns: 1fr; }
       .ds-tabs { gap: 0; }
       .ds-tab { padding: 8px 10px; font-size: 12px; }
+      .ds-result-grid { grid-template-columns: 1fr; }
     }
   `]
 })
 export class DesignSystemComponent {
   C = C;
   activeTab = 0;
-  tabs = ['Colors', 'Buttons', 'Cards', 'Badges', 'Forms', 'Avatar', 'Data Display', 'Navigation', 'Prototyping'];
+  tabs = ['Colors', 'Buttons', 'Cards', 'Badges', 'Forms', 'Avatar', 'Data Display', 'Navigation', 'Prototyping', 'Alerts & Feedback', 'Timeline', 'Complex Forms'];
 
   // Color swatches
   neutralSwatches = [
@@ -761,4 +892,25 @@ export class DesignSystemComponent {
   // Prototyping demo
   demoToggled = false;
   demoSegment = 'a';
+
+  // Alerts & Feedback demo
+  showConfirmDemo = false;
+
+  // Complex Forms demo
+  demoSelectedOption = '';
+
+  // Timeline demo
+  demoTimelineEvents: TimelineEvent[] = [
+    { date: 'Mar 10, 2026', time: '2:30 PM', title: 'Application Submitted', desc: 'Financing application submitted for review.', icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2e90fa" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>', color: '#eff8ff' },
+    { date: 'Mar 10, 2026', time: '3:15 PM', title: 'Under Review', desc: 'Application assigned to credit analyst for review.', icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f79009" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>', color: '#fffcf0' },
+    { date: 'Mar 11, 2026', time: '10:00 AM', title: 'Documents Requested', desc: 'Additional financial documents required for assessment.', icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ff825c" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>', color: '#fff2ee' },
+    { date: 'Mar 12, 2026', time: '9:00 AM', title: 'Term-sheet Issued', desc: 'Financing term-sheet ready for review and acceptance.', icon: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00af3d" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><polyline points="16 13 12 17 9 14"/></svg>', color: '#e6f9ed' },
+  ];
+
+  // Select Grid demo
+  demoSelectOptions: SelectOption[] = [
+    { value: 'residential', label: 'Residential', desc: 'Apartments, villas, townhouses', icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>' },
+    { value: 'commercial', label: 'Commercial', desc: 'Offices, retail, hospitality', icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="9" y1="6" x2="9" y2="6.01"/><line x1="15" y1="6" x2="15" y2="6.01"/><line x1="9" y1="10" x2="9" y2="10.01"/><line x1="15" y1="10" x2="15" y2="10.01"/><line x1="9" y1="14" x2="9" y2="14.01"/><line x1="15" y1="14" x2="15" y2="14.01"/></svg>' },
+    { value: 'mixed', label: 'Mixed Use', desc: 'Combined residential & commercial', icon: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="6" width="10" height="16" rx="1"/><rect x="13" y="2" width="10" height="20" rx="1"/></svg>' },
+  ];
 }

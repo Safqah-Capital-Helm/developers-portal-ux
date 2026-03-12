@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { C } from '../../shared/theme';
 import { NavComponent, SidebarComponent } from '../../shared';
@@ -11,7 +11,7 @@ import { NavComponent, SidebarComponent } from '../../shared';
     <div class="layout">
       <app-sidebar></app-sidebar>
       <div class="main-area">
-        <app-nav [showLogo]="false"></app-nav>
+        <app-nav [showLogo]="false" (menuToggle)="sidebar.openMobile()"></app-nav>
         <div class="content">
           <router-outlet></router-outlet>
         </div>
@@ -45,4 +45,6 @@ import { NavComponent, SidebarComponent } from '../../shared';
     }
   `]
 })
-export class DashboardLayoutComponent {}
+export class DashboardLayoutComponent {
+  @ViewChild(SidebarComponent) sidebar!: SidebarComponent;
+}

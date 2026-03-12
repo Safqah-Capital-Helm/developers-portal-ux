@@ -80,6 +80,24 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
       .modal-body {
         padding: 24px;
       }
+
+      @media (max-width: 480px) {
+        .modal-container {
+          width: 100%;
+          max-height: 100vh;
+          height: 100vh;
+          border-radius: 0;
+        }
+        .modal-container.wide {
+          width: 100%;
+        }
+        .modal-header {
+          border-radius: 0;
+        }
+        .modal-body {
+          padding: 16px;
+        }
+      }
     `,
   ],
 })

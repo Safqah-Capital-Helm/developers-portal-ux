@@ -85,6 +85,7 @@ type Step =
                 [disabled]="step === 'crVerifying'"
               />
             </div>
+            <p class="cr-helper" *ngIf="crRes !== 'bad'">Your company's commercial registration number from the Ministry of Commerce.</p>
 
             <!-- Error state -->
             <div *ngIf="crRes === 'bad'" class="error-box">
@@ -589,6 +590,13 @@ type Step =
       color: ${C.g400};
     }
 
+    .cr-helper {
+      font-size: 12px;
+      color: ${C.g400};
+      margin: 6px 0 0 0;
+      line-height: 1.4;
+    }
+
     .cr-error {
       color: ${C.red500};
     }
@@ -904,6 +912,15 @@ type Step =
       cursor: pointer; font-family: inherit;
     }
     .demo-advance:hover { background: ${C.g50}; color: ${C.g700}; }
+
+    @media (max-width: 768px) {
+      .container { padding: 24px 16px 48px; }
+      .page-title { font-size: 18px; }
+    }
+
+    @media (max-width: 480px) {
+      .container { padding: 16px 12px 32px; }
+    }
   `]
 })
 export class AddCompanyComponent implements OnInit, OnDestroy {

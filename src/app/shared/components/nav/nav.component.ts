@@ -1,8 +1,10 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { LogoComponent } from '../logo/logo.component';
+import { TranslatePipe } from '../../i18n/translate.pipe';
 import { C } from '../../theme';
+import { I18nService } from '../../i18n/i18n.service';
 
 interface AppNotification {
   id: number;
@@ -24,11 +26,18 @@ const TYPE_COLORS: Record<string, { bg: string; fg: string }> = {
 @Component({
   selector: 'app-nav',
   standalone: true,
-  imports: [LogoComponent, CommonModule],
+  imports: [LogoComponent, CommonModule, TranslatePipe],
   template: `
     <nav class="top-nav">
-      <app-logo *ngIf="showLogo" [size]="28"></app-logo>
-      <div *ngIf="!showLogo" class="nav-spacer"></div>
+      <div class="nav-left">
+        <button class="hamburger" (click)="menuToggle.emit()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+        <app-logo *ngIf="showLogo" [size]="28"></app-logo>
+      </div>
+      <div *ngIf="!showLogo" class="nav-spacer-mobile"></div>
 
       <div class="nav-right">
         <!-- Bell icon -->
@@ -47,8 +56,8 @@ const TYPE_COLORS: Record<string, { bg: string; fg: string }> = {
           <!-- Notification panel -->
           <div *ngIf="notifOpen" class="notif-panel">
             <div class="notif-header">
-              <span class="notif-title">Notifications</span>
-              <span *ngIf="unreadCount > 0" class="notif-mark" (click)="markAllRead()">Mark all as read</span>
+              <span class="notif-title">{{ 'nav.notifications' | t }}</span>
+              <span *ngIf="unreadCount > 0" class="notif-mark" (click)="markAllRead()">{{ 'nav.mark_all_read' | t }}</span>
             </div>
             <div class="notif-list">
               <div
@@ -92,6 +101,12 @@ const TYPE_COLORS: Record<string, { bg: string; fg: string }> = {
           </div>
         </div>
 
+        <!-- Language toggle -->
+        <button class="lang-toggle" (click)="i18n.setLang(i18n.lang === 'en' ? 'ar' : 'en')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+          <span>{{ i18n.lang === 'en' ? 'EN' : '\u0639' }}</span>
+        </button>
+
         <!-- Avatar dropdown -->
         <div class="dd-wrap">
           <div class="avatar-area" (click)="toggleAvatar()" [style.background]="open ? C.g50 : 'transparent'">
@@ -108,14 +123,14 @@ const TYPE_COLORS: Record<string, { bg: string; fg: string }> = {
             <div class="dd-sep"></div>
             <div class="dd-item" (click)="go('/profile')">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g400" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-              Profile Settings
+              {{ 'nav.profile_settings' | t }}
             </div>
             <div class="dd-item" (click)="go('/support')">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g400" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-              Help &amp; Support
+              {{ 'nav.help_support' | t }}
             </div>
             <div class="dd-sep"></div>
-            <div class="dd-signout">Sign out</div>
+            <div class="dd-signout">{{ 'nav.sign_out' | t }}</div>
           </div>
         </div>
       </div>
@@ -127,7 +142,36 @@ const TYPE_COLORS: Record<string, { bg: string; fg: string }> = {
       padding: 14px 32px; border-bottom: 1px solid #e2e5e9;
       background: #fff; position: sticky; top: 0; z-index: 50;
     }
+    .nav-left { display: flex; align-items: center; gap: 12px; }
     .nav-right { display: flex; align-items: center; gap: 4px; }
+    .nav-spacer-mobile { flex: 1; }
+
+    .hamburger {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border: none;
+      background: transparent;
+      border-radius: 10px;
+      cursor: pointer;
+      color: ${C.g500};
+      transition: background 0.15s;
+    }
+    .hamburger:hover { background: ${C.g50}; }
+
+    @media (max-width: 900px) {
+      .hamburger { display: flex; }
+      .top-nav { padding: 14px 16px; }
+      .name { display: none; }
+      .notif-panel { width: calc(100vw - 32px); right: -60px; }
+    }
+
+    @media (max-width: 480px) {
+      .top-nav { padding: 12px 12px; }
+      .notif-panel { width: calc(100vw - 24px); right: -60px; }
+    }
 
     /* Bell */
     .bell-wrap { position: relative; }
@@ -142,6 +186,16 @@ const TYPE_COLORS: Record<string, { bg: string; fg: string }> = {
       width: 8px; height: 8px; border-radius: 50%;
       background: ${C.red500}; border: 2px solid #fff;
     }
+
+    /* Language toggle */
+    .lang-toggle {
+      display: flex; align-items: center; gap: 6px;
+      height: 36px; padding: 0 8px; border: none; background: transparent;
+      cursor: pointer; color: ${C.g500}; font-family: inherit;
+      border-radius: 10px; transition: color 0.15s;
+    }
+    .lang-toggle:hover { color: ${C.g700}; }
+    .lang-toggle span { font-size: 12px; font-weight: 700; }
 
     /* Notification panel */
     .notif-panel {
@@ -210,8 +264,9 @@ const TYPE_COLORS: Record<string, { bg: string; fg: string }> = {
     .dd-signout { padding: 10px 14px; font-size: 13px; color: #f04438; font-weight: 600; cursor: pointer; }
   `]
 })
-export class NavComponent {
+export class NavComponent implements OnInit {
   @Input() showLogo = true;
+  @Output() menuToggle = new EventEmitter<void>();
   C = C;
   open = false;
   notifOpen = false;
@@ -227,7 +282,9 @@ export class NavComponent {
     { id: 8, type: 'invite',    title: 'Team Member Joined',        message: 'sara@alnoor.com has accepted your team invitation.',                         time: '1 week ago',  read: true },
   ];
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, public i18n: I18nService) {}
+
+  ngOnInit() { this.i18n.init(); }
 
   get unreadCount() { return this.notifications.filter(n => !n.read).length; }
 

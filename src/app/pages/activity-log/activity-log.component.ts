@@ -258,6 +258,26 @@ interface ActivityEvent {
     }
     .tl-actor { font-weight: 600; }
     .tl-sep { color: ${C.g300}; }
+
+    @media (max-width: 768px) {
+      .container { padding: 20px 16px 40px; }
+      .tl-desc { margin-left: 0; }
+      .tl-meta { margin-left: 0; }
+      .ctx-row { padding: 12px 14px; }
+      .ctx-divider { margin: 0 14px; }
+    }
+
+    @media (max-width: 480px) {
+      .container { padding: 16px 12px 32px; }
+      .title { font-size: 20px; }
+      .tl-item { gap: 10px; }
+      .tl-header { gap: 8px; }
+      .tl-icon { width: 28px; height: 28px; min-width: 28px; }
+      .tl-title { font-size: 13px; }
+      .tl-title-row { flex-direction: column; align-items: flex-start; gap: 4px; min-height: auto; }
+      .tl-content { padding-bottom: 20px; }
+      .ctx-row { padding: 10px 12px; }
+    }
   `]
 })
 export class ActivityLogComponent {

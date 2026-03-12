@@ -1048,6 +1048,17 @@ import {
       .review-body { padding: 8px 20px 16px; }
       .review-block-content { padding-left: 0; }
     }
+
+    @media (max-width: 768px) {
+      .container { padding: 24px 16px 48px; }
+      .page-title { font-size: 20px; }
+    }
+
+    @media (max-width: 480px) {
+      .container { padding: 16px 12px 32px; }
+      .page-title { font-size: 18px; }
+      .section-title { font-size: 15px; }
+    }
   `],
 })
 export class AddApplicationComponent implements OnInit {

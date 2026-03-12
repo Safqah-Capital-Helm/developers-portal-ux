@@ -87,6 +87,22 @@ a { text-decoration: none; color: inherit; }
   animation: spin 0.8s linear infinite;
 }
 
+/* === Responsive Breakpoints === */
+@media (max-width: 768px) {
+  .container, .container-sm, .container-md, .container-lg {
+    padding: 20px 16px 40px;
+  }
+  .container-xl {
+    padding: 20px 16px 40px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container, .container-sm, .container-md, .container-lg, .container-xl {
+    padding: 16px 12px 32px;
+  }
+}
+
 /* Proto nav bar */
 .proto-nav {
   position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
@@ -157,3 +173,19 @@ a { text-decoration: none; color: inherit; }
 .proto-btn:not(.active):hover {
   background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.7);
 }
+
+/* === RTL Support === */
+[dir="rtl"] {
+  font-family: 'IBM Plex Sans Arabic', 'IBM Plex Sans', -apple-system, system-ui, sans-serif;
+}
+
+[dir="rtl"] .proto-toggle-path {
+  margin-left: 0;
+  margin-right: auto;
+}
+
+[dir="rtl"] .proto-group {
+  border-right: none;
+  border-left: 1px solid rgba(255,255,255,0.06);
+}
+[dir="rtl"] .proto-group:last-child { border-left: none; }

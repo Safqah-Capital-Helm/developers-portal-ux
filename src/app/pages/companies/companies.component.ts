@@ -2,18 +2,18 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { C, borderColorForStatus } from '../../shared/theme';
-import { BadgeComponent, ListCardComponent, ButtonComponent, PageHeaderComponent, getCompanyLogo } from '../../shared';
+import { BadgeComponent, ListCardComponent, ButtonComponent, PageHeaderComponent, getCompanyLogo, TranslatePipe } from '../../shared';
 
 @Component({
   selector: 'app-companies-page',
   standalone: true,
-  imports: [CommonModule, BadgeComponent, ListCardComponent, ButtonComponent, PageHeaderComponent],
+  imports: [CommonModule, BadgeComponent, ListCardComponent, ButtonComponent, PageHeaderComponent, TranslatePipe],
   template: `
     <div class="container">
-      <app-page-header title="Companies" [count]="companies.length">
+      <app-page-header [title]="'companies.title' | t" [count]="companies.length">
         <app-btn variant="primary" size="sm" (clicked)="go('/company/new')">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          Add Company
+          {{ 'companies.add_company' | t }}
         </app-btn>
       </app-page-header>
 
@@ -60,6 +60,16 @@ import { BadgeComponent, ListCardComponent, ButtonComponent, PageHeaderComponent
     .company-meta { display: flex; gap: 16px; }
     .meta-item { display: flex; align-items: center; gap: 4px; font-size: 12px; color: ${C.g500}; font-weight: 600; }
     @media (max-width: 900px) { .container { padding: 20px 16px 40px; } }
+    @media (max-width: 768px) {
+      .container { padding: 20px 16px 40px; }
+      .company-row { gap: 12px; }
+      .company-logo { width: 40px; height: 40px; border-radius: 10px; }
+    }
+    @media (max-width: 480px) {
+      .container { padding: 16px 12px 32px; }
+      .company-top { flex-direction: column; gap: 4px; }
+      .company-meta { gap: 10px; }
+    }
   `]
 })
 export class CompaniesPageComponent {

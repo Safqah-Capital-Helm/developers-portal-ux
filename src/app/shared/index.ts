@@ -23,6 +23,15 @@ export { ReviewGridComponent } from './components/review-grid/review-grid.compon
 export { EmptyStateComponent } from './components/empty-state/empty-state.component';
 export { PrevCredentialsFormComponent } from './components/prev-credentials-form/prev-credentials-form.component';
 export type { PrevCredentialsData } from './components/prev-credentials-form/prev-credentials-form.component';
-export { C, BADGE_STYLES, borderColorForStatus } from './theme';
+export { AlertBannerComponent } from './components/alert-banner/alert-banner.component';
+export { ResultScreenComponent } from './components/result-screen/result-screen.component';
+export { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
+export { TimelineComponent } from './components/timeline/timeline.component';
+export type { TimelineEvent } from './components/timeline/timeline.component';
+export { SelectGridComponent } from './components/select-grid/select-grid.component';
+export type { SelectOption } from './components/select-grid/select-grid.component';
+export { I18nService } from './i18n/i18n.service';
+export { TranslatePipe } from './i18n/translate.pipe';
+export { C, S, BADGE_STYLES, borderColorForStatus } from './theme';
 export type { BadgeColor } from './theme';
 export { getCompanyLogo, getCompanyLogoByName } from './company-logos';

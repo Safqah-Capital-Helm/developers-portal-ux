@@ -2,18 +2,18 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { C, borderColorForStatus } from '../../shared/theme';
-import { BadgeComponent, ListCardComponent, ButtonComponent, PageHeaderComponent } from '../../shared';
+import { BadgeComponent, ListCardComponent, ButtonComponent, PageHeaderComponent, TranslatePipe } from '../../shared';
 
 @Component({
   selector: 'app-applications',
   standalone: true,
-  imports: [CommonModule, BadgeComponent, ListCardComponent, ButtonComponent, PageHeaderComponent],
+  imports: [CommonModule, BadgeComponent, ListCardComponent, ButtonComponent, PageHeaderComponent, TranslatePipe],
   template: `
     <div class="container">
-      <app-page-header title="Financing Applications" [count]="applications.length">
+      <app-page-header [title]="'applications.title' | t" [count]="applications.length">
         <app-btn variant="primary" size="sm" (clicked)="go('/application/new')">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          New Application
+          {{ 'applications.new_application' | t }}
         </app-btn>
       </app-page-header>
 
@@ -64,6 +64,15 @@ import { BadgeComponent, ListCardComponent, ButtonComponent, PageHeaderComponent
     .cell-label { font-size: 10px; font-weight: 700; color: ${C.g400}; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 2px; }
     .cell-value { font-size: 13px; font-weight: 700; color: ${C.g700}; }
     @media (max-width: 900px) { .container { padding: 20px 16px 40px; } }
+    @media (max-width: 768px) {
+      .container { padding: 20px 16px 40px; }
+      .app-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 480px) {
+      .container { padding: 16px 12px 32px; }
+      .app-grid { grid-template-columns: 1fr; }
+      .app-top { flex-direction: column; gap: 4px; }
+    }
   `]
 })
 export class ApplicationsComponent {

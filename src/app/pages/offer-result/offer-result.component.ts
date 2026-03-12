@@ -8,54 +8,49 @@ import { BackLinkComponent } from '../../shared/components/back-link/back-link.c
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { CardComponent } from '../../shared/components/card/card.component';
 import { BadgeComponent } from '../../shared/components/badge/badge.component';
+import { ResultScreenComponent } from '../../shared';
 
 @Component({
   selector: 'app-offer-result',
   standalone: true,
-  imports: [CommonModule, FormsModule, NavComponent, BackLinkComponent, ButtonComponent, CardComponent, BadgeComponent],
+  imports: [CommonModule, FormsModule, NavComponent, BackLinkComponent, ButtonComponent, CardComponent, BadgeComponent, ResultScreenComponent],
   template: `
     <!-- ===== ACCEPTED STATE ===== -->
     <div class="page" *ngIf="accepted">
       <app-nav></app-nav>
       <div class="container-accepted">
         <div class="center-content">
-          <div class="check-circle">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="20 6 9 17 4 12"/>
-            </svg>
-          </div>
-          <h1 class="result-title">Term-sheet accepted!</h1>
-          <p class="result-sub">Our team will contact you within 24 hours to begin the signing process.</p>
-
-          <app-card [padding]="0" class="status-card">
-            <div class="status-row">
-              <div class="status-left">
-                <div class="status-icon project-icon">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="${C.g500}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/>
-                  </svg>
+          <app-result-screen type="success" title="Term-sheet accepted!" subtitle="Our team will contact you within 24 hours to begin the signing process.">
+            <app-card [padding]="0" class="status-card">
+              <div class="status-row">
+                <div class="status-left">
+                  <div class="status-icon project-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="${C.g500}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/>
+                    </svg>
+                  </div>
+                  <span class="status-name">Al Noor Residential</span>
                 </div>
-                <span class="status-name">Al Noor Residential</span>
+                <app-badge color="blue">Pending Signing</app-badge>
               </div>
-              <app-badge color="blue">Pending Signing</app-badge>
-            </div>
-            <div class="status-divider"></div>
-            <div class="status-row">
-              <div class="status-left">
-                <div class="status-icon company-icon">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="${C.g500}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/>
-                  </svg>
+              <div class="status-divider"></div>
+              <div class="status-row">
+                <div class="status-left">
+                  <div class="status-icon company-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="${C.g500}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/>
+                    </svg>
+                  </div>
+                  <span class="status-name">Al Omran Real Estate</span>
                 </div>
-                <span class="status-name">Al Omran Real Estate</span>
+                <app-badge color="green">Approved</app-badge>
               </div>
-              <app-badge color="green">Approved</app-badge>
-            </div>
-          </app-card>
+            </app-card>
 
-          <div class="btn-group-center">
-            <app-btn variant="secondary" size="lg" (clicked)="go('/dashboard')">&larr; Back to Dashboard</app-btn>
-          </div>
+            <div class="btn-group-center">
+              <app-btn variant="secondary" size="lg" (clicked)="go('/dashboard')">&larr; Back to Dashboard</app-btn>
+            </div>
+          </app-result-screen>
         </div>
       </div>
     </div>
@@ -131,49 +126,43 @@ import { BadgeComponent } from '../../shared/components/badge/badge.component';
       <!-- Decline SUBMITTED -->
       <div class="container-accepted" *ngIf="submitted">
         <div class="center-content">
-          <div class="red-result-circle">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/>
-            </svg>
-          </div>
-          <h1 class="result-title">Term-sheet declined</h1>
-          <p class="result-sub">Your feedback has been recorded. You can contact our support team if you change your mind.</p>
-
-          <app-card [padding]="0" class="status-card">
-            <div class="status-row">
-              <div class="status-left">
-                <div class="status-icon project-icon">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="${C.g500}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/>
-                  </svg>
+          <app-result-screen type="error" title="Term-sheet declined" subtitle="Your feedback has been recorded. You can contact our support team if you change your mind.">
+            <app-card [padding]="0" class="status-card">
+              <div class="status-row">
+                <div class="status-left">
+                  <div class="status-icon project-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="${C.g500}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/>
+                    </svg>
+                  </div>
+                  <span class="status-name">Al Noor Residential</span>
                 </div>
-                <span class="status-name">Al Noor Residential</span>
+                <app-badge color="red">Declined</app-badge>
               </div>
-              <app-badge color="red">Declined</app-badge>
-            </div>
-            <div class="status-divider"></div>
-            <div class="status-row">
-              <div class="status-left">
-                <div class="status-icon company-icon">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="${C.g500}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/>
-                  </svg>
+              <div class="status-divider"></div>
+              <div class="status-row">
+                <div class="status-left">
+                  <div class="status-icon company-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="${C.g500}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/>
+                    </svg>
+                  </div>
+                  <span class="status-name">Al Omran Real Estate</span>
                 </div>
-                <span class="status-name">Al Omran Real Estate</span>
+                <app-badge color="green">Approved</app-badge>
               </div>
-              <app-badge color="green">Approved</app-badge>
-            </div>
-            <div class="status-divider"></div>
-            <div class="reason-display">
-              <span class="reason-label">Reason</span>
-              <span class="reason-value">{{ reason }}{{ reason === 'Other reason' && extra ? ': ' + extra : '' }}</span>
-            </div>
-          </app-card>
+              <div class="status-divider"></div>
+              <div class="reason-display">
+                <span class="reason-label">Reason</span>
+                <span class="reason-value">{{ reason }}{{ reason === 'Other reason' && extra ? ': ' + extra : '' }}</span>
+              </div>
+            </app-card>
 
-          <div class="btn-group-center two-btns">
-            <app-btn variant="secondary" size="lg" (clicked)="go('/dashboard')">&larr; Back to Dashboard</app-btn>
-            <app-btn variant="primary" size="lg" (clicked)="go('/support')">Contact Support</app-btn>
-          </div>
+            <div class="btn-group-center two-btns">
+              <app-btn variant="secondary" size="lg" (clicked)="go('/dashboard')">&larr; Back to Dashboard</app-btn>
+              <app-btn variant="primary" size="lg" (clicked)="go('/support')">Contact Support</app-btn>
+            </div>
+          </app-result-screen>
         </div>
       </div>
     </div>
@@ -198,45 +187,6 @@ import { BadgeComponent } from '../../shared/components/badge/badge.component';
       flex-direction: column;
       align-items: center;
       text-align: center;
-    }
-
-    .check-circle {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      background: ${C.green};
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 20px;
-      box-shadow: 0 8px 24px rgba(0, 161, 90, 0.25);
-    }
-
-    .red-result-circle {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      background: ${C.red500};
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 20px;
-      box-shadow: 0 8px 24px rgba(240, 68, 56, 0.25);
-    }
-
-    .result-title {
-      font-size: 24px;
-      font-weight: 900;
-      color: ${C.g900};
-      margin: 0 0 8px 0;
-    }
-
-    .result-sub {
-      font-size: 14px;
-      color: ${C.g500};
-      margin: 0 0 28px 0;
-      max-width: 380px;
-      line-height: 1.55;
     }
 
     .status-card {
@@ -452,6 +402,24 @@ import { BadgeComponent } from '../../shared/components/badge/badge.component';
       gap: 12px;
       justify-content: space-between;
       margin-top: 24px;
+    }
+
+    @media (max-width: 768px) {
+      .container-accepted { padding: 40px 16px 24px; }
+      .container-declined { padding: 24px 16px; }
+      .status-row { padding: 14px 16px; }
+      .status-divider { margin: 0 16px; }
+    }
+
+    @media (max-width: 480px) {
+      .container-accepted { padding: 32px 12px 20px; }
+      .container-declined { padding: 20px 12px; }
+      .result-title { font-size: 20px; }
+      .btn-group-spread { flex-direction: column; }
+      .btn-group-center { flex-direction: column; width: 100%; }
+      .btn-group-center.two-btns { flex-direction: column; }
+      .status-row { padding: 12px 14px; }
+      .reason-item { padding: 12px 14px; }
     }
   `]
 })

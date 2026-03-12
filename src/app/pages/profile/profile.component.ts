@@ -3,19 +3,19 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { C } from '../../shared/theme';
-import { NavComponent, BackLinkComponent, CardComponent, InputComponent, ButtonComponent, AvatarComponent } from '../../shared';
+import { NavComponent, BackLinkComponent, CardComponent, InputComponent, ButtonComponent, AvatarComponent, TranslatePipe } from '../../shared';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, FormsModule, NavComponent, BackLinkComponent, CardComponent, InputComponent, ButtonComponent, AvatarComponent],
+  imports: [CommonModule, FormsModule, NavComponent, BackLinkComponent, CardComponent, InputComponent, ButtonComponent, AvatarComponent, TranslatePipe],
   template: `
     <div class="page">
       <app-nav></app-nav>
       <div class="container">
         <app-back-link to="/dashboard" label="Back to Dashboard"></app-back-link>
 
-        <h1 class="page-title">Profile Settings</h1>
+        <h1 class="page-title">{{ 'profile.title' | t }}</h1>
         <p class="page-subtitle">Manage your account details and preferences</p>
 
         <app-card [padding]="28">
@@ -38,26 +38,27 @@ import { NavComponent, BackLinkComponent, CardComponent, InputComponent, ButtonC
 
           <!-- Form fields -->
           <app-input
-            label="Full Name"
+            [label]="'profile.full_name' | t"
             [value]="name"
             (valueChange)="name = $event"
             placeholder="Enter your full name"
+            [helper]="'profile.full_name_helper' | t"
           ></app-input>
 
           <app-input
-            label="Email Address"
+            [label]="'profile.email' | t"
             [value]="email"
             (valueChange)="email = $event"
             placeholder="Enter your email"
-            helper="Used for notifications and login"
+            [helper]="'profile.email_helper' | t"
           ></app-input>
 
           <app-input
-            label="Phone Number"
+            [label]="'profile.phone' | t"
             [value]="phone"
             (valueChange)="phone = $event"
             placeholder="Enter your phone number"
-            helper="Used for SMS and WhatsApp notifications"
+            [helper]="'profile.phone_helper' | t"
           ></app-input>
 
           <!-- Language Preference -->
@@ -105,7 +106,7 @@ import { NavComponent, BackLinkComponent, CardComponent, InputComponent, ButtonC
           </div>
 
           <!-- Save button -->
-          <app-btn variant="primary" [full]="true" (clicked)="save()">Save Changes</app-btn>
+          <app-btn variant="primary" [full]="true" (clicked)="save()">{{ 'profile.save' | t }}</app-btn>
         </app-card>
 
         <!-- Delete account link -->
@@ -311,6 +312,19 @@ import { NavComponent, BackLinkComponent, CardComponent, InputComponent, ButtonC
 
     .delete-link:hover {
       text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .container { padding: 24px 16px; }
+      .page-title { font-size: 20px; }
+    }
+
+    @media (max-width: 480px) {
+      .container { padding: 20px 12px; }
+      .page-title { font-size: 18px; }
+      .avatar-section { flex-direction: column; text-align: center; }
+      .lang-buttons { flex-direction: column; }
+      .lang-btn { width: 100%; }
     }
   `]
 })

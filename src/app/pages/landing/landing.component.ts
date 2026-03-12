@@ -3,17 +3,18 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { LogoComponent } from '../../shared/components/logo/logo.component';
 import { ButtonComponent } from '../../shared/components/button/button.component';
+import { TranslatePipe } from '../../shared';
 
 @Component({
   selector: 'app-landing',
   standalone: true,
-  imports: [LogoComponent, ButtonComponent, FormsModule],
+  imports: [LogoComponent, ButtonComponent, FormsModule, TranslatePipe],
   template: `
     <div class="page-white">
       <header class="top-bar">
         <app-logo [size]="36"></app-logo>
         <div class="top-links">
-          <span class="link">العربية</span>
+          <span class="link">{{ 'landing.arabic' | t }}</span>
           <span class="link">Help</span>
         </div>
       </header>
@@ -21,8 +22,8 @@ import { ButtonComponent } from '../../shared/components/button/button.component
       <div class="hero">
         <div class="hero-left animate-in">
           <div class="tag"><span>CMA Licensed · Sharia Compliant</span></div>
-          <h1>Finance your next<br/><span class="accent">real estate project</span></h1>
-          <p class="subtitle">Get structured financing and receive a term-sheet within 48 hours.</p>
+          <h1>{{ 'landing.hero_title' | t }}</h1>
+          <p class="subtitle">{{ 'landing.hero_subtitle' | t }}</p>
           <div class="stats">
             <div class="stat"><div class="stat-num">15 min</div><div class="stat-label">to submit</div></div>
             <div class="stat"><div class="stat-num">SAR 2B+</div><div class="stat-label">financed</div></div>
@@ -32,8 +33,8 @@ import { ButtonComponent } from '../../shared/components/button/button.component
 
         <div class="hero-right animate-in" style="animation-delay: 0.2s">
           <div class="form-card">
-            <h2>Get started</h2>
-            <p class="form-sub">Check eligibility — no login required</p>
+            <h2>{{ 'landing.cta_register' | t }}</h2>
+            <p class="form-sub">{{ 'landing.hero_subtitle' | t }}</p>
             <label class="input-label">CR Number</label>
             <div class="cr-input-wrap">
               <div class="cr-prefix"><span>CR</span></div>
@@ -44,7 +45,7 @@ import { ButtonComponent } from '../../shared/components/button/button.component
             </app-btn>
             <button class="demo-reject" (click)="doReject()">Demo: Not Eligible</button>
             <div class="signin-link">
-              <p>Already have an account? <a (click)="router.navigate(['/sign-in'])">Sign in</a></p>
+              <p>Already have an account? <a (click)="router.navigate(['/sign-in'])">{{ 'landing.cta_sign_in' | t }}</a></p>
             </div>
           </div>
         </div>
@@ -109,6 +110,31 @@ import { ButtonComponent } from '../../shared/components/button/button.component
     }
     .signin-link p { font-size: 14px; color: #667085; }
     .signin-link a { color: #00a15a; font-weight: 700; cursor: pointer; text-decoration: underline; }
+
+    @media (max-width: 768px) {
+      .hero {
+        grid-template-columns: 1fr;
+        gap: 40px;
+        padding: 40px 24px 60px;
+      }
+      h1 { font-size: 36px; }
+      .subtitle { font-size: 15px; }
+      .stats { gap: 24px; }
+      .top-bar { padding: 16px 24px; }
+      .form-card { padding: 32px 24px; }
+    }
+
+    @media (max-width: 480px) {
+      .hero { padding: 24px 16px 40px; gap: 28px; }
+      h1 { font-size: 28px; letter-spacing: -1px; }
+      .subtitle { font-size: 14px; margin-bottom: 24px; }
+      .stats { flex-wrap: wrap; gap: 20px; }
+      .stat-num { font-size: 18px; }
+      .top-bar { padding: 14px 16px; }
+      .form-card { padding: 24px 16px; border-radius: 18px; }
+      h2 { font-size: 20px; }
+      .form-sub { margin-bottom: 20px; }
+    }
   `]
 })
 export class LandingComponent {

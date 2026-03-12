@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs';
+import { I18nService } from './shared/i18n/i18n.service';
 
 @Component({
   selector: 'app-root',
@@ -46,7 +47,7 @@ import { filter } from 'rxjs';
     .app-shell.fading { opacity: 0; }
   `]
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   fading = false;
   collapsed = true;
   currentPath = '/';
@@ -104,7 +105,7 @@ export class AppComponent {
     },
   ];
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private i18n: I18nService) {
     this.router.events.pipe(
       filter((e): e is NavigationEnd => e instanceof NavigationEnd)
     ).subscribe(e => {
@@ -112,6 +113,8 @@ export class AppComponent {
       window.scrollTo(0, 0);
     });
   }
+
+  ngOnInit() { this.i18n.init(); }
 
   goTo(path: string) {
     this.fading = true;

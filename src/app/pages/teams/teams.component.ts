@@ -314,6 +314,21 @@ import { ButtonComponent, BadgeComponent, ModalComponent, InputComponent, Avatar
     @media (max-width: 900px) {
       .container { padding: 20px 16px 40px; }
     }
+
+    @media (max-width: 768px) {
+      .role-grid { grid-template-columns: 1fr; }
+      .member-card { padding: 10px 12px; }
+      .mm-meta-row { gap: 12px; }
+    }
+
+    @media (max-width: 480px) {
+      .container { padding: 16px 12px 32px; }
+      .member-right { flex-direction: column; align-items: flex-end; gap: 4px; }
+      .mm-profile { flex-direction: column; text-align: center; gap: 10px; }
+      .mm-name { justify-content: center; }
+      .mm-meta-row { flex-direction: column; gap: 8px; }
+      .mm-actions { flex-direction: column; }
+    }
   `]
 })
 export class TeamsPageComponent {

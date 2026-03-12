@@ -9,6 +9,8 @@ import {
   InputComponent,
   ProgressStepsComponent,
   CardComponent,
+  TranslatePipe,
+  I18nService,
 } from '../../shared';
 
 type IdentityStep = 'id' | 'otp' | 'verifying' | 'ownerCheck' | 'ownerFail' | 'delegate' | 'smsSent' | 'pending';
@@ -24,6 +26,7 @@ type IdentityStep = 'id' | 'otp' | 'verifying' | 'ownerCheck' | 'ownerFail' | 'd
     InputComponent,
     ProgressStepsComponent,
     CardComponent,
+    TranslatePipe,
   ],
   template: `
     <div class="page">
@@ -71,17 +74,17 @@ type IdentityStep = 'id' | 'otp' | 'verifying' | 'ownerCheck' | 'ownerFail' | 'd
           <div *ngIf="identityStep === 'id'">
             <div class="form-area">
               <app-input
-                label="National ID / Iqama Number"
-                placeholder="Enter your 10-digit ID"
+                [label]="'absher.nid_label' | t"
+                [placeholder]="'absher.nid_placeholder' | t"
                 [value]="nid"
                 (valueChange)="nid = $event"
               ></app-input>
               <app-btn variant="primary" [full]="true" size="lg" [disabled]="nid.length < 10" (clicked)="onIdSubmit()">
-                Verify with Absher
+                {{ 'absher.verify_btn' | t }}
               </app-btn>
             </div>
             <p class="form-footer">
-              You will be redirected to Absher to verify your identity.
+              {{ 'absher.will_redirect' | t }}
             </p>
           </div>
 
@@ -89,48 +92,48 @@ type IdentityStep = 'id' | 'otp' | 'verifying' | 'ownerCheck' | 'ownerFail' | 'd
           <div *ngIf="identityStep === 'otp'">
             <div class="form-area">
               <app-input
-                label="Absher OTP Code"
-                placeholder="Enter 6-digit code"
+                [label]="'absher.otp_label' | t"
+                [placeholder]="'absher.otp_placeholder' | t"
                 [value]="otp"
                 (valueChange)="otp = $event"
-                helper="Check your Absher-registered mobile for the code."
+                [helper]="'absher.otp_helper' | t"
               ></app-input>
               <app-btn variant="primary" [full]="true" size="lg" [disabled]="otp.length < 4" (clicked)="onOtpConfirm()">
-                Confirm
+                {{ 'common.confirm' | t }}
               </app-btn>
               <div *ngIf="mode === 'register'" class="demo-bar">
                 <button class="demo-advance" (click)="identityStep = 'ownerFail'">Demo: Owner not found &rarr;</button>
               </div>
             </div>
             <p class="form-footer">
-              <span class="link" (click)="identityStep = 'id'">Back to ID entry</span>
+              <span class="link" (click)="identityStep = 'id'">{{ 'absher.back_to_id' | t }}</span>
             </p>
           </div>
 
           <!-- Step: verifying (spinner) -->
           <div *ngIf="identityStep === 'verifying'" class="text-center" style="padding: 40px 0;">
             <div class="spinner" style="margin: 0 auto 16px;"></div>
-            <p [style.color]="C.g500" [style.font-size.px]="14">Verifying your identity...</p>
+            <p [style.color]="C.g500" [style.font-size.px]="14">{{ 'absher.verifying' | t }}</p>
           </div>
 
           <!-- Step: ownerCheck (spinner) -->
           <div *ngIf="identityStep === 'ownerCheck'" class="text-center" style="padding: 40px 0;">
             <div class="spinner" style="margin: 0 auto 16px;"></div>
-            <p [style.color]="C.g500" [style.font-size.px]="14">Checking company ownership...</p>
+            <p [style.color]="C.g500" [style.font-size.px]="14">{{ 'absher.checking_ownership' | t }}</p>
           </div>
 
           <!-- Step: ownerFail -->
           <div *ngIf="identityStep === 'ownerFail'">
             <div class="form-area">
               <p [style.color]="C.g600" [style.font-size.px]="14" [style.line-height]="'1.6'" [style.margin-bottom.px]="20">
-                Our records show you are not the registered owner of the commercial registration linked to this ID. Only the owner can register the account.
+                {{ 'absher.not_owner_desc' | t }}
               </p>
               <app-btn variant="primary" [full]="true" size="lg" (clicked)="identityStep = 'delegate'">
-                Request Owner Verification
+                {{ 'absher.request_owner' | t }}
               </app-btn>
               <div style="margin-top: 12px;">
                 <app-btn variant="secondary" [full]="true" size="md" (clicked)="identityStep = 'id'">
-                  Try a Different ID
+                  {{ 'absher.try_different_id' | t }}
                 </app-btn>
               </div>
             </div>
@@ -140,23 +143,23 @@ type IdentityStep = 'id' | 'otp' | 'verifying' | 'ownerCheck' | 'ownerFail' | 'd
           <div *ngIf="identityStep === 'delegate'">
             <div class="form-area">
               <p [style.color]="C.g600" [style.font-size.px]="14" [style.line-height]="'1.6'" [style.margin-bottom.px]="20">
-                Share this link with the company owner. They must complete verification to activate your account.
+                {{ 'absher.delegate_desc' | t }}
               </p>
 
               <div class="share-link-box">
                 <span class="share-link-text">{{ shareLink }}</span>
-                <button class="copy-btn" (click)="copyLink()">{{ copied ? 'Copied!' : 'Copy' }}</button>
+                <button class="copy-btn" (click)="copyLink()">{{ copied ? ('common.copied' | t) : ('common.copy' | t) }}</button>
               </div>
 
               <div style="margin-top: 20px;">
                 <app-input
-                  label="Owner's mobile number"
-                  placeholder="+966 5x xxx xxxx"
+                  [label]="'absher.owner_phone_label' | t"
+                  [placeholder]="'absher.owner_phone_placeholder' | t"
                   [value]="ownerPhone"
                   (valueChange)="ownerPhone = $event"
                 ></app-input>
                 <app-btn variant="primary" [full]="true" size="lg" [disabled]="ownerPhone.length < 10" (clicked)="sendSms()">
-                  Send SMS to Owner
+                  {{ 'absher.send_sms' | t }}
                 </app-btn>
               </div>
             </div>
@@ -169,8 +172,8 @@ type IdentityStep = 'id' | 'otp' | 'verifying' | 'ownerCheck' | 'ownerFail' | 'd
                 <polyline points="20 6 9 17 4 12"/>
               </svg>
             </div>
-            <p [style.color]="C.g900" [style.font-weight]="700" [style.font-size.px]="16" [style.margin-bottom.px]="6">SMS Sent!</p>
-            <p [style.color]="C.g500" [style.font-size.px]="14">The owner will receive a verification link shortly.</p>
+            <p [style.color]="C.g900" [style.font-weight]="700" [style.font-size.px]="16" [style.margin-bottom.px]="6">{{ 'absher.sms_sent' | t }}</p>
+            <p [style.color]="C.g500" [style.font-size.px]="14">{{ 'absher.sms_sent_desc' | t }}</p>
           </div>
 
           <!-- Step: pending -->
@@ -183,7 +186,7 @@ type IdentityStep = 'id' | 'otp' | 'verifying' | 'ownerCheck' | 'ownerFail' | 'd
                 </svg>
               </div>
               <p [style.color]="C.g600" [style.font-size.px]="14" [style.line-height]="'1.6'" [style.margin-bottom.px]="20" [style.text-align]="'center'">
-                We are waiting for the company owner to verify their identity. You will be notified once verification is complete.
+                {{ 'absher.pending_desc' | t }}
               </p>
               <app-btn variant="secondary" [full]="true" size="md" (clicked)="router.navigate(['/verify/owner/abc123'])">
                 Demo: Open Owner Verification
@@ -347,6 +350,7 @@ export class AbsherComponent implements OnInit, OnDestroy {
   constructor(
     public router: Router,
     private route: ActivatedRoute,
+    public i18n: I18nService,
   ) {}
 
   ngOnInit(): void {
@@ -383,25 +387,25 @@ export class AbsherComponent implements OnInit, OnDestroy {
 
   get identityTitle(): string {
     switch (this.identityStep) {
-      case 'id': return 'Verify Your Identity';
-      case 'otp': return 'Enter Absher OTP';
-      case 'verifying': return 'Verifying...';
-      case 'ownerCheck': return 'Checking Ownership...';
-      case 'ownerFail': return 'Not the Company Owner';
-      case 'delegate': return 'Request Owner Verification';
+      case 'id': return this.i18n.t('absher.verify_title');
+      case 'otp': return this.i18n.t('absher.otp_title');
+      case 'verifying': return this.i18n.t('absher.verifying');
+      case 'ownerCheck': return this.i18n.t('absher.checking_ownership');
+      case 'ownerFail': return this.i18n.t('absher.not_owner_title');
+      case 'delegate': return this.i18n.t('absher.delegate_title');
       case 'smsSent': return '';
-      case 'pending': return 'Waiting for Owner';
+      case 'pending': return this.i18n.t('absher.pending_title');
       default: return '';
     }
   }
 
   get identitySubtitle(): string {
     switch (this.identityStep) {
-      case 'id': return 'We need to confirm your identity through Absher (National SSO).';
-      case 'otp': return 'Enter the one-time password sent to your registered mobile.';
-      case 'ownerFail': return 'You can request the owner to verify on your behalf.';
-      case 'delegate': return 'Send the verification link to the company owner.';
-      case 'pending': return 'Owner verification is required to proceed.';
+      case 'id': return this.i18n.t('absher.verify_subtitle');
+      case 'otp': return this.i18n.t('absher.otp_subtitle');
+      case 'ownerFail': return this.i18n.t('absher.not_owner_subtitle');
+      case 'delegate': return this.i18n.t('absher.delegate_subtitle');
+      case 'pending': return this.i18n.t('absher.pending_subtitle');
       default: return '';
     }
   }

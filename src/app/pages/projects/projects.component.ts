@@ -3,18 +3,18 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { C } from '../../shared/theme';
-import { PageHeaderComponent, ButtonComponent, getCompanyLogoByName } from '../../shared';
+import { PageHeaderComponent, ButtonComponent, getCompanyLogoByName, TranslatePipe } from '../../shared';
 
 @Component({
   selector: 'app-projects-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, PageHeaderComponent, ButtonComponent],
+  imports: [CommonModule, FormsModule, PageHeaderComponent, ButtonComponent, TranslatePipe],
   template: `
     <div class="container">
-      <app-page-header title="Projects" [count]="filteredProjects.length">
+      <app-page-header [title]="'projects.title' | t" [count]="filteredProjects.length">
         <app-btn variant="primary" size="sm" (clicked)="go('/project/new?fresh=1')">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          New Project
+          {{ 'projects.add_project' | t }}
         </app-btn>
       </app-page-header>
 
@@ -265,6 +265,19 @@ import { PageHeaderComponent, ButtonComponent, getCompanyLogoByName } from '../.
     @media (max-width: 900px) {
       .container { padding: 20px 16px 40px; }
       .projects-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 768px) {
+      .container { padding: 20px 16px 40px; }
+      .card-img { height: 140px; }
+    }
+    @media (max-width: 480px) {
+      .container { padding: 16px 12px 32px; }
+      .card-img { height: 120px; }
+      .card-body { padding: 12px 14px 14px; }
+      .card-stats { gap: 6px; }
+      .card-stat { padding: 6px 8px; }
+      .stat-label { font-size: 9px; }
+      .stat-value { font-size: 12px; }
     }
   `]
 })

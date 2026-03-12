@@ -229,6 +229,23 @@ import { CardComponent } from '../../shared/components/card/card.component';
       margin-top: 28px;
       justify-content: center;
     }
+
+    @media (max-width: 768px) {
+      .container { padding: 24px 16px; }
+      .highlight-value { font-size: 24px; }
+      .highlight-cell { padding: 18px 16px; }
+      .detail-grid { padding: 16px; gap: 16px; }
+    }
+
+    @media (max-width: 480px) {
+      .container { padding: 20px 12px; }
+      .title { font-size: 20px; }
+      .highlight-value { font-size: 20px; }
+      .highlight-cell { padding: 14px 12px; }
+      .detail-grid { grid-template-columns: 1fr 1fr; padding: 14px 12px; gap: 14px; }
+      .actions { flex-direction: column; }
+      .warning-card { padding: 12px 14px; }
+    }
   `]
 })
 export class OfferComponent {

@@ -16,6 +16,18 @@ export const C = {
   blue50: "#eff8ff", blue100: "#d1e9ff", blue500: "#2e90fa",
 } as const;
 
+/** Spacing tokens — standardized across all pages */
+export const S = {
+  containerPad: '32px 32px 60px',
+  containerPadMobile: '20px 16px 40px',
+  sectionGap: '24px',
+  cardPad: '24px',
+  cardRadius: '14px',
+  inputGap: '16px',
+  btnGap: '12px',
+  iconGap: '10px',
+} as const;
+
 export type BadgeColor = 'green' | 'amber' | 'gray' | 'blue' | 'red';
 
 export const BADGE_STYLES: Record<BadgeColor, { bg: string; c: string }> = {
