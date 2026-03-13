@@ -6,16 +6,17 @@ import { NavComponent } from '../../shared/components/nav/nav.component';
 import { BackLinkComponent } from '../../shared/components/back-link/back-link.component';
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { CardComponent } from '../../shared/components/card/card.component';
+import { TranslatePipe } from '../../shared';
 
 @Component({
   selector: 'app-offer',
   standalone: true,
-  imports: [CommonModule, NavComponent, BackLinkComponent, ButtonComponent, CardComponent],
+  imports: [CommonModule, NavComponent, BackLinkComponent, ButtonComponent, CardComponent, TranslatePipe],
   template: `
     <div class="page">
       <app-nav></app-nav>
       <div class="container">
-        <app-back-link [to]="'/application/' + appId + '/status'" label="Back to Application Status"></app-back-link>
+        <app-back-link [to]="'/application/' + appId + '/status'" [label]="('common.back' | t)"></app-back-link>
 
         <!-- Header -->
         <div class="header">
@@ -24,7 +25,7 @@ import { CardComponent } from '../../shared/components/card/card.component';
               <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
             </svg>
           </div>
-          <h1 class="title">Financing Term-sheet</h1>
+          <h1 class="title">{{ 'offer.title' | t }}</h1>
           <p class="subtitle">Al Noor Residential &middot; Al Omran Real Estate</p>
         </div>
 
@@ -34,11 +35,11 @@ import { CardComponent } from '../../shared/components/card/card.component';
             <!-- Top highlight row -->
             <div class="highlight-grid">
               <div class="highlight-cell" [style.background]="'${C.greenLt}'">
-                <span class="highlight-label">Amount</span>
+                <span class="highlight-label">{{ 'offer.amount' | t }}</span>
                 <span class="highlight-value" [style.color]="'${C.green}'">21M SAR</span>
               </div>
               <div class="highlight-cell" [style.background]="'${C.g50}'">
-                <span class="highlight-label">Return</span>
+                <span class="highlight-label">{{ 'offer.rate' | t }}</span>
                 <span class="highlight-value" [style.color]="'${C.g800}'">8.5%</span>
               </div>
             </div>
@@ -46,11 +47,11 @@ import { CardComponent } from '../../shared/components/card/card.component';
             <!-- Detail grid -->
             <div class="detail-grid">
               <div class="detail-item">
-                <span class="detail-label">Product</span>
+                <span class="detail-label">{{ 'offer.product' | t }}</span>
                 <span class="detail-value">Development</span>
               </div>
               <div class="detail-item">
-                <span class="detail-label">Tenor</span>
+                <span class="detail-label">{{ 'offer.tenure' | t }}</span>
                 <span class="detail-value">24 months</span>
               </div>
               <div class="detail-item">
@@ -80,16 +81,15 @@ import { CardComponent } from '../../shared/components/card/card.component';
               <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
             </svg>
             <div>
-              <span class="warning-title">Valid for 14 days</span>
-              <span class="warning-sub">Respond by March 23, 2026</span>
+              <span class="warning-title">{{ 'offer.valid_until' | t:{date: 'March 23, 2026'} }}</span>
             </div>
           </div>
         </div>
 
         <!-- Actions -->
         <div class="actions">
-          <app-btn variant="dangerOutline" size="lg" (clicked)="go('/application/1/declined')">Decline</app-btn>
-          <app-btn variant="primary" size="lg" (clicked)="go('/application/1/accepted')">Accept Term-sheet &rarr;</app-btn>
+          <app-btn variant="dangerOutline" size="lg" (clicked)="go('/application/1/declined')">{{ 'offer.decline' | t }}</app-btn>
+          <app-btn variant="primary" size="lg" (clicked)="go('/application/1/accepted')">{{ 'offer.accept' | t }} &rarr;</app-btn>
         </div>
       </div>
     </div>

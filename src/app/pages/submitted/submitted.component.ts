@@ -8,16 +8,17 @@ import { BackLinkComponent } from '../../shared/components/back-link/back-link.c
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { CardComponent } from '../../shared/components/card/card.component';
 import { BadgeComponent } from '../../shared/components/badge/badge.component';
+import { TranslatePipe } from '../../shared';
 
 @Component({
   selector: 'app-submitted',
   standalone: true,
-  imports: [CommonModule, FormsModule, NavComponent, BackLinkComponent, ButtonComponent, CardComponent, BadgeComponent],
+  imports: [CommonModule, FormsModule, NavComponent, BackLinkComponent, ButtonComponent, CardComponent, BadgeComponent, TranslatePipe],
   template: `
     <div class="page">
       <app-nav></app-nav>
       <div class="container">
-        <app-back-link to="/dashboard" label="Back to Dashboard"></app-back-link>
+        <app-back-link to="/dashboard" [label]="('submitted.back_to_dashboard' | t)"></app-back-link>
 
         <!-- ===================== HEADER ===================== -->
         <div class="header">
@@ -25,7 +26,7 @@ import { BadgeComponent } from '../../shared/components/badge/badge.component';
             <svg *ngIf="allCompleted" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="${C.green}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
             <svg *ngIf="!allCompleted" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="${C.amber600}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
           </div>
-          <h1 class="title">{{ allCompleted ? 'Application Completed!' : 'Application Status' }}</h1>
+          <h1 class="title">{{ allCompleted ? ('submitted.completed_title' | t) : ('submitted.title' | t) }}</h1>
           <p class="subtitle">Al Noor Residential &middot; Al Omran Real Estate Dev Co.</p>
         </div>
 

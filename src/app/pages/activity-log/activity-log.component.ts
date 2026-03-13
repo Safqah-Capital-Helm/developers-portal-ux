@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { C, BadgeColor, BADGE_STYLES } from '../../shared/theme';
-import { NavComponent, BackLinkComponent, BadgeComponent } from '../../shared';
+import { NavComponent, BackLinkComponent, BadgeComponent, TranslatePipe } from '../../shared';
 
 interface ActivityEvent {
   id: number;
@@ -18,13 +18,13 @@ interface ActivityEvent {
 @Component({
   selector: 'app-activity-log',
   standalone: true,
-  imports: [CommonModule, NavComponent, BackLinkComponent, BadgeComponent],
+  imports: [CommonModule, NavComponent, BackLinkComponent, BadgeComponent, TranslatePipe],
   template: `
     <div class="page">
       <app-nav></app-nav>
 
       <div class="container">
-        <app-back-link to="/dashboard" label="Back to Dashboard"></app-back-link>
+        <app-back-link to="/dashboard" [label]="('activity.back_to_dashboard' | t)"></app-back-link>
 
         <!-- Header -->
         <div class="header">
@@ -33,7 +33,7 @@ interface ActivityEvent {
               <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
             </svg>
           </div>
-          <h1 class="title">Activity Log</h1>
+          <h1 class="title">{{ 'activity.title' | t }}</h1>
         </div>
 
         <!-- Context links -->
@@ -45,7 +45,7 @@ interface ActivityEvent {
               </svg>
             </div>
             <div class="ctx-info">
-              <div class="ctx-label">Company</div>
+              <div class="ctx-label">{{ 'activity.company' | t }}</div>
               <div class="ctx-value">Al Omran Real Estate Dev Co.</div>
             </div>
             <svg class="ctx-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g400" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
@@ -58,7 +58,7 @@ interface ActivityEvent {
               </svg>
             </div>
             <div class="ctx-info">
-              <div class="ctx-label">Project</div>
+              <div class="ctx-label">{{ 'activity.project' | t }}</div>
               <div class="ctx-value">Al Noor Residential</div>
             </div>
             <svg class="ctx-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g400" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
@@ -71,7 +71,7 @@ interface ActivityEvent {
               </svg>
             </div>
             <div class="ctx-info">
-              <div class="ctx-label">Financing Application</div>
+              <div class="ctx-label">{{ 'activity.financing_app' | t }}</div>
               <div class="ctx-value">Development &middot; ~21M SAR</div>
             </div>
             <svg class="ctx-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g400" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>

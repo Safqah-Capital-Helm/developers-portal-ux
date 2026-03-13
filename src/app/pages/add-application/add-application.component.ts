@@ -9,6 +9,7 @@ import {
   CardComponent,
   InputComponent,
   ProgressStepsComponent,
+  TranslatePipe,
 } from '../../shared';
 
 @Component({
@@ -22,6 +23,7 @@ import {
     CardComponent,
     InputComponent,
     ProgressStepsComponent,
+    TranslatePipe,
   ],
   template: `
     <div class="page">
@@ -40,8 +42,8 @@ import {
             </div>
           </div>
 
-          <h1 class="success-title">Application Submitted!</h1>
-          <p class="success-desc">Your financing application has been submitted successfully and is now under review by our team.</p>
+          <h1 class="success-title">{{ 'add_application.success_title' | t }}</h1>
+          <p class="success-desc">{{ 'add_application.success_desc' | t }}</p>
 
           <!-- Summary card -->
           <div class="success-summary">
@@ -50,7 +52,7 @@ import {
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g400" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h7l2 2h9v16H3z"/></svg>
               </div>
               <div class="summary-info">
-                <div class="summary-label">Project</div>
+                <div class="summary-label">{{ 'offer.project' | t }}</div>
                 <div class="summary-value">{{ selectedProject }}</div>
               </div>
             </div>
@@ -60,7 +62,7 @@ import {
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g400" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
               </div>
               <div class="summary-info">
-                <div class="summary-label">Product</div>
+                <div class="summary-label">{{ 'financing.product_label' | t }}</div>
                 <div class="summary-value">{{ getProductName() }}</div>
               </div>
             </div>
@@ -70,7 +72,7 @@ import {
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g400" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
               </div>
               <div class="summary-info">
-                <div class="summary-label">Amount</div>
+                <div class="summary-label">{{ 'financing.amount' | t }}</div>
                 <div class="summary-value">{{ formatAmount(financingAmount) }} SAR</div>
               </div>
             </div>
@@ -96,10 +98,10 @@ import {
           <!-- Actions -->
           <div class="success-actions">
             <app-btn variant="primary" size="lg" (clicked)="goToStatus()">
-              View Application Status &rarr;
+              {{ 'submitted.status' | t }} &rarr;
             </app-btn>
             <app-btn variant="ghost" (clicked)="go('/dashboard')">
-              Back to Dashboard
+              {{ 'nav.dashboard' | t }}
             </app-btn>
           </div>
         </div>
@@ -107,10 +109,10 @@ import {
 
       <!-- ============ FORM WIZARD ============ -->
       <div *ngIf="!submitted" class="container">
-        <app-back-link to="/dashboard/applications" label="Back to Applications"></app-back-link>
+        <app-back-link to="/dashboard/applications" [label]="('applications.title' | t)"></app-back-link>
 
-        <h1 class="page-title">New Financing Application</h1>
-        <p class="page-subtitle">Select a project and specify your financing needs to submit for review.</p>
+        <h1 class="page-title">{{ 'add_application.title' | t }}</h1>
+        <p class="page-subtitle">{{ 'add_application.select_project_desc' | t }}</p>
 
         <!-- Progress Steps -->
         <div class="progress-bar">
@@ -136,8 +138,8 @@ import {
         <!-- ============ STEP 0: Select Project (only when no pre-selection) ============ -->
         <div *ngIf="!projectPreSelected && step === 0" class="animate-in">
           <app-card [padding]="32">
-            <div class="section-title">Select Project</div>
-            <div class="section-desc">Choose the project you want to apply financing for.</div>
+            <div class="section-title">{{ 'add_application.select_project' | t }}</div>
+            <div class="section-desc">{{ 'add_application.select_project_desc' | t }}</div>
 
             <div class="project-list">
               <div
@@ -174,7 +176,7 @@ import {
         <!-- ============ STEP 1: Financing Product (single-select, auto-advance) ============ -->
         <div *ngIf="step === 1" class="animate-in">
           <app-card [padding]="32">
-            <div class="section-title">Select Financing Product</div>
+            <div class="section-title">{{ 'financing.product_label' | t }}</div>
             <div class="section-desc">Choose the type of financing that best suits your project needs.</div>
 
             <div class="product-list">
@@ -212,14 +214,14 @@ import {
         <!-- ============ STEP 2: Financing Amount with Ratio Visualizations ============ -->
         <div *ngIf="step === 2" class="animate-in">
           <app-card [padding]="32">
-            <div class="section-title">Financing Amount</div>
+            <div class="section-title">{{ 'financing.amount' | t }}</div>
             <div class="section-desc">Enter the financing amount you need and see how it compares to your project metrics.</div>
 
             <app-input
-              label="Financing Amount"
-              placeholder="e.g. 30,000,000"
+              [label]="('financing.amount' | t)"
+              [placeholder]="('financing.total_cost_placeholder' | t)"
               suffix="SAR"
-              helper="The total financing amount you are requesting"
+              [helper]="('financing.total_cost_helper' | t)"
               [value]="financingAmount"
               (valueChange)="financingAmount = $event"
             ></app-input>
@@ -300,7 +302,7 @@ import {
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><polyline points="16 13 12 17 9 14"/></svg>
               </div>
               <div class="review-top-text">
-                <div class="review-top-title">Review Your Application</div>
+                <div class="review-top-title">{{ 'add_application.step_review' | t }}</div>
                 <div class="review-top-desc">Please verify all details before submitting.</div>
               </div>
             </div>
@@ -312,8 +314,8 @@ import {
                   <div class="review-block-icon" [style.background]="C.blue50">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.blue500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h7l2 2h9v16H3z"/></svg>
                   </div>
-                  <span class="review-block-title">Project</span>
-                  <button *ngIf="!projectPreSelected" class="edit-link" (click)="step = 0">Edit</button>
+                  <span class="review-block-title">{{ 'offer.project' | t }}</span>
+                  <button *ngIf="!projectPreSelected" class="edit-link" (click)="step = 0">{{ 'common.edit' | t }}</button>
                 </div>
                 <div class="review-block-content">
                   <div class="review-block-value">{{ selectedProject }}</div>
@@ -327,8 +329,8 @@ import {
                   <div class="review-block-icon" [style.background]="C.amber50">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.amber500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                   </div>
-                  <span class="review-block-title">Financing Product</span>
-                  <button class="edit-link" (click)="step = 1">Edit</button>
+                  <span class="review-block-title">{{ 'financing.product_label' | t }}</span>
+                  <button class="edit-link" (click)="step = 1">{{ 'common.edit' | t }}</button>
                 </div>
                 <div class="review-block-content">
                   <div class="review-block-value">{{ getProductName() }}</div>
@@ -342,8 +344,8 @@ import {
                   <div class="review-block-icon" [style.background]="C.greenLt">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.green" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
                   </div>
-                  <span class="review-block-title">Financing Amount</span>
-                  <button class="edit-link" (click)="step = 2">Edit</button>
+                  <span class="review-block-title">{{ 'financing.amount' | t }}</span>
+                  <button class="edit-link" (click)="step = 2">{{ 'common.edit' | t }}</button>
                 </div>
                 <div class="review-block-content">
                   <div class="review-block-value">{{ formatAmount(financingAmount) }} SAR</div>
@@ -365,7 +367,7 @@ import {
               </svg>
             </div>
             <div class="confirm-text">
-              <div class="confirm-title">Confirm accuracy</div>
+              <div class="confirm-title">{{ 'common.confirm' | t }}</div>
               <div class="confirm-desc">I confirm that all information provided is accurate to the best of my knowledge and I authorize Safqah to review my application.</div>
             </div>
           </div>
@@ -381,12 +383,12 @@ import {
           <app-btn *ngIf="step === 2" variant="primary"
             [disabled]="!isStepValid(step)"
             (clicked)="nextStep()">
-            Next: Review &amp; Submit &rarr;
+            {{ 'common.next' | t }}: {{ 'add_application.step_review' | t }} &rarr;
           </app-btn>
           <app-btn *ngIf="step === 3" variant="primary" size="lg"
             [disabled]="!canSubmit"
             (clicked)="submit()">
-            Submit Application for Review &rarr;
+            {{ 'add_application.submit_application' | t }} &rarr;
           </app-btn>
         </div>
 

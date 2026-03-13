@@ -9,6 +9,7 @@ import {
   CardComponent,
   InputComponent,
   BadgeComponent,
+  TranslatePipe,
 } from '../../shared';
 
 type Step = 'intro' | 'id' | 'otp' | 'verifying' | 'grant' | 'done';
@@ -24,6 +25,7 @@ type Step = 'intro' | 'id' | 'otp' | 'verifying' | 'grant' | 'done';
     CardComponent,
     InputComponent,
     BadgeComponent,
+    TranslatePipe,
   ],
   template: `
     <div class="page">
@@ -32,7 +34,7 @@ type Step = 'intro' | 'id' | 'otp' | 'verifying' | 'grant' | 'done';
       <div class="header-bar">
         <div class="header-inner">
           <app-logo [size]="32"></app-logo>
-          <span class="header-text">Owner Verification</span>
+          <span class="header-text">{{ 'owner_verify.title' | t }}</span>
         </div>
       </div>
 
@@ -53,7 +55,7 @@ type Step = 'intro' | 'id' | 'otp' | 'verifying' | 'grant' | 'done';
 
           <div class="text-center" style="margin-bottom: 24px;">
             <h1 class="page-title">Owner authorization requested</h1>
-            <p class="page-subtitle">Someone has requested your authorization to access your company on Safqah.</p>
+            <p class="page-subtitle">{{ 'owner_verify.subtitle' | t }}</p>
           </div>
 
           <!-- Request Details card -->
@@ -102,7 +104,7 @@ type Step = 'intro' | 'id' | 'otp' | 'verifying' | 'grant' | 'done';
 
           <div style="margin-top: 24px;">
             <app-btn variant="primary" [full]="true" size="lg" (clicked)="step = 'id'">
-              Verify My Identity & Proceed &rarr;
+              {{ 'owner_verify.verify_btn' | t }} &rarr;
             </app-btn>
           </div>
           <p class="text-center footer-note">Not the right person? <span class="link">Contact support</span></p>
@@ -121,8 +123,8 @@ type Step = 'intro' | 'id' | 'otp' | 'verifying' | 'grant' | 'done';
           </div>
 
           <div class="text-center" style="margin-bottom: 24px;">
-            <h2 class="page-title-sm">Verify your identity</h2>
-            <p class="page-subtitle">Confirm your National ID to proceed with owner verification.</p>
+            <h2 class="page-title-sm">{{ 'owner_verify.verify_btn' | t }}</h2>
+            <p class="page-subtitle">{{ 'owner_verify.subtitle' | t }}</p>
           </div>
 
           <app-card [padding]="28">
@@ -133,9 +135,9 @@ type Step = 'intro' | 'id' | 'otp' | 'verifying' | 'grant' | 'done';
               (valueChange)="nid = $event"
             ></app-input>
             <app-btn variant="primary" [full]="true" size="lg" [disabled]="nid.length < 10" (clicked)="step = 'otp'">
-              Next
+              {{ 'common.next' | t }}
             </app-btn>
-            <p class="text-center back-link" (click)="step = 'intro'">&larr; Back</p>
+            <p class="text-center back-link" (click)="step = 'intro'">&larr; {{ 'common.back' | t }}</p>
           </app-card>
         </div>
 
@@ -152,8 +154,8 @@ type Step = 'intro' | 'id' | 'otp' | 'verifying' | 'grant' | 'done';
           </div>
 
           <div class="text-center" style="margin-bottom: 24px;">
-            <h2 class="page-title-sm">Enter verification code</h2>
-            <p class="page-subtitle">We sent a code to your Absher app.</p>
+            <h2 class="page-title-sm">{{ 'absher.otp_title' | t }}</h2>
+            <p class="page-subtitle">{{ 'absher.otp_subtitle' | t }}</p>
           </div>
 
           <app-card [padding]="28">
@@ -165,7 +167,7 @@ type Step = 'intro' | 'id' | 'otp' | 'verifying' | 'grant' | 'done';
               (valueChange)="otp = $event"
             ></app-input>
             <app-btn variant="primary" [full]="true" size="lg" [disabled]="otp.length < 4" (clicked)="onOtpConfirm()">
-              Confirm
+              {{ 'common.confirm' | t }}
             </app-btn>
           </app-card>
         </div>
@@ -175,7 +177,7 @@ type Step = 'intro' | 'id' | 'otp' | 'verifying' | 'grant' | 'done';
           <app-card [padding]="40">
             <div class="text-center">
               <div class="spinner"></div>
-              <p class="verifying-text">Verifying identity...</p>
+              <p class="verifying-text">{{ 'absher.verifying' | t }}</p>
             </div>
           </app-card>
         </div>
@@ -192,8 +194,8 @@ type Step = 'intro' | 'id' | 'otp' | 'verifying' | 'grant' | 'done';
           </div>
 
           <div class="text-center" style="margin-bottom: 24px;">
-            <h2 class="page-title-sm">Identity verified</h2>
-            <p class="page-subtitle">Your identity has been confirmed. Review and grant access below.</p>
+            <h2 class="page-title-sm">{{ 'owner_verify.success_title' | t }}</h2>
+            <p class="page-subtitle">{{ 'owner_verify.success_desc' | t }}</p>
           </div>
 
           <app-card [padding]="24">
@@ -221,7 +223,7 @@ type Step = 'intro' | 'id' | 'otp' | 'verifying' | 'grant' | 'done';
 
             <div style="margin-top: 20px;">
               <app-btn variant="primary" [full]="true" size="lg" (clicked)="step = 'done'">
-                Confirm & Grant Access &rarr;
+                {{ 'common.confirm' | t }} &rarr;
               </app-btn>
             </div>
           </app-card>
@@ -239,7 +241,7 @@ type Step = 'intro' | 'id' | 'otp' | 'verifying' | 'grant' | 'done';
           </div>
 
           <div class="text-center" style="margin-bottom: 24px;">
-            <h1 class="page-title">Access granted!</h1>
+            <h1 class="page-title">{{ 'owner_verify.success_title' | t }}</h1>
             <p class="page-subtitle">{{ requester.name }} now has <strong>Admin access</strong> to {{ company.name }}.</p>
           </div>
 
@@ -278,7 +280,7 @@ type Step = 'intro' | 'id' | 'otp' | 'verifying' | 'grant' | 'done';
           </div>
           <div style="margin-top: 12px;">
             <app-btn variant="secondary" [full]="true" size="md" (clicked)="go('/dashboard')">
-              &larr; Back to Dashboard
+              &larr; {{ 'common.back' | t }}
             </app-btn>
           </div>
         </div>

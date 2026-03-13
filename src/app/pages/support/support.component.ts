@@ -3,20 +3,20 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { C } from '../../shared/theme';
-import { NavComponent, BackLinkComponent, CardComponent, InputComponent, ButtonComponent } from '../../shared';
+import { NavComponent, BackLinkComponent, CardComponent, InputComponent, ButtonComponent, TranslatePipe } from '../../shared';
 
 @Component({
   selector: 'app-support',
   standalone: true,
-  imports: [CommonModule, FormsModule, NavComponent, BackLinkComponent, CardComponent, InputComponent, ButtonComponent],
+  imports: [CommonModule, FormsModule, NavComponent, BackLinkComponent, CardComponent, InputComponent, ButtonComponent, TranslatePipe],
   template: `
     <div class="page">
       <app-nav></app-nav>
       <div class="container">
-        <app-back-link to="/dashboard" label="Back to Dashboard"></app-back-link>
+        <app-back-link to="/dashboard" [label]="('support.back_to_dashboard' | t)"></app-back-link>
 
-        <h1 class="page-title">Help & Support</h1>
-        <p class="page-subtitle">Get in touch or find answers to common questions</p>
+        <h1 class="page-title">{{ 'support.title' | t }}</h1>
+        <p class="page-subtitle">{{ 'support.subtitle' | t }}</p>
 
         <!-- Contact channels -->
         <div class="channels-grid">
@@ -26,9 +26,9 @@ import { NavComponent, BackLinkComponent, CardComponent, InputComponent, ButtonC
                 <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>
               </svg>
             </div>
-            <span class="channel-label">Email</span>
+            <span class="channel-label">{{ 'support.email' | t }}</span>
             <span class="channel-value">support&#64;safqah.com</span>
-            <span class="channel-sub">4h response</span>
+            <span class="channel-sub">{{ 'support.response_time' | t }}</span>
           </div>
           <div class="channel-card">
             <div class="channel-icon" style="background: ${C.blue50};">
@@ -36,9 +36,9 @@ import { NavComponent, BackLinkComponent, CardComponent, InputComponent, ButtonC
                 <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
               </svg>
             </div>
-            <span class="channel-label">Phone</span>
+            <span class="channel-label">{{ 'support.phone' | t }}</span>
             <span class="channel-value">+966 800 000 000</span>
-            <span class="channel-sub">Sun-Thu 9-5</span>
+            <span class="channel-sub">{{ 'support.working_hours' | t }}</span>
           </div>
           <div class="channel-card">
             <div class="channel-icon" style="background: #e6faf0;">
@@ -47,14 +47,14 @@ import { NavComponent, BackLinkComponent, CardComponent, InputComponent, ButtonC
                 <path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2 22l4.832-1.438A9.955 9.955 0 0 0 12 22c5.523 0 10-4.477 10-10S17.523 2 12 2z" stroke="#25d366" stroke-width="1.5" fill="none"/>
               </svg>
             </div>
-            <span class="channel-label">WhatsApp</span>
+            <span class="channel-label">{{ 'support.whatsapp' | t }}</span>
             <span class="channel-value">+966 5XX XXX</span>
-            <span class="channel-sub">Fastest</span>
+            <span class="channel-sub">{{ 'support.fastest' | t }}</span>
           </div>
         </div>
 
         <!-- FAQ Section -->
-        <h2 class="section-title">Frequently Asked Questions</h2>
+        <h2 class="section-title">{{ 'support.faq_title' | t }}</h2>
 
         <div class="faq-list">
           <div class="faq-item" *ngFor="let faq of faqs; let i = index">
@@ -71,22 +71,22 @@ import { NavComponent, BackLinkComponent, CardComponent, InputComponent, ButtonC
         </div>
 
         <!-- Send a message -->
-        <h2 class="section-title">Send a Message</h2>
+        <h2 class="section-title">{{ 'support.send_message_title' | t }}</h2>
 
         <app-card [padding]="24">
           <div *ngIf="!sent">
             <app-input
-              label="Subject"
-              placeholder="What can we help with?"
+              [label]="('support.subject' | t)"
+              [placeholder]="('support.subject_placeholder' | t)"
               [value]="subj"
               (valueChange)="subj = $event"
             ></app-input>
 
             <div class="textarea-wrapper">
-              <label class="textarea-label">Message</label>
+              <label class="textarea-label">{{ 'support.message' | t }}</label>
               <textarea
                 class="textarea-field"
-                placeholder="Describe your question or issue..."
+                [placeholder]="('support.message_placeholder' | t)"
                 [(ngModel)]="msg"
                 rows="5"
               ></textarea>
@@ -97,7 +97,7 @@ import { NavComponent, BackLinkComponent, CardComponent, InputComponent, ButtonC
               [full]="true"
               [disabled]="!subj.trim() || !msg.trim()"
               (clicked)="send()"
-            >Send Message</app-btn>
+            >{{ 'support.send_btn' | t }}</app-btn>
           </div>
 
           <div *ngIf="sent" class="sent-state">
@@ -106,8 +106,8 @@ import { NavComponent, BackLinkComponent, CardComponent, InputComponent, ButtonC
                 <polyline points="20 6 9 17 4 12"/>
               </svg>
             </div>
-            <h3 class="sent-title">Message sent!</h3>
-            <p class="sent-sub">We'll respond within 4 hours.</p>
+            <h3 class="sent-title">{{ 'support.sent_title' | t }}</h3>
+            <p class="sent-sub">{{ 'support.sent_desc' | t }}</p>
           </div>
         </app-card>
       </div>

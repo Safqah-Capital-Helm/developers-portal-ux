@@ -3,15 +3,15 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { C, borderColorForStatus } from '../../shared/theme';
-import { BadgeComponent, BackLinkComponent, EmptyStateComponent, ButtonComponent, getCompanyLogoByName } from '../../shared';
+import { BadgeComponent, BackLinkComponent, EmptyStateComponent, ButtonComponent, getCompanyLogoByName, TranslatePipe } from '../../shared';
 
 @Component({
   selector: 'app-project-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink, BadgeComponent, BackLinkComponent, EmptyStateComponent, ButtonComponent],
+  imports: [CommonModule, RouterLink, BadgeComponent, BackLinkComponent, EmptyStateComponent, ButtonComponent, TranslatePipe],
   template: `
     <div class="container" *ngIf="project">
-      <app-back-link to="/dashboard/projects" label="Back to Projects"></app-back-link>
+      <app-back-link to="/dashboard/projects" [label]="('project.back_to_projects' | t)"></app-back-link>
 
       <!-- Project image -->
       <div class="hero-img" [style.backgroundImage]="'url(' + project.img + ')'"></div>
@@ -22,11 +22,11 @@ import { BadgeComponent, BackLinkComponent, EmptyStateComponent, ButtonComponent
         <div class="detail-actions">
           <app-btn variant="secondary" size="sm" (clicked)="editProject()">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-            Edit
+            {{ 'common.edit' | t }}
           </app-btn>
           <app-btn variant="dangerOutline" size="sm" (clicked)="showDeleteConfirm = true">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
-            Delete
+            {{ 'common.delete' | t }}
           </app-btn>
         </div>
       </div>
@@ -37,12 +37,12 @@ import { BadgeComponent, BackLinkComponent, EmptyStateComponent, ButtonComponent
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.red500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
         </div>
         <div>
-          <div class="delete-confirm-title">Delete this project?</div>
-          <div class="delete-confirm-sub">This action cannot be undone. All project data and financing applications will be permanently removed.</div>
+          <div class="delete-confirm-title">{{ 'project.delete_confirm_title' | t }}</div>
+          <div class="delete-confirm-sub">{{ 'project.delete_confirm_desc' | t }}</div>
         </div>
         <div class="delete-confirm-actions">
-          <app-btn variant="danger" size="sm" (clicked)="go('/dashboard/projects')">Yes, Delete</app-btn>
-          <app-btn variant="secondary" size="sm" (clicked)="showDeleteConfirm = false">Cancel</app-btn>
+          <app-btn variant="danger" size="sm" (clicked)="go('/dashboard/projects')">{{ 'project.yes_delete' | t }}</app-btn>
+          <app-btn variant="secondary" size="sm" (clicked)="showDeleteConfirm = false">{{ 'common.cancel' | t }}</app-btn>
         </div>
       </div>
 
@@ -71,7 +71,7 @@ import { BadgeComponent, BackLinkComponent, EmptyStateComponent, ButtonComponent
             </svg>
           </div>
           <div>
-            <div class="company-link-label">Company</div>
+            <div class="company-link-label">{{ 'project.company' | t }}</div>
             <div class="company-link-name">{{ project.compShort }}</div>
           </div>
         </div>
@@ -80,7 +80,7 @@ import { BadgeComponent, BackLinkComponent, EmptyStateComponent, ButtonComponent
 
       <!-- Project Overview -->
       <div class="section">
-        <h2 class="section-title">Project Overview</h2>
+        <h2 class="section-title">{{ 'project.overview' | t }}</h2>
         <div class="metrics-grid">
           <div class="metric-card">
             <div class="metric-icon" [style.background]="C.blue50">
@@ -91,7 +91,7 @@ import { BadgeComponent, BackLinkComponent, EmptyStateComponent, ButtonComponent
                 <path d="M9 18h6"/>
               </svg>
             </div>
-            <div class="metric-label">Expected Units</div>
+            <div class="metric-label">{{ 'project.expected_units' | t }}</div>
             <div class="metric-value">{{ project.expectedUnits }}</div>
           </div>
           <div class="metric-card">
@@ -100,7 +100,7 @@ import { BadgeComponent, BackLinkComponent, EmptyStateComponent, ButtonComponent
                 <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/>
               </svg>
             </div>
-            <div class="metric-label">Building Area</div>
+            <div class="metric-label">{{ 'project.building_area' | t }}</div>
             <div class="metric-value">{{ project.buildingArea }}</div>
           </div>
           <div class="metric-card">
@@ -109,7 +109,7 @@ import { BadgeComponent, BackLinkComponent, EmptyStateComponent, ButtonComponent
                 <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 002 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0022 16z"/>
               </svg>
             </div>
-            <div class="metric-label">Selling Area</div>
+            <div class="metric-label">{{ 'project.selling_area' | t }}</div>
             <div class="metric-value">{{ project.sellingArea }}</div>
           </div>
           <div class="metric-card">
@@ -118,7 +118,7 @@ import { BadgeComponent, BackLinkComponent, EmptyStateComponent, ButtonComponent
                 <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
               </svg>
             </div>
-            <div class="metric-label">Project Period</div>
+            <div class="metric-label">{{ 'project.period' | t }}</div>
             <div class="metric-value">{{ project.period }}</div>
           </div>
         </div>
@@ -126,11 +126,11 @@ import { BadgeComponent, BackLinkComponent, EmptyStateComponent, ButtonComponent
 
       <!-- Project Financials -->
       <div class="section">
-        <h2 class="section-title">Project Financials</h2>
+        <h2 class="section-title">{{ 'project.financials' | t }}</h2>
 
         <!-- Total Cost hero -->
         <div class="cost-hero">
-          <div class="cost-hero-label">Estimated Total Cost</div>
+          <div class="cost-hero-label">{{ 'project.estimated_total_cost' | t }}</div>
           <div class="cost-hero-value">{{ project.cost }}</div>
         </div>
 
@@ -139,11 +139,11 @@ import { BadgeComponent, BackLinkComponent, EmptyStateComponent, ButtonComponent
           <div class="breakdown-header">
             <span class="breakdown-tag" [style.color]="C.amber600">
               <span class="tag-dot" [style.background]="C.amber500"></span>
-              Land {{ landPct }}%
+              {{ 'project.land' | t }} {{ landPct }}%
             </span>
             <span class="breakdown-tag" [style.color]="C.blue500">
               <span class="tag-dot" [style.background]="C.blue500"></span>
-              Development {{ devPct }}%
+              {{ 'project.development' | t }} {{ devPct }}%
             </span>
           </div>
           <div class="breakdown-bar">
@@ -154,26 +154,26 @@ import { BadgeComponent, BackLinkComponent, EmptyStateComponent, ButtonComponent
 
         <div class="stat-row">
           <div class="stat-box" [style.borderColor]="C.amber100" [style.background]="C.amber50">
-            <div class="stat-label" [style.color]="C.amber600">Land Cost</div>
+            <div class="stat-label" [style.color]="C.amber600">{{ 'project.land_cost' | t }}</div>
             <div class="stat-val">{{ project.landCost }}</div>
-            <div class="stat-sub" [style.color]="C.amber500">{{ landPct }}% of total</div>
+            <div class="stat-sub" [style.color]="C.amber500">{{ 'project.pct_of_total' | t:{pct: '' + landPct} }}</div>
           </div>
           <div class="stat-box" [style.borderColor]="C.blue100" [style.background]="C.blue50">
-            <div class="stat-label" [style.color]="C.blue500">Development Cost</div>
+            <div class="stat-label" [style.color]="C.blue500">{{ 'project.dev_cost' | t }}</div>
             <div class="stat-val">{{ project.devCost }}</div>
-            <div class="stat-sub" [style.color]="C.blue500">{{ devPct }}% of total</div>
+            <div class="stat-sub" [style.color]="C.blue500">{{ 'project.pct_of_total' | t:{pct: '' + devPct} }}</div>
           </div>
         </div>
 
         <div class="stat-box revenue" [style.borderColor]="C.greenMd" [style.background]="C.greenLt">
           <div class="revenue-row">
             <div>
-              <div class="stat-label" [style.color]="C.green">Expected Revenue</div>
+              <div class="stat-label" [style.color]="C.green">{{ 'project.expected_revenue' | t }}</div>
               <div class="stat-val">{{ project.expectedRevenue }}</div>
             </div>
             <div *ngIf="profitMargin > 0" class="margin-badge">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.green" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
-              {{ profitMargin }}% margin
+              {{ 'project.margin' | t:{pct: '' + profitMargin} }}
             </div>
           </div>
         </div>
@@ -182,14 +182,14 @@ import { BadgeComponent, BackLinkComponent, EmptyStateComponent, ButtonComponent
       <!-- Financing Applications -->
       <div class="section">
         <div class="section-header">
-          <h2 class="section-title" style="margin-bottom: 0;">Financing Applications</h2>
+          <h2 class="section-title" style="margin-bottom: 0;">{{ 'project.applications' | t }}</h2>
           <a (click)="newApplication()" class="new-app-link">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.green" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            New Application
+            {{ 'project.new_application' | t }}
           </a>
         </div>
 
-        <app-empty-state *ngIf="applications.length === 0" message="No financing applications yet"></app-empty-state>
+        <app-empty-state *ngIf="applications.length === 0" [message]="('project.no_applications' | t)"></app-empty-state>
 
         <div *ngFor="let app of applications"
              class="app-card"
@@ -201,15 +201,15 @@ import { BadgeComponent, BackLinkComponent, EmptyStateComponent, ButtonComponent
           </div>
           <div class="app-grid">
             <div class="app-cell">
-              <div class="cell-label">Amount</div>
+              <div class="cell-label">{{ 'project.amount' | t }}</div>
               <div class="cell-value">{{ app.amount }}</div>
             </div>
             <div class="app-cell">
-              <div class="cell-label">Submitted</div>
+              <div class="cell-label">{{ 'project.submitted' | t }}</div>
               <div class="cell-value">{{ app.submitted || '\u2014' }}</div>
             </div>
             <div class="app-cell">
-              <div class="cell-label">Accepted</div>
+              <div class="cell-label">{{ 'project.accepted' | t }}</div>
               <div class="cell-value">{{ app.accepted || '\u2014' }}</div>
             </div>
           </div>

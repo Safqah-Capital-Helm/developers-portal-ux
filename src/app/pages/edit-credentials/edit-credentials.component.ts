@@ -7,6 +7,7 @@ import {
   BackLinkComponent,
   ButtonComponent,
   PrevCredentialsFormComponent,
+  TranslatePipe,
 } from '../../shared';
 import type { PrevCredentialsData } from '../../shared';
 
@@ -19,6 +20,7 @@ import type { PrevCredentialsData } from '../../shared';
     BackLinkComponent,
     ButtonComponent,
     PrevCredentialsFormComponent,
+    TranslatePipe,
   ],
   template: `
     <div class="page">
@@ -26,8 +28,8 @@ import type { PrevCredentialsData } from '../../shared';
       <div class="container">
         <app-back-link [to]="backLink" [label]="backLabel"></app-back-link>
 
-        <h1 class="page-title">Previous Credentials</h1>
-        <p class="page-desc">Share your company track record to strengthen financing applications.</p>
+        <h1 class="page-title">{{ 'credentials.title' | t }}</h1>
+        <p class="page-desc">{{ 'credentials.desc' | t }}</p>
 
         <app-prev-credentials-form
           #formRef
@@ -36,10 +38,10 @@ import type { PrevCredentialsData } from '../../shared';
         ></app-prev-credentials-form>
 
         <div class="actions">
-          <app-btn variant="ghost" size="lg" (clicked)="goBack()">&larr; Cancel</app-btn>
+          <app-btn variant="ghost" size="lg" (clicked)="goBack()">&larr; {{ 'common.cancel' | t }}</app-btn>
           <app-btn variant="primary" size="lg" (clicked)="save()">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-            Save Credentials
+            {{ 'credentials.save' | t }}
           </app-btn>
         </div>
       </div>

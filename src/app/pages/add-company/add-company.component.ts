@@ -12,6 +12,7 @@ import {
   BadgeComponent,
   ProgressStepsComponent,
   PrevCredentialsFormComponent,
+  TranslatePipe,
 } from '../../shared';
 
 type Step =
@@ -42,12 +43,13 @@ type Step =
     BadgeComponent,
     ProgressStepsComponent,
     PrevCredentialsFormComponent,
+    TranslatePipe,
   ],
   template: `
     <div class="page">
       <app-nav></app-nav>
       <div class="container">
-        <app-back-link to="/dashboard/companies" label="Back to Companies"></app-back-link>
+        <app-back-link to="/dashboard/companies" [label]="('nav.companies' | t)"></app-back-link>
 
         <!-- Title -->
         <h1 class="page-title">{{ title }}</h1>
@@ -71,8 +73,8 @@ type Step =
                   <line x1="8" y1="16" x2="12" y2="16"/>
                 </svg>
               </div>
-              <h2 class="card-title">Company verification</h2>
-              <p class="card-desc">We'll verify eligibility from the commercial registry.</p>
+              <h2 class="card-title">{{ 'add_company.step_verify' | t }}</h2>
+              <p class="card-desc">{{ 'add_company.cr_helper' | t }}</p>
             </div>
 
             <div class="cr-input-row">
@@ -80,30 +82,30 @@ type Step =
               <input
                 class="cr-field"
                 [class.cr-error]="crRes === 'bad'"
-                placeholder="Enter CR number"
+                [placeholder]="('add_company.cr_placeholder' | t)"
                 [(ngModel)]="cr"
                 [disabled]="step === 'crVerifying'"
               />
             </div>
-            <p class="cr-helper" *ngIf="crRes !== 'bad'">Your company's commercial registration number from the Ministry of Commerce.</p>
+            <p class="cr-helper" *ngIf="crRes !== 'bad'">{{ 'add_company.cr_helper' | t }}</p>
 
             <!-- Error state -->
             <div *ngIf="crRes === 'bad'" class="error-box">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f04438" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>
               </svg>
-              CR not found or not eligible for registration.
+              {{ 'add_company.cr_not_found' | t }}
             </div>
 
             <!-- Verifying spinner -->
             <div *ngIf="step === 'crVerifying'" class="text-center" style="margin-top: 20px;">
               <div class="spinner" style="margin: 0 auto 10px;"></div>
-              <p class="spinner-text">Verifying CR {{ cr }}...</p>
+              <p class="spinner-text">{{ 'absher.verifying' | t }}</p>
             </div>
 
             <div *ngIf="step === 'cr'" style="margin-top: 20px;">
               <app-btn variant="primary" [full]="true" size="lg" [disabled]="cr.length < 5" (clicked)="onCrSubmit()">
-                Verify CR
+                {{ 'add_company.verify_cr' | t }}
               </app-btn>
             </div>
           </app-card>
@@ -123,19 +125,19 @@ type Step =
                   <polyline points="9 12 11 14 15 10"/>
                 </svg>
               </div>
-              <h2 class="card-title">Verify your identity</h2>
+              <h2 class="card-title">{{ 'absher.verify_title' | t }}</h2>
             </div>
 
             <!-- verify: National ID input -->
             <div *ngIf="step === 'verify'">
               <app-input
-                label="National ID / Iqama Number"
-                placeholder="Enter your 10-digit ID"
+                [label]="('absher.nid_label' | t)"
+                [placeholder]="('absher.nid_placeholder' | t)"
                 [value]="nid"
                 (valueChange)="nid = $event"
               ></app-input>
               <app-btn variant="primary" [full]="true" size="lg" [disabled]="nid.length < 10" (clicked)="step = 'otp'">
-                Send Verification Code
+                {{ 'absher.verify_btn' | t }}
               </app-btn>
               <div class="demo-bar" style="margin-top: 12px;">
                 <button class="demo-advance" (click)="step = 'delegate'">Demo: Owner not found &rarr;</button>
@@ -151,20 +153,20 @@ type Step =
                 <span>National ID: {{ nid }}</span>
               </div>
               <app-input
-                label="Verification Code"
-                placeholder="Enter 6-digit code"
+                [label]="('absher.otp_label' | t)"
+                [placeholder]="('absher.otp_placeholder' | t)"
                 [value]="otp"
                 (valueChange)="otp = $event"
-                helper="Check your registered mobile for the code."
+                [helper]="('absher.otp_helper' | t)"
               ></app-input>
               <app-btn variant="primary" [full]="true" size="lg" [disabled]="otp.length < 4" (clicked)="onOtpConfirm()">
-                Confirm
+                {{ 'common.confirm' | t }}
               </app-btn>
             </div>
           </app-card>
 
           <p class="form-footer">
-            <span class="link" (click)="step = 'cr'; crRes = ''">Back to CR entry</span>
+            <span class="link" (click)="step = 'cr'; crRes = ''">{{ 'absher.back_to_id' | t }}</span>
           </p>
         </div>
 
@@ -173,7 +175,7 @@ type Step =
           <app-card [padding]="48">
             <div class="text-center">
               <div class="spinner" style="margin: 0 auto 16px;"></div>
-              <p class="spinner-text">Verifying ownership...</p>
+              <p class="spinner-text">{{ 'absher.checking_ownership' | t }}</p>
             </div>
           </app-card>
         </div>
@@ -187,7 +189,7 @@ type Step =
               <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
             </svg>
             <div>
-              <span class="delegate-alert-title">You're not listed as a registered owner</span>
+              <span class="delegate-alert-title">{{ 'absher.not_owner_title' | t }}</span>
               <span class="delegate-alert-desc">ID {{ nid.substring(0, 3) }}****{{ nid.substring(nid.length - 3) }} was not found as an owner of CR {{ cr }}. Ask the company owner to verify instead.</span>
             </div>
           </div>
@@ -200,9 +202,9 @@ type Step =
                   <polyline points="22,6 12,13 2,6"/>
                 </svg>
               </div>
-              <h2 class="card-title">Request owner verification</h2>
+              <h2 class="card-title">{{ 'absher.delegate_title' | t }}</h2>
               <p class="card-desc" style="margin-top: 6px;">
-                Share the secure link below with the company owner so they can verify their identity via Absher.
+                {{ 'absher.delegate_desc' | t }}
               </p>
             </div>
 
@@ -234,7 +236,7 @@ type Step =
             </div>
             <div class="share-link-box" style="margin-top: 12px;">
               <span class="share-link-text">{{ shareLink }}</span>
-              <button class="copy-btn" (click)="copyLink()">{{ copied ? 'Copied!' : 'Copy' }}</button>
+              <button class="copy-btn" (click)="copyLink()">{{ copied ? ('common.copied' | t) : ('common.copy' | t) }}</button>
             </div>
           </app-card>
 
@@ -248,20 +250,20 @@ type Step =
             </div>
             <div style="margin-top: 12px;">
               <app-input
-                label="Owner's mobile number"
-                placeholder="+966 5x xxx xxxx"
+                [label]="('absher.owner_phone_label' | t)"
+                [placeholder]="('absher.owner_phone_placeholder' | t)"
                 [value]="ownerPhone"
                 (valueChange)="ownerPhone = $event"
               ></app-input>
               <app-btn variant="primary" [full]="true" size="lg" [disabled]="ownerPhone.length < 10" (clicked)="sendSms()">
-                Send SMS to Owner
+                {{ 'absher.send_sms' | t }}
               </app-btn>
             </div>
           </app-card>
 
           <div style="display: flex; gap: 10px; margin-top: 20px;">
-            <app-btn variant="ghost" [full]="true" size="md" (clicked)="go('/dashboard')">Dashboard</app-btn>
-            <app-btn variant="ghost" [full]="true" size="md" (clicked)="go('/support')">Support</app-btn>
+            <app-btn variant="ghost" [full]="true" size="md" (clicked)="go('/dashboard')">{{ 'nav.dashboard' | t }}</app-btn>
+            <app-btn variant="ghost" [full]="true" size="md" (clicked)="go('/support')">{{ 'support.title' | t }}</app-btn>
           </div>
         </div>
 
@@ -274,7 +276,7 @@ type Step =
                   <polyline points="20 6 9 17 4 12"/>
                 </svg>
               </div>
-              <p [style.color]="C.g900" [style.font-weight]="700" [style.font-size.px]="17" [style.margin-bottom.px]="6">Link sent!</p>
+              <p [style.color]="C.g900" [style.font-weight]="700" [style.font-size.px]="17" [style.margin-bottom.px]="6">{{ 'absher.sms_sent' | t }}</p>
               <p [style.color]="C.g500" [style.font-size.px]="14">Verification link sent to {{ ownerPhone }}</p>
             </div>
           </app-card>
@@ -299,21 +301,21 @@ type Step =
                   <polyline points="12 6 12 12 16 14"/>
                 </svg>
               </div>
-              <app-badge color="amber">Pending owner verification</app-badge>
+              <app-badge color="amber">{{ 'absher.pending_title' | t }}</app-badge>
               <p [style.color]="C.g600" [style.font-size.px]="14" [style.line-height]="'1.6'" [style.margin-top.px]="16">
-                We're waiting for the company owner to verify their identity. You'll receive a notification once it's complete.
+                {{ 'absher.pending_desc' | t }}
               </p>
             </div>
           </app-card>
 
           <div style="margin-top: 20px;">
             <app-btn variant="secondary" [full]="true" size="md" (clicked)="step = 'delegate'">
-              Resend / Change
+              {{ 'absher.request_owner' | t }}
             </app-btn>
           </div>
 
           <p class="form-footer" style="margin-top: 20px;">
-            <span class="link" (click)="go('/dashboard')">Back to Dashboard</span>
+            <span class="link" (click)="go('/dashboard')">{{ 'nav.dashboard' | t }}</span>
           </p>
 
           <div class="demo-bar">
@@ -341,7 +343,7 @@ type Step =
 
           <!-- Company Details card -->
           <app-card [padding]="32">
-            <h2 class="card-title" style="margin-bottom: 20px;">Company Details</h2>
+            <h2 class="card-title" style="margin-bottom: 20px;">{{ 'company.details' | t }}</h2>
             <div class="details-grid">
               <div class="detail-item" *ngFor="let f of companyFields">
                 <div class="detail-label">{{ f[0] }}</div>
@@ -357,7 +359,7 @@ type Step =
             <!-- Website (optional) -->
             <div style="margin-top: 20px;">
               <app-input
-                label="Company Website (optional)"
+                [label]="('company.online' | t)"
                 placeholder="https://example.com"
                 [value]="website"
                 (valueChange)="website = $event"
@@ -367,7 +369,7 @@ type Step =
 
           <div style="margin-top: 24px;">
             <app-btn variant="primary" [full]="true" size="lg" (clicked)="onRegister()">
-              Confirm &amp; Register Company &rarr;
+              {{ 'common.confirm' | t }} &rarr;
             </app-btn>
           </div>
         </div>
@@ -382,7 +384,7 @@ type Step =
           <div style="display: flex; gap: 12px; margin-top: 24px;">
             <app-btn variant="ghost" [full]="true" size="lg" (clicked)="step = 'details'">&larr; Back</app-btn>
             <app-btn variant="primary" [full]="true" size="lg" (clicked)="step = 'uploadDocs'">
-              Next: Upload Documents &rarr;
+              {{ 'common.next' | t }} &rarr;
             </app-btn>
           </div>
         </div>
@@ -398,10 +400,10 @@ type Step =
                   <line x1="12" y1="3" x2="12" y2="15"/>
                 </svg>
               </div>
-              <h2 class="card-title" style="margin: 0;">Company Documents</h2>
+              <h2 class="card-title" style="margin: 0;">{{ 'add_company.step_review' | t }}</h2>
             </div>
 
-            <p class="card-desc" style="margin: 16px 0 20px;">Upload the required company documents. These are necessary for verifying your company's eligibility.</p>
+            <p class="card-desc" style="margin: 16px 0 20px;">{{ 'add_company.cr_helper' | t }}</p>
 
             <div class="doc-list">
               <div *ngFor="let doc of companyDocSlots" class="doc-row" [class.doc-uploaded]="doc.uploaded">
@@ -427,9 +429,9 @@ type Step =
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                       <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
                     </svg>
-                    Upload
+                    {{ 'common.add' | t }}
                   </button>
-                  <button *ngIf="doc.uploaded" class="doc-view-btn">View</button>
+                  <button *ngIf="doc.uploaded" class="doc-view-btn">{{ 'common.view_all' | t }}</button>
                   <button *ngIf="doc.uploaded" class="doc-remove-btn" (click)="removeDoc(doc)">
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                       <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
@@ -450,7 +452,7 @@ type Step =
           <div style="display: flex; gap: 12px; margin-top: 24px;">
             <app-btn variant="ghost" [full]="true" size="lg" (clicked)="step = 'prevProjects'">&larr; Back</app-btn>
             <app-btn variant="primary" [full]="true" size="lg" [disabled]="!companyRequiredDocsDone" (clicked)="step = 'success'">
-              Complete Registration &rarr;
+              {{ 'common.submit' | t }} &rarr;
             </app-btn>
           </div>
         </div>
@@ -476,18 +478,18 @@ type Step =
                 <p [style.font-size.px]="15" [style.font-weight]="700" [style.color]="C.g900">Al Jazeera Development Co.</p>
                 <p [style.font-size.px]="13" [style.color]="C.g500" [style.margin-top.px]="2">CR {{ cr || '1020304050607' }}</p>
               </div>
-              <app-badge color="amber">Under Review</app-badge>
+              <app-badge color="amber">{{ 'dashboard.under_review' | t }}</app-badge>
             </div>
           </app-card>
 
           <div style="margin-top: 24px;">
             <app-btn variant="primary" [full]="true" size="lg" (clicked)="goToCompanyVerify()">
-              Complete Company Verification &rarr;
+              {{ 'company.verify_btn' | t }} &rarr;
             </app-btn>
           </div>
           <div style="margin-top: 12px;">
             <app-btn variant="secondary" [full]="true" size="md" (clicked)="go('/dashboard')">
-              &larr; Back to Dashboard
+              &larr; {{ 'nav.dashboard' | t }}
             </app-btn>
           </div>
         </div>

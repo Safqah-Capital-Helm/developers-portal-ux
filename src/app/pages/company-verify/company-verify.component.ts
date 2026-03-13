@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { C } from '../../shared/theme';
+import { I18nService } from '../../shared/i18n/i18n.service';
 import {
   NavComponent,
   BackLinkComponent,
@@ -9,6 +10,7 @@ import {
   ProgressStepsComponent,
   CompanyVerifyFormComponent,
   AvatarComponent,
+  TranslatePipe,
 } from '../../shared';
 
 @Component({
@@ -22,17 +24,18 @@ import {
     ProgressStepsComponent,
     CompanyVerifyFormComponent,
     AvatarComponent,
+    TranslatePipe,
   ],
   template: `
     <div class="page">
       <app-nav></app-nav>
       <div class="container">
-        <app-back-link to="/dashboard" label="Back to Dashboard"></app-back-link>
+        <app-back-link to="/dashboard" [label]="('company_verify.back_to_dashboard' | t)"></app-back-link>
 
         <!-- Demo toggles -->
         <div class="demo-bar">
-          <button class="demo-toggle" [class.active]="demoRole === 'owner'" (click)="setDemoRole('owner')">I am an Owner</button>
-          <button class="demo-toggle" [class.active]="demoRole === 'non-owner'" (click)="setDemoRole('non-owner')">I am not an Owner</button>
+          <button class="demo-toggle" [class.active]="demoRole === 'owner'" (click)="setDemoRole('owner')">{{ 'company_verify.demo_owner' | t }}</button>
+          <button class="demo-toggle" [class.active]="demoRole === 'non-owner'" (click)="setDemoRole('non-owner')">{{ 'company_verify.demo_non_owner' | t }}</button>
         </div>
 
         <!-- Non-owner blocker -->
@@ -42,10 +45,9 @@ import {
               <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>
             </svg>
           </div>
-          <h2 class="non-owner-title">Owner verification required</h2>
+          <h2 class="non-owner-title">{{ 'company_verify.non_owner_title' | t }}</h2>
           <p class="non-owner-desc">
-            Only registered company owners can complete the verification process.
-            Ask one of the following owners to verify.
+            {{ 'company_verify.non_owner_desc' | t }}
           </p>
 
           <div class="owners-list">
@@ -60,10 +62,10 @@ import {
               <div class="owner-right">
                 <span *ngIf="owner.invited" class="invited-tag">
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-                  Invited
+                  {{ 'company_verify.invited' | t }}
                 </span>
                 <app-btn *ngIf="!owner.invited" variant="secondary" size="sm" (clicked)="inviteOwner(owner)">
-                  Invite to verify
+                  {{ 'company_verify.invite_to_verify' | t }}
                 </app-btn>
               </div>
             </div>
@@ -73,7 +75,7 @@ import {
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g400" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
             </svg>
-            They will receive an email with a link to complete the verification.
+            {{ 'company_verify.non_owner_help' | t }}
           </p>
         </div>
 
@@ -188,10 +190,12 @@ export class CompanyVerifyComponent implements OnInit {
   currentStep = 0;
   demoRole: 'owner' | 'non-owner' = 'owner';
 
-  stepLabels = [
-    'Company Details',
-    'Declaration',
-  ];
+  get stepLabels() {
+    return [
+      this.i18n.t('company_verify.step_details'),
+      this.i18n.t('company_verify.step_declaration'),
+    ];
+  }
 
   crOwners = [
     { name: 'Mohammad Al-Omran', crRole: 'Partner', invited: false },
@@ -202,6 +206,7 @@ export class CompanyVerifyComponent implements OnInit {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
+    private i18n: I18nService,
   ) {}
 
   ngOnInit(): void {

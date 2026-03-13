@@ -8,19 +8,19 @@ import { BackLinkComponent } from '../../shared/components/back-link/back-link.c
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { CardComponent } from '../../shared/components/card/card.component';
 import { BadgeComponent } from '../../shared/components/badge/badge.component';
-import { ResultScreenComponent } from '../../shared';
+import { ResultScreenComponent, TranslatePipe } from '../../shared';
 
 @Component({
   selector: 'app-offer-result',
   standalone: true,
-  imports: [CommonModule, FormsModule, NavComponent, BackLinkComponent, ButtonComponent, CardComponent, BadgeComponent, ResultScreenComponent],
+  imports: [CommonModule, FormsModule, NavComponent, BackLinkComponent, ButtonComponent, CardComponent, BadgeComponent, ResultScreenComponent, TranslatePipe],
   template: `
     <!-- ===== ACCEPTED STATE ===== -->
     <div class="page" *ngIf="accepted">
       <app-nav></app-nav>
       <div class="container-accepted">
         <div class="center-content">
-          <app-result-screen type="success" title="Term-sheet accepted!" subtitle="Our team will contact you within 24 hours to begin the signing process.">
+          <app-result-screen type="success" [title]="('offer.accepted_title' | t)" [subtitle]="('offer.accepted_desc' | t)">
             <app-card [padding]="0" class="status-card">
               <div class="status-row">
                 <div class="status-left">
@@ -48,7 +48,7 @@ import { ResultScreenComponent } from '../../shared';
             </app-card>
 
             <div class="btn-group-center">
-              <app-btn variant="secondary" size="lg" (clicked)="go('/dashboard')">&larr; Back to Dashboard</app-btn>
+              <app-btn variant="secondary" size="lg" (clicked)="go('/dashboard')">&larr; {{ 'common.back' | t }}</app-btn>
             </div>
           </app-result-screen>
         </div>
@@ -61,7 +61,7 @@ import { ResultScreenComponent } from '../../shared';
 
       <!-- Decline FORM -->
       <div class="container-declined" *ngIf="!submitted">
-        <app-back-link [to]="'/application/' + appId + '/term-sheet'" label="Back to Term-sheet"></app-back-link>
+        <app-back-link [to]="'/application/' + appId + '/term-sheet'" [label]="('common.back' | t)"></app-back-link>
 
         <div class="header-section">
           <div class="x-circle">
@@ -69,8 +69,8 @@ import { ResultScreenComponent } from '../../shared';
               <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
             </svg>
           </div>
-          <h1 class="result-title">Decline term-sheet</h1>
-          <p class="result-sub">Please let us know why so we can improve our offerings.</p>
+          <h1 class="result-title">{{ 'offer.declined_title' | t }}</h1>
+          <p class="result-sub">{{ 'offer.decline_reason' | t }}</p>
         </div>
 
         <app-card [padding]="0">
@@ -109,7 +109,7 @@ import { ResultScreenComponent } from '../../shared';
             <div class="other-textarea" *ngIf="reason === 'Other reason'">
               <textarea
                 class="textarea-field"
-                placeholder="Please describe your reason..."
+                [placeholder]="('offer.decline_reason_placeholder' | t)"
                 [(ngModel)]="extra"
                 rows="3"
               ></textarea>
@@ -118,15 +118,15 @@ import { ResultScreenComponent } from '../../shared';
         </app-card>
 
         <div class="btn-group-spread">
-          <app-btn variant="secondary" size="lg" (clicked)="go('/application/1/term-sheet')">&larr; Back to Term-sheet</app-btn>
-          <app-btn variant="danger" size="lg" [disabled]="!reason" (clicked)="submitted = true">Confirm Decline</app-btn>
+          <app-btn variant="secondary" size="lg" (clicked)="go('/application/1/term-sheet')">&larr; {{ 'common.back' | t }}</app-btn>
+          <app-btn variant="danger" size="lg" [disabled]="!reason" (clicked)="submitted = true">{{ 'common.confirm' | t }} {{ 'offer.decline' | t }}</app-btn>
         </div>
       </div>
 
       <!-- Decline SUBMITTED -->
       <div class="container-accepted" *ngIf="submitted">
         <div class="center-content">
-          <app-result-screen type="error" title="Term-sheet declined" subtitle="Your feedback has been recorded. You can contact our support team if you change your mind.">
+          <app-result-screen type="error" [title]="('offer.declined_title' | t)" [subtitle]="('offer.declined_desc' | t)">
             <app-card [padding]="0" class="status-card">
               <div class="status-row">
                 <div class="status-left">
@@ -153,14 +153,14 @@ import { ResultScreenComponent } from '../../shared';
               </div>
               <div class="status-divider"></div>
               <div class="reason-display">
-                <span class="reason-label">Reason</span>
+                <span class="reason-label">{{ 'offer.decline_reason' | t }}</span>
                 <span class="reason-value">{{ reason }}{{ reason === 'Other reason' && extra ? ': ' + extra : '' }}</span>
               </div>
             </app-card>
 
             <div class="btn-group-center two-btns">
-              <app-btn variant="secondary" size="lg" (clicked)="go('/dashboard')">&larr; Back to Dashboard</app-btn>
-              <app-btn variant="primary" size="lg" (clicked)="go('/support')">Contact Support</app-btn>
+              <app-btn variant="secondary" size="lg" (clicked)="go('/dashboard')">&larr; {{ 'common.back' | t }}</app-btn>
+              <app-btn variant="primary" size="lg" (clicked)="go('/support')">{{ 'support.title' | t }}</app-btn>
             </div>
           </app-result-screen>
         </div>

@@ -2,12 +2,12 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { C } from '../../shared/theme';
-import { LogoComponent } from '../../shared';
+import { LogoComponent, TranslatePipe } from '../../shared';
 
 @Component({
   selector: 'app-not-dev',
   standalone: true,
-  imports: [CommonModule, LogoComponent],
+  imports: [CommonModule, LogoComponent, TranslatePipe],
   template: `
     <div class="page-white">
       <!-- Header -->
@@ -27,8 +27,8 @@ import { LogoComponent } from '../../shared';
           </div>
         </div>
 
-        <h1 class="title">Not Eligible for Financing</h1>
-        <p class="subtitle">Based on the commercial registration provided, this entity does not currently meet the eligibility criteria for Safqah financing products.</p>
+        <h1 class="title">{{ 'not_eligible.title' | t }}</h1>
+        <p class="subtitle">{{ 'not_eligible.desc' | t }}</p>
 
         <!-- Reason card -->
         <div class="reason-card">

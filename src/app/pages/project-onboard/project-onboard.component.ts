@@ -2,12 +2,14 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { C } from '../../shared/theme';
+import { I18nService } from '../../shared/i18n/i18n.service';
 import {
   LogoComponent,
   ButtonComponent,
   ProgressStepsComponent,
   CardComponent,
   ProjectFormComponent,
+  TranslatePipe,
 } from '../../shared';
 
 @Component({
@@ -20,12 +22,13 @@ import {
     ProgressStepsComponent,
     CardComponent,
     ProjectFormComponent,
+    TranslatePipe,
   ],
   template: `
     <!-- Header bar -->
     <div class="header-bar">
       <app-logo [size]="32"></app-logo>
-      <span class="step-indicator">Step 2 of 3</span>
+      <span class="step-indicator">{{ 'common.step_of' | t:{current: '2', total: '3'} }}</span>
     </div>
 
     <div class="page">
@@ -38,10 +41,10 @@ import {
 
         <!-- Welcome text -->
         <div class="welcome-section">
-          <p class="welcome-name">Welcome, Ahmed Al-Salem</p>
-          <h1 class="welcome-title">Tell us about your project</h1>
+          <p class="welcome-name">{{ 'add_project.welcome_name' | t:{name: 'Ahmed Al-Salem'} }}</p>
+          <h1 class="welcome-title">{{ 'add_project.welcome_title' | t }}</h1>
           <p class="welcome-subtitle">
-            Provide key details so we can match you with the right financing options.
+            {{ 'add_project.welcome_subtitle' | t }}
           </p>
         </div>
 
@@ -61,7 +64,7 @@ import {
         <!-- Next button -->
         <div class="btn-row">
           <app-btn variant="primary" size="lg" (clicked)="go('/onboarding/financing')">
-            Next: Financing Need &rarr;
+            {{ 'add_project.next_financing' | t }} &rarr;
           </app-btn>
         </div>
       </div>
@@ -137,7 +140,13 @@ import {
 export class ProjectOnboardComponent {
   C = C;
 
-  onboardSteps = ['Verify identity', 'Project details', 'Financing need'];
+  get onboardSteps() {
+    return [
+      this.i18n.t('add_project.step_verify'),
+      this.i18n.t('add_project.step_project'),
+      this.i18n.t('add_project.step_financing'),
+    ];
+  }
 
   name = '';
   type = '';
@@ -147,7 +156,7 @@ export class ProjectOnboardComponent {
   totalSellingArea = '';
   projectPeriod = '';
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private i18n: I18nService) {}
 
   go(path: string) {
     this.router.navigateByUrl(path);

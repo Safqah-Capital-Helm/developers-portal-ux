@@ -7,12 +7,13 @@ import {
   LogoComponent,
   ButtonComponent,
   CardComponent,
+  TranslatePipe,
 } from '../../shared';
 
 @Component({
   selector: 'app-invite-accept',
   standalone: true,
-  imports: [CommonModule, FormsModule, LogoComponent, ButtonComponent, CardComponent],
+  imports: [CommonModule, FormsModule, LogoComponent, ButtonComponent, CardComponent, TranslatePipe],
   template: `
     <!-- Header bar -->
     <div class="header-bar">
@@ -34,9 +35,9 @@ import {
 
         <!-- Welcome text -->
         <div class="welcome-section">
-          <h1 class="welcome-title">You've been invited!</h1>
+          <h1 class="welcome-title">{{ 'invite_accept.title' | t }}</h1>
           <p class="welcome-subtitle">
-            <strong>Ahmed Al-Salem</strong> has invited you to join
+            {{ 'invite_accept.desc' | t }}
           </p>
           <div class="company-badge">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.green" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -78,7 +79,7 @@ import {
         <!-- Actions -->
         <div class="actions">
           <app-btn variant="primary" size="lg" [disabled]="!fullName.trim() || !phone.trim()" (clicked)="accept()">
-            Accept Invitation &amp; Continue &rarr;
+            {{ 'invite_accept.accept' | t }} &rarr;
           </app-btn>
           <button class="decline-btn" (click)="showDecline = true">Decline invitation</button>
         </div>

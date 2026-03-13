@@ -8,17 +8,18 @@ import {
   ButtonComponent,
   ProgressStepsComponent,
   CardComponent,
+  TranslatePipe,
 } from '../../shared';
 
 @Component({
   selector: 'app-team-invite',
   standalone: true,
-  imports: [CommonModule, FormsModule, LogoComponent, ButtonComponent, ProgressStepsComponent, CardComponent],
+  imports: [CommonModule, FormsModule, LogoComponent, ButtonComponent, ProgressStepsComponent, CardComponent, TranslatePipe],
   template: `
     <!-- Header bar -->
     <div class="header-bar">
       <app-logo [size]="32"></app-logo>
-      <span class="step-indicator">Step 2 of 2</span>
+      <span class="step-indicator">{{ 'common.step_of' | t:{current: '2', total: '2'} }}</span>
     </div>
 
     <div class="page">
@@ -45,14 +46,9 @@ import {
         <!-- Welcome text -->
         <div class="welcome-section">
           <p class="welcome-name">Welcome, Ahmed Al-Salem</p>
-          <h1 class="welcome-title">Invite your team</h1>
-          <p class="welcome-subtitle" *ngIf="crOwners.length > 0">
-            We found the registered owners from your company's CR.
-            Add their contact details so they can access the portal.
-          </p>
-          <p class="welcome-subtitle" *ngIf="crOwners.length === 0">
-            Add your team members' email addresses and assign roles
-            so they can access the portal.
+          <h1 class="welcome-title">{{ 'team_invite.title' | t }}</h1>
+          <p class="welcome-subtitle">
+            {{ 'team_invite.subtitle' | t }}
           </p>
         </div>
 
@@ -87,11 +83,11 @@ import {
                     </div>
                   </div>
                   <div class="invite-field">
-                    <label class="field-label">Email Address</label>
+                    <label class="field-label">{{ 'team_invite.email_label' | t }}</label>
                     <input class="field-input" [placeholder]="'e.g. ' + owner.name.split(' ')[0].toLowerCase() + '@company.com'" [(ngModel)]="owner.email" />
                   </div>
                   <div class="invite-field">
-                    <label class="field-label">Portal Role</label>
+                    <label class="field-label">{{ 'team_invite.role_label' | t }}</label>
                     <select class="field-select" [(ngModel)]="owner.role">
                       <option value="">Select role...</option>
                       <option value="Admin">Admin</option>
@@ -126,11 +122,11 @@ import {
               <div class="invite-num extra">{{ crOwners.length + i + 1 }}</div>
               <div class="invite-fields">
                 <div class="invite-field">
-                  <label class="field-label">Email Address</label>
-                  <input class="field-input" placeholder="e.g. omar@company.com" [(ngModel)]="inv.email" />
+                  <label class="field-label">{{ 'team_invite.email_label' | t }}</label>
+                  <input class="field-input" [placeholder]="('team_invite.email_placeholder' | t)" [(ngModel)]="inv.email" />
                 </div>
                 <div class="invite-field">
-                  <label class="field-label">Role</label>
+                  <label class="field-label">{{ 'team_invite.role_label' | t }}</label>
                   <select class="field-select" [(ngModel)]="inv.role">
                     <option value="Admin">Admin</option>
                     <option value="Editor">Editor</option>
@@ -149,7 +145,7 @@ import {
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                 <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
               </svg>
-              Add another member
+              {{ 'team_invite.add_another' | t }}
             </button>
           </div>
         </app-card>
@@ -157,9 +153,9 @@ import {
         <!-- Actions -->
         <div class="actions">
           <app-btn variant="primary" size="lg" [disabled]="!hasValidInvite" (clicked)="sendAndContinue()">
-            Send Invitations &amp; Continue &rarr;
+            {{ 'team_invite.send_continue' | t }} &rarr;
           </app-btn>
-          <button class="skip-btn" (click)="skip()">Skip for now</button>
+          <button class="skip-btn" (click)="skip()">{{ 'team_invite.skip' | t }}</button>
         </div>
 
         <!-- Helper note -->
@@ -167,12 +163,12 @@ import {
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g400" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
           </svg>
-          <span>Team members will receive an email invitation to join your workspace.</span>
+          <span>{{ 'team_invite.email_helper' | t }}</span>
         </div>
 
         <!-- Demo: view invite acceptance page -->
         <div class="demo-bar" style="margin-top: 28px">
-          <button class="demo-toggle" (click)="goToInviteAccept()">Demo: View Invite Acceptance Page &rarr;</button>
+          <button class="demo-toggle" (click)="goToInviteAccept()">{{ 'team_invite.demo_invite' | t }} &rarr;</button>
         </div>
 
       </div>

@@ -14,6 +14,7 @@ import {
   MapPickerComponent,
   ReviewGridComponent,
   getCompanyLogo,
+  TranslatePipe,
 } from '../../shared';
 import type { MapLocation } from '../../shared';
 
@@ -32,15 +33,16 @@ import type { MapLocation } from '../../shared';
     InputComponent,
     MapPickerComponent,
     ReviewGridComponent,
+    TranslatePipe,
   ],
   template: `
     <div class="page">
       <app-nav></app-nav>
       <div class="container">
-        <app-back-link to="/dashboard/projects" label="Back to Projects"></app-back-link>
+        <app-back-link to="/dashboard/projects" [label]="('projects.title' | t)"></app-back-link>
 
-        <h1 class="page-title">Create a new project</h1>
-        <p class="page-subtitle">Fill in the details below to register your project and prepare it for financing.</p>
+        <h1 class="page-title">{{ 'add_project.title' | t }}</h1>
+        <p class="page-subtitle">{{ 'add_project.name_helper' | t }}</p>
 
         <!-- Progress Steps -->
         <app-progress-steps
@@ -52,7 +54,7 @@ import type { MapLocation } from '../../shared';
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.green" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="20 6 9 17 4 12"/>
           </svg>
-          Draft saved
+          {{ 'common.done' | t }}
         </div>
 
         <!-- Pre-selected company banner -->
@@ -70,8 +72,8 @@ import type { MapLocation } from '../../shared';
         <!-- ============ STEP 0: Select Company ============ -->
         <div *ngIf="!companyPreSelected && step === 0" class="animate-in">
           <app-card [padding]="32">
-            <div class="section-title">Select Company</div>
-            <div class="section-desc">Choose the company entity that owns or will develop this project.</div>
+            <div class="section-title">{{ 'nav.companies' | t }}</div>
+            <div class="section-desc">{{ 'add_application.select_project_desc' | t }}</div>
 
             <div class="company-list">
               <div
@@ -110,21 +112,21 @@ import type { MapLocation } from '../../shared';
         <!-- ============ STEP 1: Project Details ============ -->
         <div *ngIf="step === 1" class="animate-in">
           <app-card [padding]="32">
-            <div class="section-title">Project Details</div>
-            <div class="section-desc">Tell us about your project — this helps us understand your development and match it to the right financing.</div>
+            <div class="section-title">{{ 'add_project.step_details' | t }}</div>
+            <div class="section-desc">{{ 'add_project.name_helper' | t }}</div>
 
             <!-- Project Name -->
             <app-input
-              label="Project Name"
-              placeholder="e.g. Al Noor Residential Compound"
-              helper="Choose a descriptive name for your development project."
+              [label]="('add_project.name_label' | t)"
+              [placeholder]="('add_project.name_placeholder' | t)"
+              [helper]="('add_project.name_helper' | t)"
               [value]="name"
               (valueChange)="name = $event; onFieldChange()"
             ></app-input>
 
             <!-- Description -->
             <div class="field-group">
-              <label class="field-label">Description</label>
+              <label class="field-label">{{ 'add_project.step_details' | t }}</label>
               <textarea
                 class="textarea"
                 rows="3"
@@ -137,7 +139,7 @@ import type { MapLocation } from '../../shared';
 
             <!-- Project Type -->
             <div class="field-group">
-              <label class="field-label">Project Type</label>
+              <label class="field-label">{{ 'add_project.type_label' | t }}</label>
               <p class="field-helper" style="margin-bottom: 10px;">Select the category that best describes your development</p>
               <div class="type-grid">
                 <div
@@ -154,7 +156,7 @@ import type { MapLocation } from '../../shared';
 
             <!-- Current Stage -->
             <div class="field-group">
-              <label class="field-label">Current Stage</label>
+              <label class="field-label">{{ 'add_project.stage_label' | t }}</label>
               <p class="field-helper" style="margin-bottom: 10px;">Where is the project in its lifecycle right now?</p>
               <div class="stepper">
                 <ng-container *ngFor="let s of stages; let i = index; let last = last">
@@ -185,10 +187,10 @@ import type { MapLocation } from '../../shared';
 
             <!-- Development Period -->
             <app-input
-              label="Development Period"
-              placeholder="e.g. 24"
+              [label]="('add_project.period_label' | t)"
+              [placeholder]="('add_project.period_placeholder' | t)"
               suffix="months"
-              helper="Estimated duration from start to completion."
+              [helper]="('add_project.period_helper' | t)"
               [value]="projectPeriod"
               (valueChange)="projectPeriod = $event; onFieldChange()"
             ></app-input>
@@ -198,12 +200,12 @@ import type { MapLocation } from '../../shared';
         <!-- ============ STEP 2: Land ============ -->
         <div *ngIf="step === 2" class="animate-in">
           <app-card [padding]="32">
-            <div class="section-title">Land Information</div>
+            <div class="section-title">{{ 'add_project.location_label' | t }}</div>
             <div class="section-desc">Provide the location and size of the land plot for this project.</div>
 
             <!-- Map -->
             <div class="field-group">
-              <label class="field-label">Project Location</label>
+              <label class="field-label">{{ 'add_project.location_label' | t }}</label>
               <p class="field-helper" style="margin-bottom: 10px;">Pin the exact location of your project on the map</p>
               <app-map-picker (locationChange)="onMapChange($event)"></app-map-picker>
             </div>
@@ -236,10 +238,10 @@ import type { MapLocation } from '../../shared';
 
             <!-- Total Land Area -->
             <app-input
-              label="Total Land Area"
+              [label]="('add_project.building_area_label' | t)"
               placeholder="e.g. 25,000"
               suffix="m²"
-              helper="Total area of the land plot in square meters, as per the title deed"
+              [helper]="('add_project.building_area_helper' | t)"
               [value]="totalLandArea"
               (valueChange)="totalLandArea = $event; onFieldChange()"
             ></app-input>
@@ -249,31 +251,31 @@ import type { MapLocation } from '../../shared';
         <!-- ============ STEP 3: Specs ============ -->
         <div *ngIf="step === 3" class="animate-in">
           <app-card [padding]="32">
-            <div class="section-title">Project Specifications</div>
+            <div class="section-title">{{ 'add_project.step_details' | t }}</div>
             <div class="section-desc">Provide the key metrics for your development. These help us assess the project scope and financing needs.</div>
 
             <app-input
-              label="Number of Units"
-              placeholder="e.g. 120"
-              helper="Total number of sellable units in the project."
+              [label]="('add_project.units_label' | t)"
+              [placeholder]="('add_project.units_placeholder' | t)"
+              [helper]="('add_project.units_helper' | t)"
               [value]="expectedUnits"
               (valueChange)="expectedUnits = $event; onFieldChange()"
             ></app-input>
 
             <app-input
-              label="Building Area"
-              placeholder="e.g. 15,000"
+              [label]="('add_project.building_area_label' | t)"
+              [placeholder]="('add_project.building_area_placeholder' | t)"
               suffix="m²"
-              helper="Total built-up area across all floors."
+              [helper]="('add_project.building_area_helper' | t)"
               [value]="totalBuildingArea"
               (valueChange)="totalBuildingArea = $event; onFieldChange()"
             ></app-input>
 
             <app-input
-              label="Selling Area"
-              placeholder="e.g. 12,000"
+              [label]="('add_project.selling_area_label' | t)"
+              [placeholder]="('add_project.selling_area_placeholder' | t)"
               suffix="m²"
-              helper="Net sellable area available to buyers."
+              [helper]="('add_project.selling_area_helper' | t)"
               [value]="totalSellingArea"
               (valueChange)="totalSellingArea = $event; onFieldChange()"
             ></app-input>
@@ -292,20 +294,20 @@ import type { MapLocation } from '../../shared';
         <!-- ============ STEP 4: Project Financials ============ -->
         <div *ngIf="step === 4" class="animate-in">
           <app-card [padding]="32">
-            <div class="section-title">Project Financials</div>
+            <div class="section-title">{{ 'company_verify.financial' | t }}</div>
             <div class="section-desc">Provide the financial details — these are critical for assessing financing eligibility and structuring offers.</div>
 
             <app-input
-              label="Estimated Total Project Cost"
-              placeholder="e.g. 50,000,000"
+              [label]="('financing.total_cost_label' | t)"
+              [placeholder]="('financing.total_cost_placeholder' | t)"
               suffix="SAR"
-              helper="Total estimated project cost including land acquisition, construction, infrastructure, and soft costs"
+              [helper]="('financing.total_cost_helper' | t)"
               [value]="totalCost"
               (valueChange)="totalCost = $event; onFieldChange()"
             ></app-input>
 
             <div *ngIf="parsedCost > 0" class="fin-section">
-              <div class="fin-label">Cost Breakdown</div>
+              <div class="fin-label">{{ 'financing.land_cost' | t }}</div>
               <div class="breakdown-slider">
                 <div class="slider-header">
                   <span class="slider-tag" [style.color]="C.amber600">Land {{ landCostPct }}%</span>
@@ -346,10 +348,10 @@ import type { MapLocation } from '../../shared';
 
             <div class="fin-section">
               <app-input
-                label="Expected Revenue"
-                placeholder="e.g. 75,000,000"
+                [label]="('financing.revenue_label' | t)"
+                [placeholder]="('financing.revenue_placeholder' | t)"
                 suffix="SAR"
-                helper="Total expected revenue from all unit sales upon project completion"
+                [helper]="('financing.revenue_helper' | t)"
                 [value]="expectedRevenue"
                 (valueChange)="expectedRevenue = $event; onFieldChange()"
               ></app-input>
@@ -383,7 +385,7 @@ import type { MapLocation } from '../../shared';
               </svg>
             </div>
             <div>
-              <div class="rv-hero-title">Review Your Project</div>
+              <div class="rv-hero-title">{{ 'add_project.step_review' | t }}</div>
               <div class="rv-hero-desc">Please review all details before submitting. You can edit any section below.</div>
             </div>
           </div>
@@ -394,10 +396,10 @@ import type { MapLocation } from '../../shared';
               <div class="rv-card-icon" [style.background]="C.blue50">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.blue500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><line x1="9" y1="10" x2="15" y2="10"/><line x1="9" y1="14" x2="15" y2="14"/></svg>
               </div>
-              <span class="rv-card-title">Company</span>
+              <span class="rv-card-title">{{ 'nav.companies' | t }}</span>
               <button *ngIf="!companyPreSelected" class="rv-edit" (click)="step = 0">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
-                Edit
+                {{ 'common.edit' | t }}
               </button>
             </div>
             <div class="rv-company-body">
@@ -420,10 +422,10 @@ import type { MapLocation } from '../../shared';
               <div class="rv-card-icon" [style.background]="C.greenLt">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.green" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
               </div>
-              <span class="rv-card-title">Project Details</span>
+              <span class="rv-card-title">{{ 'add_project.step_details' | t }}</span>
               <button class="rv-edit" (click)="step = 1">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
-                Edit
+                {{ 'common.edit' | t }}
               </button>
             </div>
             <app-review-grid [items]="reviewDetailsItems"></app-review-grid>
@@ -435,10 +437,10 @@ import type { MapLocation } from '../../shared';
               <div class="rv-card-icon" [style.background]="C.amber50">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.amber500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
               </div>
-              <span class="rv-card-title">Land Information</span>
+              <span class="rv-card-title">{{ 'add_project.step_location' | t }}</span>
               <button class="rv-edit" (click)="step = 2">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
-                Edit
+                {{ 'common.edit' | t }}
               </button>
             </div>
             <app-review-grid [items]="reviewLandItems"></app-review-grid>
@@ -450,10 +452,10 @@ import type { MapLocation } from '../../shared';
               <div class="rv-card-icon" style="background: #ede9fe">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
               </div>
-              <span class="rv-card-title">Project Specifications</span>
+              <span class="rv-card-title">{{ 'add_project.step_details' | t }}</span>
               <button class="rv-edit" (click)="step = 3">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
-                Edit
+                {{ 'common.edit' | t }}
               </button>
             </div>
             <app-review-grid [items]="reviewSpecsItems"></app-review-grid>
@@ -465,10 +467,10 @@ import type { MapLocation } from '../../shared';
               <div class="rv-card-icon" style="background: #fff2ee">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.orange" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
               </div>
-              <span class="rv-card-title">Project Financials</span>
+              <span class="rv-card-title">{{ 'company_verify.financial' | t }}</span>
               <button class="rv-edit" (click)="step = 4">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
-                Edit
+                {{ 'common.edit' | t }}
               </button>
             </div>
             <app-review-grid [items]="reviewFinancialItems"></app-review-grid>
@@ -482,7 +484,7 @@ import type { MapLocation } from '../../shared';
                   <polyline points="20 6 9 17 4 12"/>
                 </svg>
               </div>
-              <span class="checkbox-label">I confirm that all information provided is accurate to the best of my knowledge.</span>
+              <span class="checkbox-label">{{ 'common.confirm' | t }}</span>
             </label>
           </div>
         </div>
@@ -503,7 +505,7 @@ import type { MapLocation } from '../../shared';
                 <polyline points="17 21 17 13 7 13 7 21"/>
                 <polyline points="7 3 7 8 15 8"/>
               </svg>
-              Save & continue later
+              {{ 'common.save' | t }}
             </button>
 
             <app-btn *ngIf="step > 0 && step < 5" variant="primary"
@@ -514,7 +516,7 @@ import type { MapLocation } from '../../shared';
             <app-btn *ngIf="step === 5" variant="primary" size="lg"
               [disabled]="!canSubmit"
               (clicked)="submit()">
-              Create Project &rarr;
+              {{ 'add_project.submit' | t }} &rarr;
             </app-btn>
           </div>
         </div>

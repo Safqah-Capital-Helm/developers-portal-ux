@@ -3,18 +3,18 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { C } from '../../shared/theme';
-import { ButtonComponent, BadgeComponent, ModalComponent, InputComponent, AvatarComponent, PageHeaderComponent } from '../../shared';
+import { ButtonComponent, BadgeComponent, ModalComponent, InputComponent, AvatarComponent, PageHeaderComponent, TranslatePipe } from '../../shared';
 
 @Component({
   selector: 'app-teams-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, ButtonComponent, BadgeComponent, ModalComponent, InputComponent, AvatarComponent, PageHeaderComponent],
+  imports: [CommonModule, FormsModule, ButtonComponent, BadgeComponent, ModalComponent, InputComponent, AvatarComponent, PageHeaderComponent, TranslatePipe],
   template: `
     <div class="container">
-      <app-page-header title="Team" [count]="team.length">
+      <app-page-header [title]="('teams.title' | t)" [count]="team.length">
         <app-btn variant="primary" size="sm" (clicked)="openInviteModal()">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
-          Invite Member
+          {{ 'teams.invite_member' | t }}
         </app-btn>
       </app-page-header>
 
@@ -35,7 +35,7 @@ import { ButtonComponent, BadgeComponent, ModalComponent, InputComponent, Avatar
       </div>
 
       <!-- Member Detail Modal -->
-      <app-modal *ngIf="showMemberModal && selectedMember" [title]="'Member Details'" [wide]="true" (closed)="showMemberModal = false">
+      <app-modal *ngIf="showMemberModal && selectedMember" [title]="('teams.modal_title' | t)" [wide]="true" (closed)="showMemberModal = false">
         <!-- Profile card -->
         <div class="mm-profile">
           <div class="mm-avatar-ring">
@@ -59,7 +59,7 @@ import { ButtonComponent, BadgeComponent, ModalComponent, InputComponent, Avatar
           </div>
           <div class="mm-meta-item">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g400" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            <span>{{ selectedMember.active ? 'Active now' : 'Inactive' }}</span>
+            <span>{{ selectedMember.active ? ('teams.status_active' | t) : ('teams.status_pending' | t) }}</span>
           </div>
         </div>
 
@@ -67,7 +67,7 @@ import { ButtonComponent, BadgeComponent, ModalComponent, InputComponent, Avatar
         <div class="mm-section">
           <div class="mm-section-header">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><polyline points="17 11 19 13 23 9"/></svg>
-            <span>Role & Permissions</span>
+            <span>{{ 'teams.modal_role' | t }}</span>
           </div>
           <div class="role-grid">
             <div *ngFor="let r of roleOptions" class="role-option"
@@ -90,7 +90,7 @@ import { ButtonComponent, BadgeComponent, ModalComponent, InputComponent, Avatar
         <div class="mm-section">
           <div class="mm-section-header">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><line x1="9" y1="10" x2="15" y2="10"/><line x1="9" y1="14" x2="15" y2="14"/></svg>
-            <span>Company Access</span>
+            <span>{{ 'teams.modal_companies' | t }}</span>
           </div>
           <div class="mm-company-list">
             <label *ngFor="let co of companies; let i = index" class="mm-company-item" [class.checked]="memberCompanyAccess[i]">
@@ -108,13 +108,13 @@ import { ButtonComponent, BadgeComponent, ModalComponent, InputComponent, Avatar
 
         <!-- Actions -->
         <div class="mm-actions">
-          <app-btn variant="primary" (clicked)="showMemberModal = false">Save Changes</app-btn>
-          <app-btn *ngIf="!selectedMember.you" variant="dangerOutline" (clicked)="showMemberModal = false">Remove Member</app-btn>
+          <app-btn variant="primary" (clicked)="showMemberModal = false">{{ 'teams.modal_save' | t }}</app-btn>
+          <app-btn *ngIf="!selectedMember.you" variant="dangerOutline" (clicked)="showMemberModal = false">{{ 'teams.modal_remove' | t }}</app-btn>
         </div>
       </app-modal>
 
       <!-- Invite Modal -->
-      <app-modal *ngIf="showInviteModal" title="Invite Team Member" (closed)="showInviteModal = false; inviteSent = false">
+      <app-modal *ngIf="showInviteModal" [title]="('teams.invite_member' | t)" (closed)="showInviteModal = false; inviteSent = false">
         <div *ngIf="!inviteSent">
           <app-input label="Full Name" placeholder="e.g. Omar Al-Harbi" [(value)]="inviteName"></app-input>
           <app-input label="Email Address" placeholder="e.g. omar@company.com" [(value)]="inviteEmail"></app-input>
@@ -122,7 +122,7 @@ import { ButtonComponent, BadgeComponent, ModalComponent, InputComponent, Avatar
           <div class="mm-section" style="margin-top: 4px;">
             <div class="mm-section-header">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><polyline points="17 11 19 13 23 9"/></svg>
-              <span>Role</span>
+              <span>{{ 'teams.modal_role' | t }}</span>
             </div>
             <div class="role-grid">
               <div *ngFor="let r of roleOptions" class="role-option"
@@ -144,7 +144,7 @@ import { ButtonComponent, BadgeComponent, ModalComponent, InputComponent, Avatar
           <div class="mm-section">
             <div class="mm-section-header">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><line x1="9" y1="10" x2="15" y2="10"/><line x1="9" y1="14" x2="15" y2="14"/></svg>
-              <span>Company Access</span>
+              <span>{{ 'teams.modal_companies' | t }}</span>
             </div>
             <div class="mm-company-list">
               <label *ngFor="let co of companies; let i = index" class="mm-company-item" [class.checked]="inviteCompanyAccess[i]">
@@ -161,7 +161,7 @@ import { ButtonComponent, BadgeComponent, ModalComponent, InputComponent, Avatar
           </div>
 
           <div style="margin-top: 24px;">
-            <app-btn variant="primary" [full]="true" (clicked)="sendInvite()">Send Invitation</app-btn>
+            <app-btn variant="primary" [full]="true" (clicked)="sendInvite()">{{ 'team_invite.send_continue' | t }}</app-btn>
           </div>
         </div>
 
@@ -174,7 +174,7 @@ import { ButtonComponent, BadgeComponent, ModalComponent, InputComponent, Avatar
           <div class="invite-success-title">Invitation Sent!</div>
           <div class="invite-success-sub">An invitation has been sent to {{ inviteEmail }}. They will receive an email with instructions to join.</div>
           <div style="margin-top: 20px;">
-            <app-btn variant="secondary" (clicked)="showInviteModal = false; inviteSent = false">Close</app-btn>
+            <app-btn variant="secondary" (clicked)="showInviteModal = false; inviteSent = false">{{ 'common.close' | t }}</app-btn>
           </div>
         </div>
       </app-modal>

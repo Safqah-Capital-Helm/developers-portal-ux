@@ -3,23 +3,23 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { C } from '../../shared/theme';
-import { BadgeComponent, BackLinkComponent, ButtonComponent, AvatarComponent, EmptyStateComponent, AlertBannerComponent, getCompanyLogo } from '../../shared';
+import { BadgeComponent, BackLinkComponent, ButtonComponent, AvatarComponent, EmptyStateComponent, AlertBannerComponent, getCompanyLogo, TranslatePipe } from '../../shared';
 
 @Component({
   selector: 'app-company-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, BadgeComponent, BackLinkComponent, ButtonComponent, AvatarComponent, EmptyStateComponent, AlertBannerComponent],
+  imports: [CommonModule, FormsModule, RouterLink, BadgeComponent, BackLinkComponent, ButtonComponent, AvatarComponent, EmptyStateComponent, AlertBannerComponent, TranslatePipe],
   template: `
     <div class="container" *ngIf="company">
-      <app-back-link to="/dashboard/companies" label="Back to Companies"></app-back-link>
+      <app-back-link to="/dashboard/companies" [label]="('company.back_to_companies' | t)"></app-back-link>
 
       <!-- Verification Alert -->
       <app-alert-banner
         *ngIf="!company.verified"
         type="warning"
-        title="Company Verification Required"
-        message="Complete company verification to unlock financing applications."
-        actionLabel="Verify Company"
+        [title]="('company.verify_alert_title' | t)"
+        [message]="('company.verify_alert_desc' | t)"
+        [actionLabel]="('company.verify_btn' | t)"
         (action)="go('/onboarding/company-verify?from=dashboard')"
         style="display: block; margin-bottom: 16px;"
       ></app-alert-banner>
@@ -59,11 +59,11 @@ import { BadgeComponent, BackLinkComponent, ButtonComponent, AvatarComponent, Em
         <div class="domain-row">
           <div class="domain-label">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g400" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
-            Domain
+            {{ 'company.domain' | t }}
           </div>
           <div class="domain-value" *ngIf="!editingDomain" (click)="startEditDomain()">
             <span *ngIf="company.domain" class="domain-text">{{ company.domain }}</span>
-            <span *ngIf="!company.domain" class="domain-placeholder">Add domain name</span>
+            <span *ngIf="!company.domain" class="domain-placeholder">{{ 'company.add_domain' | t }}</span>
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g400" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
           </div>
           <div class="domain-edit" *ngIf="editingDomain">
@@ -88,22 +88,22 @@ import { BadgeComponent, BackLinkComponent, ButtonComponent, AvatarComponent, Em
         <div class="hero-stats">
           <div class="hero-stat">
             <div class="hero-stat-value">{{ companyProjects.length }}</div>
-            <div class="hero-stat-label">Projects</div>
+            <div class="hero-stat-label">{{ 'company.projects' | t }}</div>
           </div>
           <div class="hero-stat-divider"></div>
           <div class="hero-stat">
             <div class="hero-stat-value">{{ team.length }}</div>
-            <div class="hero-stat-label">Members</div>
+            <div class="hero-stat-label">{{ 'company.members' | t }}</div>
           </div>
           <div class="hero-stat-divider"></div>
           <div class="hero-stat">
             <div class="hero-stat-value">{{ company.capital }}</div>
-            <div class="hero-stat-label">Capital</div>
+            <div class="hero-stat-label">{{ 'company.capital' | t }}</div>
           </div>
           <div class="hero-stat-divider"></div>
           <div class="hero-stat">
             <div class="hero-stat-value">{{ company.size }}</div>
-            <div class="hero-stat-label">Size</div>
+            <div class="hero-stat-label">{{ 'company.size' | t }}</div>
           </div>
         </div>
       </div>
@@ -111,14 +111,14 @@ import { BadgeComponent, BackLinkComponent, ButtonComponent, AvatarComponent, Em
       <!-- ═══ Projects Section ═══ -->
       <div class="section">
         <div class="section-header">
-          <h2 class="section-title">Projects</h2>
+          <h2 class="section-title">{{ 'company.projects' | t }}</h2>
           <a class="new-link" *ngIf="companyProjects.length > 0" (click)="newProject()">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.green" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            New Project
+            {{ 'company.new_project' | t }}
           </a>
         </div>
 
-        <app-empty-state *ngIf="companyProjects.length === 0" message="No projects yet"></app-empty-state>
+        <app-empty-state *ngIf="companyProjects.length === 0" [message]="('company.no_projects' | t)"></app-empty-state>
 
         <div class="projects-grid" *ngIf="companyProjects.length > 0">
           <div *ngFor="let p of visibleProjects"
@@ -128,7 +128,7 @@ import { BadgeComponent, BackLinkComponent, ButtonComponent, AvatarComponent, Em
             <div class="card-img" [style.backgroundImage]="'url(' + p.img + ')'">
               <span *ngIf="p.draft" class="draft-ribbon">
                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                Draft
+                {{ 'company.draft' | t }}
               </span>
             </div>
             <div class="card-body">
@@ -137,14 +137,14 @@ import { BadgeComponent, BackLinkComponent, ButtonComponent, AvatarComponent, Em
               <div *ngIf="!p.draft && p.cost" class="card-cost">{{ p.cost }}</div>
               <div *ngIf="p.draft" class="draft-msg">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.amber500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                Setup incomplete
+                {{ 'company.setup_incomplete' | t }}
               </div>
             </div>
           </div>
         </div>
 
         <a *ngIf="companyProjects.length > 3" class="view-all-link" routerLink="/dashboard/projects">
-          View all {{ companyProjects.length }} projects
+          {{ 'company.view_all_projects' | t:{count: '' + companyProjects.length} }}
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
         </a>
       </div>
@@ -158,11 +158,11 @@ import { BadgeComponent, BackLinkComponent, ButtonComponent, AvatarComponent, Em
                 <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
               </svg>
             </span>
-            Previous Credentials
+            {{ 'company.credentials' | t }}
           </h2>
           <a *ngIf="company.hasPrevProjects" class="new-link" (click)="editCredentials()">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.green" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-            Edit
+            {{ 'common.edit' | t }}
           </a>
         </div>
 
@@ -171,16 +171,16 @@ import { BadgeComponent, BackLinkComponent, ButtonComponent, AvatarComponent, Em
           <div class="prev-stats-row">
             <div class="prev-stat-box">
               <div class="prev-stat-value">{{ company.prevCount }}</div>
-              <div class="prev-stat-label">Completed Projects</div>
+              <div class="prev-stat-label">{{ 'company.completed_projects' | t }}</div>
             </div>
             <div class="prev-stat-box">
               <div class="prev-stat-value">{{ company.prevValue }}</div>
-              <div class="prev-stat-label">Combined Value</div>
+              <div class="prev-stat-label">{{ 'company.combined_value' | t }}</div>
             </div>
           </div>
 
           <div class="prev-fin-section">
-            <div class="prev-fin-label">Financing Sources</div>
+            <div class="prev-fin-label">{{ 'credentials.financing_sources' | t }}</div>
             <div class="prev-fin-bar">
               <div class="prev-fin-seg" *ngIf="company.finBank > 0" [style.width.%]="company.finBank" [style.background]="C.green">{{ company.finBank }}%</div>
               <div class="prev-fin-seg" *ngIf="company.finFintech > 0" [style.width.%]="company.finFintech" [style.background]="C.blue500">{{ company.finFintech }}%</div>
@@ -188,10 +188,10 @@ import { BadgeComponent, BackLinkComponent, ButtonComponent, AvatarComponent, Em
               <div class="prev-fin-seg" *ngIf="company.finSelf > 0" [style.width.%]="company.finSelf" [style.background]="C.g300">{{ company.finSelf }}%</div>
             </div>
             <div class="prev-fin-legend">
-              <span class="prev-fin-item"><span class="prev-fin-dot" [style.background]="C.green"></span> Bank {{ company.finBank }}%</span>
-              <span class="prev-fin-item"><span class="prev-fin-dot" [style.background]="C.blue500"></span> Fintech {{ company.finFintech }}%</span>
-              <span class="prev-fin-item"><span class="prev-fin-dot" [style.background]="C.amber500"></span> Friends & Family {{ company.finFriends }}%</span>
-              <span class="prev-fin-item"><span class="prev-fin-dot" [style.background]="C.g300"></span> Self-Funded {{ company.finSelf }}%</span>
+              <span class="prev-fin-item"><span class="prev-fin-dot" [style.background]="C.green"></span> {{ 'credentials.bank' | t }} {{ company.finBank }}%</span>
+              <span class="prev-fin-item"><span class="prev-fin-dot" [style.background]="C.blue500"></span> {{ 'credentials.fintech' | t }} {{ company.finFintech }}%</span>
+              <span class="prev-fin-item"><span class="prev-fin-dot" [style.background]="C.amber500"></span> {{ 'credentials.friends_family' | t }} {{ company.finFriends }}%</span>
+              <span class="prev-fin-item"><span class="prev-fin-dot" [style.background]="C.g300"></span> {{ 'credentials.self_funded' | t }} {{ company.finSelf }}%</span>
             </div>
           </div>
         </div>
@@ -203,11 +203,11 @@ import { BadgeComponent, BackLinkComponent, ButtonComponent, AvatarComponent, Em
               <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
             </svg>
           </div>
-          <div class="prev-empty-text">No previous credentials added yet</div>
-          <div class="prev-empty-desc">Share your track record to strengthen financing applications.</div>
+          <div class="prev-empty-text">{{ 'company.no_credentials' | t }}</div>
+          <div class="prev-empty-desc">{{ 'company.no_credentials_desc' | t }}</div>
           <app-btn variant="primary" size="sm" (clicked)="editCredentials()">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            Add Credentials
+            {{ 'company.add_credentials' | t }}
           </app-btn>
         </div>
       </div>
@@ -215,10 +215,10 @@ import { BadgeComponent, BackLinkComponent, ButtonComponent, AvatarComponent, Em
       <!-- ═══ Team Section ═══ -->
       <div class="section">
         <div class="section-header">
-          <h2 class="section-title">Team Members <span class="section-count">{{ team.length }}</span></h2>
+          <h2 class="section-title">{{ 'company.team_members' | t }} <span class="section-count">{{ team.length }}</span></h2>
           <a routerLink="/dashboard/teams" class="new-link">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.green" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
-            Invite
+            {{ 'company.invite' | t }}
           </a>
         </div>
 

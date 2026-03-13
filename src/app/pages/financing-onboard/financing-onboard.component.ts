@@ -8,12 +8,13 @@ import {
   CardComponent,
   ProgressStepsComponent,
   FinancingFormComponent,
+  TranslatePipe,
 } from '../../shared';
 
 @Component({
   selector: 'app-financing-onboard',
   standalone: true,
-  imports: [CommonModule, LogoComponent, ButtonComponent, CardComponent, ProgressStepsComponent, FinancingFormComponent],
+  imports: [CommonModule, LogoComponent, ButtonComponent, CardComponent, ProgressStepsComponent, FinancingFormComponent, TranslatePipe],
   template: `
     <div class="page">
       <div class="container">
@@ -21,7 +22,7 @@ import {
         <!-- Header -->
         <div class="header">
           <app-logo [size]="36"></app-logo>
-          <span class="step-label">Step 3 of 3</span>
+          <span class="step-label">{{ 'common.step_of' | t:{current: '3', total: '3'} }}</span>
         </div>
 
         <!-- Progress Steps -->
@@ -47,8 +48,8 @@ import {
 
         <!-- Navigation -->
         <div class="nav-row">
-          <app-btn variant="ghost" (clicked)="go('/onboarding/project')">&#8592; Back</app-btn>
-          <app-btn variant="primary" [disabled]="!totalCost || !product" (clicked)="go('/onboarding/complete')">Save &amp; Continue &#8594;</app-btn>
+          <app-btn variant="ghost" (clicked)="go('/onboarding/project')">&#8592; {{ 'common.back' | t }}</app-btn>
+          <app-btn variant="primary" [disabled]="!totalCost || !product" (clicked)="go('/onboarding/complete')">{{ 'common.save' | t }} &amp; {{ 'common.next' | t }} &#8594;</app-btn>
         </div>
 
       </div>

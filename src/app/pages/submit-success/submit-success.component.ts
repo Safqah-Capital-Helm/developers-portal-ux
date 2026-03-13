@@ -1,21 +1,21 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { C } from '../../shared/theme';
-import { ResultScreenComponent } from '../../shared';
+import { ResultScreenComponent, TranslatePipe } from '../../shared';
 
 @Component({
   selector: 'app-submit-success',
   standalone: true,
-  imports: [ResultScreenComponent],
+  imports: [ResultScreenComponent, TranslatePipe],
   template: `
     <div class="success-page">
       <div class="content">
         <app-result-screen
           type="success"
-          title="Application submitted!"
-          subtitle="Your application is now under review. We'll notify you of any updates via email and SMS."
+          [title]="('add_application.success_title' | t)"
+          [subtitle]="('add_application.success_desc' | t)"
         >
-          <p class="redirect-text">Redirecting to your dashboard...</p>
+          <p class="redirect-text">{{ 'common.loading' | t }}</p>
           <div class="progress-track">
             <div class="progress-fill"></div>
           </div>
