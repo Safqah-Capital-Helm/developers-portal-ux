@@ -198,16 +198,17 @@ import { C } from '../../theme';
       }
     }
 
-    [dir="rtl"] .sidebar {
+    :host-context([dir="rtl"]) .sidebar {
       left: auto;
       right: 0;
       border-right: none;
       border-left: 1px solid ${C.g200};
     }
 
-    [dir="rtl"] .sidebar.mobile-open {
+    :host-context([dir="rtl"]) .sidebar.mobile-open {
       left: auto;
       right: 0;
+      box-shadow: -4px 0 24px rgba(0,0,0,0.12);
     }
   `]
 })

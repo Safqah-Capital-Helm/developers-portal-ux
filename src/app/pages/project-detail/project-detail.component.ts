@@ -3,12 +3,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { C, borderColorForStatus } from '../../shared/theme';
-import { BadgeComponent, BackLinkComponent, EmptyStateComponent, ButtonComponent, getCompanyLogoByName, TranslatePipe } from '../../shared';
+import { BadgeComponent, BackLinkComponent, EmptyStateComponent, ButtonComponent, ConfirmDialogComponent, getCompanyLogoByName, TranslatePipe, I18nService } from '../../shared';
 
 @Component({
   selector: 'app-project-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink, BadgeComponent, BackLinkComponent, EmptyStateComponent, ButtonComponent, TranslatePipe],
+  imports: [CommonModule, RouterLink, BadgeComponent, BackLinkComponent, EmptyStateComponent, ButtonComponent, ConfirmDialogComponent, TranslatePipe],
   template: `
     <div class="container" *ngIf="project">
       <app-back-link to="/dashboard/projects" [label]="('project.back_to_projects' | t)"></app-back-link>
@@ -31,20 +31,17 @@ import { BadgeComponent, BackLinkComponent, EmptyStateComponent, ButtonComponent
         </div>
       </div>
 
-      <!-- Delete confirmation -->
-      <div *ngIf="showDeleteConfirm" class="delete-confirm">
-        <div class="delete-confirm-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.red500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
-        </div>
-        <div>
-          <div class="delete-confirm-title">{{ 'project.delete_confirm_title' | t }}</div>
-          <div class="delete-confirm-sub">{{ 'project.delete_confirm_desc' | t }}</div>
-        </div>
-        <div class="delete-confirm-actions">
-          <app-btn variant="danger" size="sm" (clicked)="go('/dashboard/projects')">{{ 'project.yes_delete' | t }}</app-btn>
-          <app-btn variant="secondary" size="sm" (clicked)="showDeleteConfirm = false">{{ 'common.cancel' | t }}</app-btn>
-        </div>
-      </div>
+      <!-- Delete confirmation dialog -->
+      <app-confirm-dialog
+        [visible]="showDeleteConfirm"
+        [title]="('project.delete_confirm_title' | t)"
+        [message]="('project.delete_confirm_desc' | t)"
+        [confirmLabel]="('project.yes_delete' | t)"
+        [cancelLabel]="('common.cancel' | t)"
+        confirmVariant="danger"
+        (confirmed)="go('/dashboard/projects')"
+        (cancelled)="showDeleteConfirm = false"
+      ></app-confirm-dialog>
 
       <div class="detail-chips">
         <span class="chip">
@@ -223,7 +220,7 @@ import { BadgeComponent, BackLinkComponent, EmptyStateComponent, ButtonComponent
     .container {
       max-width: 800px;
       margin: 0 auto;
-      padding: 28px 40px 60px;
+      padding: 32px 32px 60px;
     }
 
     /* Hero image */
@@ -246,21 +243,6 @@ import { BadgeComponent, BackLinkComponent, EmptyStateComponent, ButtonComponent
     .detail-title {
       font-size: 24px; font-weight: 900; color: ${C.g900}; margin: 0;
     }
-
-    /* Delete confirmation */
-    .delete-confirm {
-      display: flex; align-items: flex-start; gap: 12px;
-      background: ${C.red50}; border: 1.5px solid ${C.red500};
-      border-radius: 14px; padding: 16px 18px; margin-bottom: 16px;
-    }
-    .delete-confirm-icon { flex-shrink: 0; margin-top: 2px; }
-    .delete-confirm-title {
-      font-size: 14px; font-weight: 800; color: ${C.g900}; margin-bottom: 4px;
-    }
-    .delete-confirm-sub {
-      font-size: 12px; color: ${C.g600}; line-height: 1.5; margin-bottom: 12px;
-    }
-    .delete-confirm-actions { display: flex; gap: 8px; flex-shrink: 0; align-self: center; }
 
     /* Chips */
     .detail-chips {
@@ -447,7 +429,6 @@ import { BadgeComponent, BackLinkComponent, EmptyStateComponent, ButtonComponent
       .detail-actions { align-self: flex-start; }
       .section { padding: 18px 18px; border-radius: 14px; }
       .app-grid { grid-template-columns: 1fr 1fr; }
-      .delete-confirm { flex-wrap: wrap; }
     }
     @media (max-width: 480px) {
       .container { padding: 16px 12px 32px; }
@@ -462,6 +443,12 @@ import { BadgeComponent, BackLinkComponent, EmptyStateComponent, ButtonComponent
       .revenue-row { flex-direction: column; align-items: flex-start; gap: 8px; }
       .section { padding: 14px 14px; }
     }
+
+    /* RTL */
+    :host-context([dir="rtl"]) .app-card {
+      border-left: 1px solid ${C.g200};
+      border-right: 3.5px solid ${C.g300};
+    }
   `]
 })
 export class ProjectDetailComponent implements OnInit {
@@ -471,119 +458,123 @@ export class ProjectDetailComponent implements OnInit {
   showDeleteConfirm = false;
 
   // Enriched project data with details
-  allProjects: any[] = [
-    {
-      name: "Khobar Mixed-Use Tower", type: "Mixed Use", loc: "Khobar",
-      compShort: "Al Omran Real Estate", compLogo: getCompanyLogoByName("Al Omran Real Estate"), companyIdx: 0,
-      stage: "Pre-Development",
-      expectedUnits: "120", buildingArea: "15,000 sqm", sellingArea: "12,000 sqm",
-      period: "36 months", cost: "SAR 35,000,000",
-      landCost: "SAR 14,000,000", devCost: "SAR 21,000,000", expectedRevenue: "SAR 52,000,000",
-      img: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&h=440&fit=crop"
-    },
-    {
-      name: "Al Noor Residential", type: "Mixed Use", loc: "Dammam",
-      compShort: "Al Omran Real Estate", compLogo: getCompanyLogoByName("Al Omran Real Estate"), companyIdx: 0,
-      stage: "Development",
-      expectedUnits: "80", buildingArea: "10,500 sqm", sellingArea: "8,200 sqm",
-      period: "24 months", cost: "SAR 28,000,000",
-      landCost: "SAR 11,200,000", devCost: "SAR 16,800,000", expectedRevenue: "SAR 42,000,000",
-      img: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&h=440&fit=crop"
-    },
-    {
-      name: "Riyadh Commercial Plaza", type: "Commercial", loc: "Riyadh",
-      compShort: "Al Omran Real Estate", compLogo: getCompanyLogoByName("Al Omran Real Estate"), companyIdx: 0,
-      stage: "Construction",
-      expectedUnits: "45", buildingArea: "22,000 sqm", sellingArea: "18,500 sqm",
-      period: "30 months", cost: "SAR 65,000,000",
-      landCost: "SAR 26,000,000", devCost: "SAR 39,000,000", expectedRevenue: "SAR 95,000,000",
-      img: "https://images.unsplash.com/photo-1577495508048-b635879837f1?w=800&h=440&fit=crop"
-    },
-    {
-      name: "Tabuk Residential Complex", type: "Residential", loc: "Tabuk",
-      compShort: "Al Omran Real Estate", compLogo: getCompanyLogoByName("Al Omran Real Estate"), companyIdx: 0,
-      stage: "Development",
-      expectedUnits: "35", buildingArea: "5,800 sqm", sellingArea: "4,500 sqm",
-      period: "18 months", cost: "SAR 12,000,000",
-      landCost: "SAR 4,800,000", devCost: "SAR 7,200,000", expectedRevenue: "SAR 18,000,000",
-      img: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&h=440&fit=crop"
-    },
-    {
-      name: "Jeddah Waterfront Villas", type: "Residential", loc: "Jeddah",
-      compShort: "Al Omran Real Estate", compLogo: getCompanyLogoByName("Al Omran Real Estate"), companyIdx: 0,
-      stage: "Development",
-      expectedUnits: "24", buildingArea: "8,400 sqm", sellingArea: "7,200 sqm",
-      period: "24 months", cost: "SAR 32,000,000",
-      landCost: "SAR 12,800,000", devCost: "SAR 19,200,000", expectedRevenue: "SAR 48,000,000",
-      img: "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=800&h=440&fit=crop"
-    },
-    {
-      name: "Abha Mountain Villas", type: "Residential", loc: "Abha",
-      compShort: "Al Omran Real Estate", compLogo: getCompanyLogoByName("Al Omran Real Estate"), companyIdx: 0,
-      stage: "Land Acquisition",
-      expectedUnits: "16", buildingArea: "4,200 sqm", sellingArea: "3,600 sqm",
-      period: "20 months", cost: "SAR 14,000,000",
-      landCost: "SAR 5,600,000", devCost: "SAR 8,400,000", expectedRevenue: "SAR 22,000,000",
-      img: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&h=440&fit=crop"
-    },
-    {
-      name: "Al Rawdah Gardens", type: "Residential", loc: "Riyadh",
-      compShort: "Al Omran Real Estate", compLogo: getCompanyLogoByName("Al Omran Real Estate"), companyIdx: 0,
-      stage: "Development",
-      expectedUnits: "60", buildingArea: "9,600 sqm", sellingArea: "8,000 sqm",
-      period: "24 months", cost: "SAR 30,000,000",
-      landCost: "SAR 12,000,000", devCost: "SAR 18,000,000", expectedRevenue: "SAR 45,000,000",
-      img: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&h=440&fit=crop"
-    },
-    {
-      name: "Eastern Industrial Park", type: "Industrial", loc: "Dammam",
-      compShort: "Al Jazeera Development", compLogo: getCompanyLogoByName("Al Jazeera Development"), companyIdx: 1,
-      stage: "Bridge",
-      expectedUnits: "\u2014", buildingArea: "30,000 sqm", sellingArea: "28,000 sqm",
-      period: "36 months", cost: "SAR 75,000,000",
-      landCost: "SAR 30,000,000", devCost: "SAR 45,000,000", expectedRevenue: "SAR 110,000,000",
-      img: "https://images.unsplash.com/photo-1565008447742-97f6f38c985c?w=800&h=440&fit=crop"
-    },
-    {
-      name: "Madinah Commercial Hub", type: "Commercial", loc: "Madinah",
-      compShort: "Al Jazeera Development", compLogo: getCompanyLogoByName("Al Jazeera Development"), companyIdx: 1,
-      stage: "Construction",
-      expectedUnits: "30", buildingArea: "12,000 sqm", sellingArea: "10,000 sqm",
-      period: "28 months", cost: "SAR 40,000,000",
-      landCost: "SAR 16,000,000", devCost: "SAR 24,000,000", expectedRevenue: "SAR 58,000,000",
-      img: "https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=800&h=440&fit=crop"
-    },
-  ];
+  get allProjects(): any[] {
+    return [
+      {
+        name: "Khobar Mixed-Use Tower", type: this.i18n.t('common.type_mixed_use'), loc: "Khobar",
+        compShort: "Al Omran Real Estate", compLogo: getCompanyLogoByName("Al Omran Real Estate"), companyIdx: 0,
+        stage: this.i18n.t('common.stage_pre_dev'),
+        expectedUnits: "120", buildingArea: "15,000 sqm", sellingArea: "12,000 sqm",
+        period: "36 months", cost: "SAR 35,000,000",
+        landCost: "SAR 14,000,000", devCost: "SAR 21,000,000", expectedRevenue: "SAR 52,000,000",
+        img: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&h=440&fit=crop"
+      },
+      {
+        name: "Al Noor Residential", type: this.i18n.t('common.type_mixed_use'), loc: "Dammam",
+        compShort: "Al Omran Real Estate", compLogo: getCompanyLogoByName("Al Omran Real Estate"), companyIdx: 0,
+        stage: this.i18n.t('common.stage_development'),
+        expectedUnits: "80", buildingArea: "10,500 sqm", sellingArea: "8,200 sqm",
+        period: "24 months", cost: "SAR 28,000,000",
+        landCost: "SAR 11,200,000", devCost: "SAR 16,800,000", expectedRevenue: "SAR 42,000,000",
+        img: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&h=440&fit=crop"
+      },
+      {
+        name: "Riyadh Commercial Plaza", type: this.i18n.t('common.type_commercial'), loc: "Riyadh",
+        compShort: "Al Omran Real Estate", compLogo: getCompanyLogoByName("Al Omran Real Estate"), companyIdx: 0,
+        stage: this.i18n.t('common.stage_construction'),
+        expectedUnits: "45", buildingArea: "22,000 sqm", sellingArea: "18,500 sqm",
+        period: "30 months", cost: "SAR 65,000,000",
+        landCost: "SAR 26,000,000", devCost: "SAR 39,000,000", expectedRevenue: "SAR 95,000,000",
+        img: "https://images.unsplash.com/photo-1577495508048-b635879837f1?w=800&h=440&fit=crop"
+      },
+      {
+        name: "Tabuk Residential Complex", type: this.i18n.t('common.type_residential'), loc: "Tabuk",
+        compShort: "Al Omran Real Estate", compLogo: getCompanyLogoByName("Al Omran Real Estate"), companyIdx: 0,
+        stage: this.i18n.t('common.stage_development'),
+        expectedUnits: "35", buildingArea: "5,800 sqm", sellingArea: "4,500 sqm",
+        period: "18 months", cost: "SAR 12,000,000",
+        landCost: "SAR 4,800,000", devCost: "SAR 7,200,000", expectedRevenue: "SAR 18,000,000",
+        img: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&h=440&fit=crop"
+      },
+      {
+        name: "Jeddah Waterfront Villas", type: this.i18n.t('common.type_residential'), loc: "Jeddah",
+        compShort: "Al Omran Real Estate", compLogo: getCompanyLogoByName("Al Omran Real Estate"), companyIdx: 0,
+        stage: this.i18n.t('common.stage_development'),
+        expectedUnits: "24", buildingArea: "8,400 sqm", sellingArea: "7,200 sqm",
+        period: "24 months", cost: "SAR 32,000,000",
+        landCost: "SAR 12,800,000", devCost: "SAR 19,200,000", expectedRevenue: "SAR 48,000,000",
+        img: "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=800&h=440&fit=crop"
+      },
+      {
+        name: "Abha Mountain Villas", type: this.i18n.t('common.type_residential'), loc: "Abha",
+        compShort: "Al Omran Real Estate", compLogo: getCompanyLogoByName("Al Omran Real Estate"), companyIdx: 0,
+        stage: this.i18n.t('common.stage_land_acquisition'),
+        expectedUnits: "16", buildingArea: "4,200 sqm", sellingArea: "3,600 sqm",
+        period: "20 months", cost: "SAR 14,000,000",
+        landCost: "SAR 5,600,000", devCost: "SAR 8,400,000", expectedRevenue: "SAR 22,000,000",
+        img: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&h=440&fit=crop"
+      },
+      {
+        name: "Al Rawdah Gardens", type: this.i18n.t('common.type_residential'), loc: "Riyadh",
+        compShort: "Al Omran Real Estate", compLogo: getCompanyLogoByName("Al Omran Real Estate"), companyIdx: 0,
+        stage: this.i18n.t('common.stage_development'),
+        expectedUnits: "60", buildingArea: "9,600 sqm", sellingArea: "8,000 sqm",
+        period: "24 months", cost: "SAR 30,000,000",
+        landCost: "SAR 12,000,000", devCost: "SAR 18,000,000", expectedRevenue: "SAR 45,000,000",
+        img: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&h=440&fit=crop"
+      },
+      {
+        name: "Eastern Industrial Park", type: this.i18n.t('common.type_industrial'), loc: "Dammam",
+        compShort: "Al Jazeera Development", compLogo: getCompanyLogoByName("Al Jazeera Development"), companyIdx: 1,
+        stage: this.i18n.t('common.stage_bridge'),
+        expectedUnits: "\u2014", buildingArea: "30,000 sqm", sellingArea: "28,000 sqm",
+        period: "36 months", cost: "SAR 75,000,000",
+        landCost: "SAR 30,000,000", devCost: "SAR 45,000,000", expectedRevenue: "SAR 110,000,000",
+        img: "https://images.unsplash.com/photo-1565008447742-97f6f38c985c?w=800&h=440&fit=crop"
+      },
+      {
+        name: "Madinah Commercial Hub", type: this.i18n.t('common.type_commercial'), loc: "Madinah",
+        compShort: "Al Jazeera Development", compLogo: getCompanyLogoByName("Al Jazeera Development"), companyIdx: 1,
+        stage: this.i18n.t('common.stage_construction'),
+        expectedUnits: "30", buildingArea: "12,000 sqm", sellingArea: "10,000 sqm",
+        period: "28 months", cost: "SAR 40,000,000",
+        landCost: "SAR 16,000,000", devCost: "SAR 24,000,000", expectedRevenue: "SAR 58,000,000",
+        img: "https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=800&h=440&fit=crop"
+      },
+    ];
+  }
 
   // Mock financing applications per project
-  allApplications: Record<number, any[]> = {
-    1: [
-      { product: "Development Finance", amount: "SAR 21,000,000", status: "Term-sheet Ready", sc: "green", submitted: "Feb 12, 2026", accepted: "\u2014", route: "/application/1/term-sheet" },
-    ],
-    2: [
-      { product: "Construction Finance", amount: "SAR 45,000,000", status: "In Review", sc: "amber", submitted: "Feb 28, 2026", accepted: "\u2014", route: "/application/2/status" },
-    ],
-    3: [
-      { product: "Development Finance", amount: "SAR 8,000,000", status: "Feedback Requested", sc: "amber", submitted: "Mar 1, 2026", accepted: "\u2014", route: "/application/3/status" },
-    ],
-    4: [
-      { product: "Development Finance", amount: "SAR 18,000,000", status: "Pending Signing", sc: "blue", submitted: "Jan 15, 2026", accepted: "Feb 5, 2026", route: "/application/4/accepted" },
-    ],
-    5: [
-      { product: "Land Acquisition Finance", amount: "SAR 10,000,000", status: "Signed", sc: "green", submitted: "Dec 8, 2025", accepted: "Jan 2, 2026", route: "/dashboard" },
-    ],
-    6: [
-      { product: "Development Finance", amount: "SAR 22,000,000", status: "Completed", sc: "green", submitted: "Aug 15, 2025", accepted: "Sep 3, 2025", route: "/dashboard" },
-    ],
-    7: [
-      { product: "Bridge Finance", amount: "SAR 60,000,000", status: "Cancelled", sc: "red", submitted: "Nov 20, 2025", accepted: "\u2014", route: "/dashboard" },
-    ],
-    8: [
-      { product: "Construction Finance", amount: "SAR 30,000,000", status: "Term-sheet Rejected", sc: "red", submitted: "Jan 10, 2026", accepted: "\u2014", route: "/dashboard" },
-    ],
-  };
+  get allApplications(): Record<number, any[]> {
+    return {
+      1: [
+        { product: this.i18n.t('common.product_dev_finance'), amount: "SAR 21,000,000", status: this.i18n.t('common.status_termsheet_ready'), sc: "green", submitted: "Feb 12, 2026", accepted: "\u2014", route: "/application/1/term-sheet" },
+      ],
+      2: [
+        { product: this.i18n.t('common.product_construction_finance'), amount: "SAR 45,000,000", status: this.i18n.t('common.status_in_review'), sc: "amber", submitted: "Feb 28, 2026", accepted: "\u2014", route: "/application/2/status" },
+      ],
+      3: [
+        { product: this.i18n.t('common.product_dev_finance'), amount: "SAR 8,000,000", status: this.i18n.t('common.status_feedback_requested'), sc: "amber", submitted: "Mar 1, 2026", accepted: "\u2014", route: "/application/3/status" },
+      ],
+      4: [
+        { product: this.i18n.t('common.product_dev_finance'), amount: "SAR 18,000,000", status: this.i18n.t('common.status_pending_signing'), sc: "blue", submitted: "Jan 15, 2026", accepted: "Feb 5, 2026", route: "/application/4/accepted" },
+      ],
+      5: [
+        { product: this.i18n.t('common.product_land_finance'), amount: "SAR 10,000,000", status: this.i18n.t('common.status_signed'), sc: "green", submitted: "Dec 8, 2025", accepted: "Jan 2, 2026", route: "/dashboard" },
+      ],
+      6: [
+        { product: this.i18n.t('common.product_dev_finance'), amount: "SAR 22,000,000", status: this.i18n.t('common.status_completed'), sc: "green", submitted: "Aug 15, 2025", accepted: "Sep 3, 2025", route: "/dashboard" },
+      ],
+      7: [
+        { product: this.i18n.t('common.product_bridge_finance'), amount: "SAR 60,000,000", status: this.i18n.t('common.status_cancelled'), sc: "red", submitted: "Nov 20, 2025", accepted: "\u2014", route: "/dashboard" },
+      ],
+      8: [
+        { product: this.i18n.t('common.product_construction_finance'), amount: "SAR 30,000,000", status: this.i18n.t('common.status_termsheet_rejected'), sc: "red", submitted: "Jan 10, 2026", accepted: "\u2014", route: "/dashboard" },
+      ],
+    };
+  }
 
-  constructor(private route: ActivatedRoute, private router: Router) {}
+  constructor(private route: ActivatedRoute, private router: Router, private i18n: I18nService) {}
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {

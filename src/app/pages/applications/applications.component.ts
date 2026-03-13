@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { C, borderColorForStatus } from '../../shared/theme';
-import { BadgeComponent, ListCardComponent, ButtonComponent, PageHeaderComponent, TranslatePipe } from '../../shared';
+import { BadgeComponent, ListCardComponent, ButtonComponent, PageHeaderComponent, TranslatePipe, I18nService } from '../../shared';
 
 @Component({
   selector: 'app-applications',
@@ -52,7 +52,7 @@ import { BadgeComponent, ListCardComponent, ButtonComponent, PageHeaderComponent
   `,
   styles: [`
     :host { display: block; }
-    .container { max-width: 900px; margin: 0 auto; padding: 28px 40px 60px; }
+    .container { max-width: 900px; margin: 0 auto; padding: 32px 32px 60px; }
     .app-inner { flex: 1; }
     .app-inner.dead { opacity: 0.6; }
     .app-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 4px; }
@@ -78,15 +78,17 @@ import { BadgeComponent, ListCardComponent, ButtonComponent, PageHeaderComponent
 export class ApplicationsComponent {
   C = C;
 
-  applications = [
-    { id: 1, projectName: "Al Noor Residential", company: "Al Omran Real Estate", amount: "~21M SAR", product: "Development", status: "Term-sheet Ready", sc: "green", submitted: "Feb 12, 2026", route: "/application/1/status" },
-    { id: 2, projectName: "Riyadh Commercial Plaza", company: "Al Omran Real Estate", amount: "~45M SAR", product: "Construction", status: "In Review", sc: "amber", submitted: "Feb 28, 2026", route: "/application/2/status" },
-    { id: 3, projectName: "Tabuk Residential Complex", company: "Al Omran Real Estate", amount: "~8M SAR", product: "Development", status: "Feedback Requested", sc: "amber", submitted: "Mar 1, 2026", route: "/application/3/status" },
-    { id: 4, projectName: "Jeddah Waterfront Villas", company: "Al Omran Real Estate", amount: "~18M SAR", product: "Development", status: "Pending Signing", sc: "blue", submitted: "Jan 15, 2026", route: "/application/4/accepted" },
-    { id: 5, projectName: "Abha Mountain Villas", company: "Al Omran Real Estate", amount: "~10M SAR", product: "Land Acquisition", status: "Signed", sc: "green", submitted: "Dec 8, 2025", route: "/dashboard" },
-  ];
+  get applications() {
+    return [
+      { id: 1, projectName: "Al Noor Residential", company: "Al Omran Real Estate", amount: "~21M SAR", product: this.i18n.t('common.stage_development'), status: this.i18n.t('common.status_termsheet_ready'), sc: "green", submitted: "Feb 12, 2026", route: "/application/1/status" },
+      { id: 2, projectName: "Riyadh Commercial Plaza", company: "Al Omran Real Estate", amount: "~45M SAR", product: this.i18n.t('common.stage_construction'), status: this.i18n.t('common.status_in_review'), sc: "amber", submitted: "Feb 28, 2026", route: "/application/2/status" },
+      { id: 3, projectName: "Tabuk Residential Complex", company: "Al Omran Real Estate", amount: "~8M SAR", product: this.i18n.t('common.stage_development'), status: this.i18n.t('common.status_feedback_requested'), sc: "amber", submitted: "Mar 1, 2026", route: "/application/3/status" },
+      { id: 4, projectName: "Jeddah Waterfront Villas", company: "Al Omran Real Estate", amount: "~18M SAR", product: this.i18n.t('common.stage_development'), status: this.i18n.t('common.status_pending_signing'), sc: "blue", submitted: "Jan 15, 2026", route: "/application/4/accepted" },
+      { id: 5, projectName: "Abha Mountain Villas", company: "Al Omran Real Estate", amount: "~10M SAR", product: this.i18n.t('common.stage_land_acquisition'), status: this.i18n.t('common.status_signed'), sc: "green", submitted: "Dec 8, 2025", route: "/dashboard" },
+    ];
+  }
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private i18n: I18nService) {}
 
   go(path: string) { this.router.navigateByUrl(path); }
 

@@ -15,6 +15,7 @@ import {
   ReviewGridComponent,
   getCompanyLogo,
   TranslatePipe,
+  I18nService,
 } from '../../shared';
 import type { MapLocation } from '../../shared';
 
@@ -63,7 +64,7 @@ import type { MapLocation } from '../../shared';
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.green" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><line x1="9" y1="10" x2="15" y2="10"/><line x1="9" y1="14" x2="15" y2="14"/></svg>
           </div>
           <div class="preselected-info">
-            <div class="preselected-label">Company</div>
+            <div class="preselected-label">{{ 'add_project.company_label' | t }}</div>
             <div class="preselected-name">{{ getCompanyName() }}</div>
           </div>
           <div class="preselected-cr">CR {{ sel }}</div>
@@ -130,17 +131,17 @@ import type { MapLocation } from '../../shared';
               <textarea
                 class="textarea"
                 rows="3"
-                placeholder="e.g. A gated residential compound with 120 villas targeting middle-income families..."
+                [placeholder]="'add_project.description_placeholder' | t"
                 [ngModel]="description"
                 (ngModelChange)="description = $event; onFieldChange()"
               ></textarea>
-              <p class="field-helper">Describe what you are building or developing — this helps us understand your vision</p>
+              <p class="field-helper">{{ 'add_project.description_helper' | t }}</p>
             </div>
 
             <!-- Project Type -->
             <div class="field-group">
               <label class="field-label">{{ 'add_project.type_label' | t }}</label>
-              <p class="field-helper" style="margin-bottom: 10px;">Select the category that best describes your development</p>
+              <p class="field-helper" style="margin-bottom: 10px;">{{ 'add_project.type_helper' | t }}</p>
               <div class="type-grid">
                 <div
                   *ngFor="let t of types"
@@ -157,7 +158,7 @@ import type { MapLocation } from '../../shared';
             <!-- Current Stage -->
             <div class="field-group">
               <label class="field-label">{{ 'add_project.stage_label' | t }}</label>
-              <p class="field-helper" style="margin-bottom: 10px;">Where is the project in its lifecycle right now?</p>
+              <p class="field-helper" style="margin-bottom: 10px;">{{ 'add_project.stage_helper' | t }}</p>
               <div class="stepper">
                 <ng-container *ngFor="let s of stages; let i = index; let last = last">
                   <div class="stage-node" (click)="stage = s.id; onFieldChange()">
@@ -189,7 +190,7 @@ import type { MapLocation } from '../../shared';
             <app-input
               [label]="('add_project.period_label' | t)"
               [placeholder]="('add_project.period_placeholder' | t)"
-              suffix="months"
+              [suffix]="'project_form.period_suffix' | t"
               [helper]="('add_project.period_helper' | t)"
               [value]="projectPeriod"
               (valueChange)="projectPeriod = $event; onFieldChange()"
@@ -201,12 +202,12 @@ import type { MapLocation } from '../../shared';
         <div *ngIf="step === 2" class="animate-in">
           <app-card [padding]="32">
             <div class="section-title">{{ 'add_project.location_label' | t }}</div>
-            <div class="section-desc">Provide the location and size of the land plot for this project.</div>
+            <div class="section-desc">{{ 'add_project.land_desc' | t }}</div>
 
             <!-- Map -->
             <div class="field-group">
               <label class="field-label">{{ 'add_project.location_label' | t }}</label>
-              <p class="field-helper" style="margin-bottom: 10px;">Pin the exact location of your project on the map</p>
+              <p class="field-helper" style="margin-bottom: 10px;">{{ 'add_project.map_helper' | t }}</p>
               <app-map-picker (locationChange)="onMapChange($event)"></app-map-picker>
             </div>
 
@@ -214,32 +215,32 @@ import type { MapLocation } from '../../shared';
             <div class="two-col">
               <div class="field-group">
                 <label class="field-label">
-                  City
-                  <span class="auto-tag">Auto-detected</span>
+                  {{ 'add_project.city_label' | t }}
+                  <span class="auto-tag">{{ 'add_project.auto_detected' | t }}</span>
                 </label>
                 <div class="readonly-field">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g400" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                  {{ city || 'Move pin to detect' }}
+                  {{ city || ('add_project.move_pin' | t) }}
                 </div>
-                <p class="field-helper">Automatically detected based on map pin location</p>
+                <p class="field-helper">{{ 'add_project.auto_detected_helper' | t }}</p>
               </div>
               <div class="field-group">
                 <label class="field-label">
-                  District
-                  <span class="auto-tag">Auto-detected</span>
+                  {{ 'add_project.district_label' | t }}
+                  <span class="auto-tag">{{ 'add_project.auto_detected' | t }}</span>
                 </label>
                 <div class="readonly-field">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g400" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
-                  {{ district || 'Move pin to detect' }}
+                  {{ district || ('add_project.move_pin' | t) }}
                 </div>
-                <p class="field-helper">Automatically detected based on map pin location</p>
+                <p class="field-helper">{{ 'add_project.auto_detected_helper' | t }}</p>
               </div>
             </div>
 
             <!-- Total Land Area -->
             <app-input
               [label]="('add_project.building_area_label' | t)"
-              placeholder="e.g. 25,000"
+              [placeholder]="'add_project.area_placeholder' | t"
               suffix="m²"
               [helper]="('add_project.building_area_helper' | t)"
               [value]="totalLandArea"
@@ -252,7 +253,7 @@ import type { MapLocation } from '../../shared';
         <div *ngIf="step === 3" class="animate-in">
           <app-card [padding]="32">
             <div class="section-title">{{ 'add_project.step_details' | t }}</div>
-            <div class="section-desc">Provide the key metrics for your development. These help us assess the project scope and financing needs.</div>
+            <div class="section-desc">{{ 'add_project.specs_desc' | t }}</div>
 
             <app-input
               [label]="('add_project.units_label' | t)"
@@ -286,7 +287,7 @@ import type { MapLocation } from '../../shared';
                 <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
                 <polyline points="22 4 12 14.01 9 11.01"/>
               </svg>
-              <span>Selling efficiency: <strong [style.color]="efficiencyColor">{{ efficiencyPct }}%</strong></span>
+              <span>{{ 'add_project.selling_efficiency' | t }} <strong [style.color]="efficiencyColor">{{ efficiencyPct }}%</strong></span>
             </div>
           </app-card>
         </div>
@@ -295,7 +296,7 @@ import type { MapLocation } from '../../shared';
         <div *ngIf="step === 4" class="animate-in">
           <app-card [padding]="32">
             <div class="section-title">{{ 'company_verify.financial' | t }}</div>
-            <div class="section-desc">Provide the financial details — these are critical for assessing financing eligibility and structuring offers.</div>
+            <div class="section-desc">{{ 'add_project.financials_desc' | t }}</div>
 
             <app-input
               [label]="('financing.total_cost_label' | t)"
@@ -310,8 +311,8 @@ import type { MapLocation } from '../../shared';
               <div class="fin-label">{{ 'financing.land_cost' | t }}</div>
               <div class="breakdown-slider">
                 <div class="slider-header">
-                  <span class="slider-tag" [style.color]="C.amber600">Land {{ landCostPct }}%</span>
-                  <span class="slider-tag" [style.color]="C.blue500">Development {{ 100 - landCostPct }}%</span>
+                  <span class="slider-tag" [style.color]="C.amber600">{{ 'add_project.land_pct' | t:{pct: '' + landCostPct} }}</span>
+                  <span class="slider-tag" [style.color]="C.blue500">{{ 'add_project.dev_pct' | t:{pct: '' + (100 - landCostPct)} }}</span>
                 </div>
                 <div class="dual-track">
                   <div class="track-fill-land" [style.width.%]="landCostPct"></div>
@@ -330,18 +331,18 @@ import type { MapLocation } from '../../shared';
                     (ngModelChange)="landCostPct = $event; onFieldChange()"
                   />
                 </div>
-                <div class="drag-hint">Drag to adjust the land vs. development cost split</div>
+                <div class="drag-hint">{{ 'add_project.drag_hint' | t }}</div>
               </div>
               <div class="stat-row">
                 <div class="stat-box" [style.borderColor]="C.amber100" [style.background]="C.amber50">
-                  <div class="stat-label" [style.color]="C.amber600">Land Cost</div>
+                  <div class="stat-label" [style.color]="C.amber600">{{ 'add_project.land_cost_label' | t }}</div>
                   <div class="stat-value">{{ fmt(landCostVal) }} <span class="stat-unit">SAR</span></div>
-                  <div class="stat-sub" [style.color]="C.amber500">{{ landCostPct }}% of total</div>
+                  <div class="stat-sub" [style.color]="C.amber500">{{ 'add_project.pct_of_total' | t:{pct: '' + landCostPct} }}</div>
                 </div>
                 <div class="stat-box" [style.borderColor]="C.blue100" [style.background]="C.blue50">
-                  <div class="stat-label" [style.color]="C.blue500">Development Cost</div>
+                  <div class="stat-label" [style.color]="C.blue500">{{ 'add_project.dev_cost_label' | t }}</div>
                   <div class="stat-value">{{ fmt(devCostVal) }} <span class="stat-unit">SAR</span></div>
-                  <div class="stat-sub" [style.color]="C.blue500">{{ 100 - landCostPct }}% of total</div>
+                  <div class="stat-sub" [style.color]="C.blue500">{{ 'add_project.pct_of_total' | t:{pct: '' + (100 - landCostPct)} }}</div>
                 </div>
               </div>
             </div>
@@ -358,14 +359,14 @@ import type { MapLocation } from '../../shared';
 
               <div *ngIf="parsedRevenue > 0 && (parsedUnits > 0 || parsedSellingArea > 0)" class="stat-row" style="margin-top: 16px;">
                 <div *ngIf="parsedUnits > 0" class="stat-box" [style.borderColor]="C.greenMd" [style.background]="C.greenLt">
-                  <div class="stat-label" [style.color]="C.green">Avg. Revenue per Unit</div>
+                  <div class="stat-label" [style.color]="C.green">{{ 'add_project.avg_revenue_unit' | t }}</div>
                   <div class="stat-value">{{ fmt(revenuePerUnit) }} <span class="stat-unit">SAR</span></div>
-                  <div class="stat-sub" [style.color]="C.green">Based on {{ expectedUnits }} units</div>
+                  <div class="stat-sub" [style.color]="C.green">{{ 'add_project.based_on_units' | t:{count: expectedUnits} }}</div>
                 </div>
                 <div *ngIf="parsedSellingArea > 0" class="stat-box" [style.borderColor]="C.greenMd" [style.background]="C.greenLt">
-                  <div class="stat-label" [style.color]="C.green">Avg. Revenue per m&sup2;</div>
+                  <div class="stat-label" [style.color]="C.green">{{ 'add_project.avg_revenue_sqm' | t }}</div>
                   <div class="stat-value">{{ fmt(revenuePerSqm) }} <span class="stat-unit">SAR/m&sup2;</span></div>
-                  <div class="stat-sub" [style.color]="C.green">Based on {{ totalSellingArea }} m&sup2;</div>
+                  <div class="stat-sub" [style.color]="C.green">{{ 'add_project.based_on_sqm' | t:{area: totalSellingArea} }}</div>
                 </div>
               </div>
             </div>
@@ -386,7 +387,7 @@ import type { MapLocation } from '../../shared';
             </div>
             <div>
               <div class="rv-hero-title">{{ 'add_project.step_review' | t }}</div>
-              <div class="rv-hero-desc">Please review all details before submitting. You can edit any section below.</div>
+              <div class="rv-hero-desc">{{ 'add_project.review_desc' | t }}</div>
             </div>
           </div>
 
@@ -493,7 +494,7 @@ import type { MapLocation } from '../../shared';
         <div class="wizard-nav">
           <div class="nav-left">
             <app-btn *ngIf="step > firstStep" variant="ghost" (clicked)="prevStep()">
-              &#8592; Back
+              &#8592; {{ 'common.back' | t }}
             </app-btn>
           </div>
 
@@ -511,7 +512,7 @@ import type { MapLocation } from '../../shared';
             <app-btn *ngIf="step > 0 && step < 5" variant="primary"
               [disabled]="!isStepValid(step)"
               (clicked)="nextStep()">
-              Next: {{ nextStepLabel }} &rarr;
+              {{ 'add_project.next_label' | t:{step: nextStepLabel} }}
             </app-btn>
             <app-btn *ngIf="step === 5" variant="primary" size="lg"
               [disabled]="!canSubmit"
@@ -1043,6 +1044,9 @@ import type { MapLocation } from '../../shared';
       .page-title { font-size: 18px; }
       .section-title { font-size: 15px; }
     }
+
+    /* RTL */
+    :host-context([dir="rtl"]) .nav-right { margin-left: 0; margin-right: auto; }
   `],
 })
 export class AddProjectComponent implements OnInit, OnDestroy {
@@ -1089,27 +1093,16 @@ export class AddProjectComponent implements OnInit, OnDestroy {
     { name: 'Al Jazeera Development Co.', cr: '1020304050607', st: 'Under Review', logo: getCompanyLogo('1020304050607') },
   ];
 
-  types = [
-    { id: 'warehouse', t: 'Warehouse', emoji: '🏭' },
-    { id: 'residential', t: 'Residential', emoji: '🏘️' },
-    { id: 'offices', t: 'Offices', emoji: '🏢' },
-    { id: 'commercial', t: 'Commercial', emoji: '🏬' },
-    { id: 'hospitality', t: 'Hospitality', emoji: '🏨' },
-    { id: 'rawland', t: 'Raw Land', emoji: '🌾' },
-    { id: 'infrastructure', t: 'Infrastructure', emoji: '🏗️' },
-  ];
+  // Cached arrays (avoids ExpressionChangedAfterItHasBeenCheckedError from getters returning new refs)
+  types: Array<{ id: string; t: string; emoji: string }> = [];
+  stages: Array<{ id: string; l: string; c: string }> = [];
+  visibleStepLabels: string[] = [];
 
-  stages = [
-    { id: 'plan', l: 'Planning', c: '#2e90fa' },
-    { id: 'design', l: 'Design', c: '#8b5cf6' },
-    { id: 'permit', l: 'Permits', c: '#f79009' },
-    { id: 'build', l: 'Construction', c: '#00a15a' },
-    { id: 'sale', l: 'Pre-Sale', c: '#ec4899' },
-  ];
-
-  constructor(private router: Router, private route: ActivatedRoute) {}
+  constructor(private router: Router, private route: ActivatedRoute, private i18n: I18nService) {}
 
   ngOnInit(): void {
+    this.rebuildStaticData();
+
     const fresh = this.route.snapshot.queryParamMap.get('fresh');
     const companyParam = this.route.snapshot.queryParamMap.get('company');
 
@@ -1127,13 +1120,36 @@ export class AddProjectComponent implements OnInit, OnDestroy {
         if (this.step < 1) this.step = 1;
       }
     }
+
+    this.rebuildStepLabels();
+    if (this.step === 5) this.rebuildReviewItems();
   }
 
-  /** Step labels shown in the progress bar */
-  get visibleStepLabels(): string[] {
-    return this.companyPreSelected
-      ? ['Details', 'Land', 'Specs', 'Financials', 'Review']
-      : ['Company', 'Details', 'Land', 'Specs', 'Financials', 'Review'];
+  /** Build translated arrays once (page reloads on lang change) */
+  private rebuildStaticData(): void {
+    this.types = [
+      { id: 'warehouse', t: this.i18n.t('add_project.type_warehouse'), emoji: '🏭' },
+      { id: 'residential', t: this.i18n.t('add_project.type_residential'), emoji: '🏘️' },
+      { id: 'offices', t: this.i18n.t('add_project.type_offices'), emoji: '🏢' },
+      { id: 'commercial', t: this.i18n.t('add_project.type_commercial'), emoji: '🏬' },
+      { id: 'hospitality', t: this.i18n.t('add_project.type_hospitality'), emoji: '🏨' },
+      { id: 'rawland', t: this.i18n.t('add_project.type_raw_land'), emoji: '🌾' },
+      { id: 'infrastructure', t: this.i18n.t('add_project.type_infrastructure'), emoji: '🏗️' },
+    ];
+    this.stages = [
+      { id: 'plan', l: this.i18n.t('add_project.stage_planning'), c: '#2e90fa' },
+      { id: 'design', l: this.i18n.t('add_project.stage_design'), c: '#8b5cf6' },
+      { id: 'permit', l: this.i18n.t('add_project.stage_permits'), c: '#f79009' },
+      { id: 'build', l: this.i18n.t('add_project.stage_construction'), c: '#00a15a' },
+      { id: 'sale', l: this.i18n.t('add_project.stage_presale'), c: '#ec4899' },
+    ];
+  }
+
+  /** Rebuild step labels (depends on companyPreSelected) */
+  private rebuildStepLabels(): void {
+    this.visibleStepLabels = this.companyPreSelected
+      ? [this.i18n.t('add_project.step_details'), this.i18n.t('add_project.step_land'), this.i18n.t('add_project.step_specs'), this.i18n.t('add_project.step_financials'), this.i18n.t('add_project.step_review')]
+      : [this.i18n.t('add_project.step_company'), this.i18n.t('add_project.step_details'), this.i18n.t('add_project.step_land'), this.i18n.t('add_project.step_specs'), this.i18n.t('add_project.step_financials'), this.i18n.t('add_project.step_review')];
   }
 
   /** Maps internal step to display step for progress bar */
@@ -1149,7 +1165,11 @@ export class AddProjectComponent implements OnInit, OnDestroy {
   /** Label for next step button */
   get nextStepLabel(): string {
     const labels: Record<number, string> = {
-      0: 'Details', 1: 'Land', 2: 'Specs', 3: 'Financials', 4: 'Review',
+      0: this.i18n.t('add_project.step_details'),
+      1: this.i18n.t('add_project.step_land'),
+      2: this.i18n.t('add_project.step_specs'),
+      3: this.i18n.t('add_project.step_financials'),
+      4: this.i18n.t('add_project.step_review'),
     };
     return labels[this.step] || '';
   }
@@ -1213,6 +1233,7 @@ export class AddProjectComponent implements OnInit, OnDestroy {
   nextStep(): void {
     if (this.step < 5 && this.isStepValid(this.step)) {
       this.step++;
+      if (this.step === 5) this.rebuildReviewItems();
       this.saveDraft();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -1229,6 +1250,7 @@ export class AddProjectComponent implements OnInit, OnDestroy {
     const internalStep = this.companyPreSelected ? index + 1 : index;
     if (internalStep <= this.step) {
       this.step = internalStep;
+      if (this.step === 5) this.rebuildReviewItems();
     }
   }
 
@@ -1345,46 +1367,49 @@ export class AddProjectComponent implements OnInit, OnDestroy {
     return n.toLocaleString('en-US');
   }
 
-  // ── Review computed items ──
-  get reviewDetailsItems(): Array<{ label: string; value: string }> {
-    const items: Array<{ label: string; value: string }> = [
-      { label: 'Name', value: this.name },
+  // ── Review cached items (rebuilt when entering review step) ──
+  reviewDetailsItems: Array<{ label: string; value: string }> = [];
+  reviewLandItems: Array<{ label: string; value: string }> = [];
+  reviewSpecsItems: Array<{ label: string; value: string }> = [];
+  reviewFinancialItems: Array<{ label: string; value: string }> = [];
+
+  private rebuildReviewItems(): void {
+    // Details
+    const details: Array<{ label: string; value: string }> = [
+      { label: this.i18n.t('add_project.review_name'), value: this.name },
     ];
-    if (this.description) items.push({ label: 'Description', value: this.description.length > 80 ? this.description.substring(0, 80) + '...' : this.description });
-    items.push({ label: 'Type', value: this.getTypeName() });
-    if (this.stage) items.push({ label: 'Stage', value: this.getStageName() });
-    if (this.projectPeriod) items.push({ label: 'Period', value: this.projectPeriod + ' months' });
-    return items;
-  }
+    if (this.description) details.push({ label: this.i18n.t('add_project.review_description'), value: this.description.length > 80 ? this.description.substring(0, 80) + '...' : this.description });
+    details.push({ label: this.i18n.t('add_project.review_type'), value: this.getTypeName() });
+    if (this.stage) details.push({ label: this.i18n.t('add_project.review_stage'), value: this.getStageName() });
+    if (this.projectPeriod) details.push({ label: this.i18n.t('add_project.review_period'), value: this.projectPeriod + this.i18n.t('add_project.suffix_months') });
+    this.reviewDetailsItems = details;
 
-  get reviewLandItems(): Array<{ label: string; value: string }> {
-    const items: Array<{ label: string; value: string }> = [];
-    if (this.city) items.push({ label: 'City', value: this.city });
-    if (this.district) items.push({ label: 'District', value: this.district });
-    if (this.totalLandArea) items.push({ label: 'Total Land Area', value: this.totalLandArea + ' m²' });
-    if (items.length === 0) items.push({ label: 'Location', value: 'Not specified' });
-    return items;
-  }
+    // Land
+    const land: Array<{ label: string; value: string }> = [];
+    if (this.city) land.push({ label: this.i18n.t('add_project.review_city'), value: this.city });
+    if (this.district) land.push({ label: this.i18n.t('add_project.review_district'), value: this.district });
+    if (this.totalLandArea) land.push({ label: this.i18n.t('add_project.review_total_land'), value: this.totalLandArea + this.i18n.t('add_project.suffix_sqm') });
+    if (land.length === 0) land.push({ label: this.i18n.t('add_project.review_location'), value: this.i18n.t('add_project.not_specified') });
+    this.reviewLandItems = land;
 
-  get reviewSpecsItems(): Array<{ label: string; value: string }> {
-    const items: Array<{ label: string; value: string }> = [];
-    if (this.expectedUnits) items.push({ label: 'Number of Units', value: this.expectedUnits });
-    if (this.totalBuildingArea) items.push({ label: 'Building Area', value: this.totalBuildingArea + ' m²' });
-    if (this.totalSellingArea) items.push({ label: 'Selling Area', value: this.totalSellingArea + ' m²' });
+    // Specs
+    const specs: Array<{ label: string; value: string }> = [];
+    if (this.expectedUnits) specs.push({ label: this.i18n.t('add_project.review_units'), value: this.expectedUnits });
+    if (this.totalBuildingArea) specs.push({ label: this.i18n.t('add_project.review_building_area'), value: this.totalBuildingArea + this.i18n.t('add_project.suffix_sqm') });
+    if (this.totalSellingArea) specs.push({ label: this.i18n.t('add_project.review_selling_area'), value: this.totalSellingArea + this.i18n.t('add_project.suffix_sqm') });
     if (this.parsedBuildingArea > 0 && this.parsedSellingArea > 0) {
-      items.push({ label: 'Selling Efficiency', value: this.efficiencyPct + '%' });
+      specs.push({ label: this.i18n.t('add_project.review_selling_efficiency'), value: this.efficiencyPct + '%' });
     }
-    if (items.length === 0) items.push({ label: 'Specifications', value: 'Not specified' });
-    return items;
-  }
+    if (specs.length === 0) specs.push({ label: this.i18n.t('add_project.review_specs'), value: this.i18n.t('add_project.not_specified') });
+    this.reviewSpecsItems = specs;
 
-  get reviewFinancialItems(): Array<{ label: string; value: string }> {
-    const items: Array<{ label: string; value: string }> = [
-      { label: 'Total Cost', value: this.fmt(this.parseNum(this.totalCost)) + ' SAR' },
-      { label: 'Land / Dev Split', value: this.landCostPct + '% / ' + (100 - this.landCostPct) + '%' },
+    // Financial
+    const fin: Array<{ label: string; value: string }> = [
+      { label: this.i18n.t('add_project.review_total_cost'), value: this.fmt(this.parseNum(this.totalCost)) + this.i18n.t('add_project.suffix_sar') },
+      { label: this.i18n.t('add_project.review_land_dev_split'), value: this.landCostPct + '% / ' + (100 - this.landCostPct) + '%' },
     ];
-    if (this.expectedRevenue) items.push({ label: 'Expected Revenue', value: this.fmt(this.parseNum(this.expectedRevenue)) + ' SAR' });
-    return items;
+    if (this.expectedRevenue) fin.push({ label: this.i18n.t('add_project.review_expected_revenue'), value: this.fmt(this.parseNum(this.expectedRevenue)) + this.i18n.t('add_project.suffix_sar') });
+    this.reviewFinancialItems = fin;
   }
 
   // Review helpers

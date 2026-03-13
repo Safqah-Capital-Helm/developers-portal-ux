@@ -43,6 +43,17 @@ import { NavComponent, SidebarComponent } from '../../shared';
         margin-left: 0;
       }
     }
+
+    :host-context([dir="rtl"]) .main-area {
+      margin-left: 0;
+      margin-right: 240px;
+    }
+
+    @media (max-width: 900px) {
+      :host-context([dir="rtl"]) .main-area {
+        margin-right: 0;
+      }
+    }
   `]
 })
 export class DashboardLayoutComponent {

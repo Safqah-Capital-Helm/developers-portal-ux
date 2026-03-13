@@ -9,7 +9,8 @@ import { ButtonComponent } from '../button/button.component';
   imports: [CommonModule, ButtonComponent],
   template: `
     <div class="alert-banner" *ngIf="visible"
-         [style.borderLeftColor]="borderColor">
+         [style.borderLeftColor]="borderColor"
+         [style.borderRightColor]="borderColor">
       <div class="icon-circle" [style.background]="iconBg">
         <!-- info -->
         <svg *ngIf="type === 'info'" width="18" height="18" viewBox="0 0 24 24" fill="none"
@@ -83,6 +84,11 @@ import { ButtonComponent } from '../button/button.component';
       border-radius: 6px; transition: background 0.15s;
     }
     .dismiss:hover { background: ${C.g100}; }
+
+    :host-context([dir="rtl"]) .alert-banner {
+      border-left: 1px solid ${C.g200};
+      border-right: 3.5px solid;
+    }
   `]
 })
 export class AlertBannerComponent {

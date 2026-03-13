@@ -43,10 +43,10 @@ import {
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.green" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/>
             </svg>
-            <span>Al-Salem Development Co.</span>
+            <span>{{ 'invite_accept.company_name' | t }}</span>
           </div>
           <p class="role-info">
-            {{ 'invite_accept.as_role' | t }} <span class="role-tag">Editor</span>
+            {{ 'invite_accept.as_role' | t }} <span class="role-tag">{{ 'invite_accept.role_editor' | t }}</span>
           </p>
         </div>
 
@@ -95,7 +95,7 @@ import {
                 <p class="decline-text">{{ 'invite_accept.decline_confirm' | t }}</p>
                 <div class="decline-actions">
                   <app-btn variant="danger" size="sm" (clicked)="0">{{ 'invite_accept.yes_decline' | t }}</app-btn>
-                  <app-btn variant="secondary" size="sm" (clicked)="showDecline = false">Cancel</app-btn>
+                  <app-btn variant="secondary" size="sm" (clicked)="showDecline = false">{{ 'invite_accept.cancel' | t }}</app-btn>
                 </div>
               </div>
             </div>

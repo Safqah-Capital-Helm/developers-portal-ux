@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { C, borderColorForStatus } from '../../shared/theme';
-import { BadgeComponent, ListCardComponent, ButtonComponent, PageHeaderComponent, getCompanyLogo, TranslatePipe } from '../../shared';
+import { BadgeComponent, ListCardComponent, ButtonComponent, PageHeaderComponent, getCompanyLogo, TranslatePipe, I18nService } from '../../shared';
 
 @Component({
   selector: 'app-companies-page',
@@ -46,7 +46,7 @@ import { BadgeComponent, ListCardComponent, ButtonComponent, PageHeaderComponent
   `,
   styles: [`
     :host { display: block; }
-    .container { max-width: 800px; margin: 0 auto; padding: 28px 40px 60px; }
+    .container { max-width: 800px; margin: 0 auto; padding: 32px 32px 60px; }
     .company-inner { flex: 1; }
     .company-row { display: flex; align-items: center; gap: 16px; }
     .company-logo {
@@ -75,13 +75,15 @@ import { BadgeComponent, ListCardComponent, ButtonComponent, PageHeaderComponent
 export class CompaniesPageComponent {
   C = C;
 
-  companies = [
-    { name: "Al Omran Real Estate Dev Co.", cr: "1551515151516515", status: "Approved", sc: "green", proj: 8, mem: 3, logo: getCompanyLogo('1551515151516515') },
-    { name: "Al Jazeera Development Co.", cr: "1020304050607", status: "Pending Verification", sc: "amber", proj: 2, mem: 1, logo: getCompanyLogo('1020304050607') },
-    { name: "Riyad Construction Group", cr: "3080706050403", status: "Missing Credentials", sc: "red", proj: 1, mem: 2, logo: getCompanyLogo('3080706050403') }
-  ];
+  get companies() {
+    return [
+      { name: "Al Omran Real Estate Dev Co.", cr: "1551515151516515", status: this.i18n.t('common.status_approved'), sc: "green", proj: 8, mem: 3, logo: getCompanyLogo('1551515151516515') },
+      { name: "Al Jazeera Development Co.", cr: "1020304050607", status: this.i18n.t('common.status_pending_verification'), sc: "amber", proj: 2, mem: 1, logo: getCompanyLogo('1020304050607') },
+      { name: "Riyad Construction Group", cr: "3080706050403", status: this.i18n.t('common.status_missing_credentials'), sc: "red", proj: 1, mem: 2, logo: getCompanyLogo('3080706050403') }
+    ];
+  }
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private i18n: I18nService) {}
 
   go(path: string) { this.router.navigateByUrl(path); }
 }

@@ -12,7 +12,10 @@ import {
   BadgeComponent,
   ProgressStepsComponent,
   PrevCredentialsFormComponent,
+  AlertBannerComponent,
+  ResultScreenComponent,
   TranslatePipe,
+  I18nService,
 } from '../../shared';
 
 type Step =
@@ -43,6 +46,8 @@ type Step =
     BadgeComponent,
     ProgressStepsComponent,
     PrevCredentialsFormComponent,
+    AlertBannerComponent,
+    ResultScreenComponent,
     TranslatePipe,
   ],
   template: `
@@ -78,7 +83,7 @@ type Step =
             </div>
 
             <div class="cr-input-row">
-              <div class="cr-prefix">CR</div>
+              <div class="cr-prefix">{{ 'add_company.cr_prefix' | t }}</div>
               <input
                 class="cr-field"
                 [class.cr-error]="crRes === 'bad'"
@@ -90,12 +95,7 @@ type Step =
             <p class="cr-helper" *ngIf="crRes !== 'bad'">{{ 'add_company.cr_helper' | t }}</p>
 
             <!-- Error state -->
-            <div *ngIf="crRes === 'bad'" class="error-box">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f04438" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>
-              </svg>
-              {{ 'add_company.cr_not_found' | t }}
-            </div>
+            <app-alert-banner *ngIf="crRes === 'bad'" type="error" [title]="('add_company.cr_not_found_title' | t)" [message]="('add_company.cr_not_found_desc' | t)"></app-alert-banner>
 
             <!-- Verifying spinner -->
             <div *ngIf="step === 'crVerifying'" class="text-center" style="margin-top: 20px;">
@@ -114,7 +114,7 @@ type Step =
         <!-- ═══════ Step: verify / otp ═══════ -->
         <div *ngIf="step === 'verify' || step === 'otp'">
           <div style="margin-bottom: 20px;">
-            <app-badge color="green">CR {{ cr }} verified &mdash; eligible for registration</app-badge>
+            <app-badge color="green">{{ 'add_company.cr_verified' | t:{cr: cr} }}</app-badge>
           </div>
 
           <app-card [padding]="32">
@@ -140,7 +140,7 @@ type Step =
                 {{ 'absher.verify_btn' | t }}
               </app-btn>
               <div class="demo-bar" style="margin-top: 12px;">
-                <button class="demo-advance" (click)="step = 'delegate'">Demo: Owner not found &rarr;</button>
+                <button class="demo-advance" (click)="step = 'delegate'">{{ 'add_company.demo_owner_not_found' | t }} &rarr;</button>
               </div>
             </div>
 
@@ -150,7 +150,7 @@ type Step =
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g400" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
                 </svg>
-                <span>National ID: {{ nid }}</span>
+                <span>{{ 'add_company.nid_label' | t }}: {{ nid }}</span>
               </div>
               <app-input
                 [label]="('absher.otp_label' | t)"
@@ -183,16 +183,7 @@ type Step =
         <!-- ═══════ Step: delegate (owner not found + request authorization) ═══════ -->
         <div *ngIf="step === 'delegate'">
           <!-- Alert banner -->
-          <div class="delegate-alert">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${C.amber500}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;">
-              <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
-              <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
-            </svg>
-            <div>
-              <span class="delegate-alert-title">{{ 'absher.not_owner_title' | t }}</span>
-              <span class="delegate-alert-desc">ID {{ nid.substring(0, 3) }}****{{ nid.substring(nid.length - 3) }} was not found as an owner of CR {{ cr }}. Ask the company owner to verify instead.</span>
-            </div>
-          </div>
+          <app-alert-banner type="warning" [title]="('add_company.delegate_title' | t)" [message]="('add_company.delegate_desc' | t)"></app-alert-banner>
 
           <app-card [padding]="32" style="margin-top: 16px;">
             <div class="text-center" style="margin-bottom: 20px;">
@@ -212,15 +203,15 @@ type Step =
             <div class="delegate-steps">
               <div class="delegate-step">
                 <div class="delegate-step-num">1</div>
-                <div class="delegate-step-text">Share the link below with the company owner</div>
+                <div class="delegate-step-text">{{ 'add_company.delegate_step_1' | t }}</div>
               </div>
               <div class="delegate-step">
                 <div class="delegate-step-num">2</div>
-                <div class="delegate-step-text">The owner verifies their identity via Absher</div>
+                <div class="delegate-step-text">{{ 'add_company.delegate_step_2' | t }}</div>
               </div>
               <div class="delegate-step">
                 <div class="delegate-step-num">3</div>
-                <div class="delegate-step-text">You'll be notified once verification is complete</div>
+                <div class="delegate-step-text">{{ 'add_company.delegate_step_3' | t }}</div>
               </div>
             </div>
           </app-card>
@@ -232,7 +223,7 @@ type Step =
                 <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/>
                 <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/>
               </svg>
-              <span class="delegate-option-label">Option 1: Copy &amp; share the link</span>
+              <span class="delegate-option-label">{{ 'add_company.delegate_option_1' | t }}</span>
             </div>
             <div class="share-link-box" style="margin-top: 12px;">
               <span class="share-link-text">{{ shareLink }}</span>
@@ -246,7 +237,7 @@ type Step =
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
               </svg>
-              <span class="delegate-option-label">Option 2: Send the link via SMS</span>
+              <span class="delegate-option-label">{{ 'add_company.delegate_option_2' | t }}</span>
             </div>
             <div style="margin-top: 12px;">
               <app-input
@@ -277,7 +268,7 @@ type Step =
                 </svg>
               </div>
               <p [style.color]="C.g900" [style.font-weight]="700" [style.font-size.px]="17" [style.margin-bottom.px]="6">{{ 'absher.sms_sent' | t }}</p>
-              <p [style.color]="C.g500" [style.font-size.px]="14">Verification link sent to {{ ownerPhone }}</p>
+              <p [style.color]="C.g500" [style.font-size.px]="14">{{ 'add_company.link_sent_sms' | t:{phone: ownerPhone} }}</p>
             </div>
           </app-card>
         </div>
@@ -285,13 +276,7 @@ type Step =
         <!-- ═══════ Step: pending ═══════ -->
         <div *ngIf="step === 'pending'">
           <!-- Confirmation banner -->
-          <div class="pending-confirm">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.green" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;">
-              <polyline points="20 6 9 17 4 12"/>
-            </svg>
-            <span *ngIf="delegateMethod === 'sms'">Verification link sent to {{ ownerPhone }}</span>
-            <span *ngIf="delegateMethod === 'link'">Verification link copied to clipboard</span>
-          </div>
+          <app-alert-banner type="success" [title]="('add_company.pending_confirm_title' | t)" [message]="('add_company.pending_confirm_desc' | t)"></app-alert-banner>
 
           <app-card [padding]="32" style="margin-top: 16px;">
             <div class="text-center">
@@ -319,7 +304,7 @@ type Step =
           </p>
 
           <div class="demo-bar">
-            <button class="demo-advance" (click)="go('/verify/owner/abc123')">Demo: Owner View &rarr;</button>
+            <button class="demo-advance" (click)="go('/verify/owner/abc123')">{{ 'add_company.demo_owner_view' | t }} &rarr;</button>
           </div>
         </div>
 
@@ -331,12 +316,12 @@ type Step =
               <app-badge color="green">CR {{ cr || '1020304050607' }} &mdash; Al Jazeera Development Co.</app-badge>
             </div>
             <div style="display: flex; gap: 8px; margin-top: 8px;">
-              <app-badge color="green">Eligible</app-badge>
+              <app-badge color="green">{{ 'add_company.eligible_badge' | t }}</app-badge>
               <app-badge color="green">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 2px;">
                   <polyline points="20 6 9 17 4 12"/>
                 </svg>
-                Owner verified
+                {{ 'add_company.owner_verified_badge' | t }}
               </app-badge>
             </div>
           </div>
@@ -360,7 +345,7 @@ type Step =
             <div style="margin-top: 20px;">
               <app-input
                 [label]="('company.online' | t)"
-                placeholder="https://example.com"
+                [placeholder]="'add_company.website_placeholder' | t"
                 [value]="website"
                 (valueChange)="website = $event"
               ></app-input>
@@ -382,7 +367,7 @@ type Step =
           ></app-prev-credentials-form>
 
           <div style="display: flex; gap: 12px; margin-top: 24px;">
-            <app-btn variant="ghost" [full]="true" size="lg" (clicked)="step = 'details'">&larr; Back</app-btn>
+            <app-btn variant="ghost" [full]="true" size="lg" (clicked)="step = 'details'">&larr; {{ 'common.back' | t }}</app-btn>
             <app-btn variant="primary" [full]="true" size="lg" (clicked)="step = 'uploadDocs'">
               {{ 'common.next' | t }} &rarr;
             </app-btn>
@@ -418,8 +403,8 @@ type Step =
                 <div class="doc-info">
                   <div class="doc-name">
                     {{ doc.name }}
-                    <app-badge *ngIf="doc.required" color="red" style="margin-left: 6px;">Required</app-badge>
-                    <app-badge *ngIf="!doc.required" color="gray" style="margin-left: 6px;">Optional</app-badge>
+                    <app-badge *ngIf="doc.required" color="red" style="margin-left: 6px;">{{ 'add_company.required' | t }}</app-badge>
+                    <app-badge *ngIf="!doc.required" color="gray" style="margin-left: 6px;">{{ 'add_company.optional' | t }}</app-badge>
                   </div>
                   <div class="doc-desc">{{ doc.desc }}</div>
                   <div *ngIf="doc.uploaded" class="doc-file">{{ doc.fileName }}</div>
@@ -445,12 +430,12 @@ type Step =
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g400" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
               </svg>
-              <span>Accepted formats: PDF, PNG, JPG. Max file size: 10MB.</span>
+              <span>{{ 'add_company.doc_hint' | t }}</span>
             </div>
           </app-card>
 
           <div style="display: flex; gap: 12px; margin-top: 24px;">
-            <app-btn variant="ghost" [full]="true" size="lg" (clicked)="step = 'prevProjects'">&larr; Back</app-btn>
+            <app-btn variant="ghost" [full]="true" size="lg" (clicked)="step = 'prevProjects'">&larr; {{ 'common.back' | t }}</app-btn>
             <app-btn variant="primary" [full]="true" size="lg" [disabled]="!companyRequiredDocsDone" (clicked)="step = 'success'">
               {{ 'common.submit' | t }} &rarr;
             </app-btn>
@@ -459,39 +444,29 @@ type Step =
 
         <!-- ═══════ Step: success ═══════ -->
         <div *ngIf="step === 'success'">
-          <app-card [padding]="40">
-            <div class="text-center">
-              <div class="success-circle">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                  <polyline points="20 6 9 17 4 12"/>
-                </svg>
+          <app-result-screen type="success" [title]="('add_company.success_title' | t)" [subtitle]="('add_company.success_desc' | t)">
+            <!-- Company status card -->
+            <app-card [padding]="24" style="margin-top: 16px;">
+              <div style="display: flex; align-items: center; justify-content: space-between;">
+                <div>
+                  <p [style.font-size.px]="15" [style.font-weight]="700" [style.color]="C.g900">Al Jazeera Development Co.</p>
+                  <p [style.font-size.px]="13" [style.color]="C.g500" [style.margin-top.px]="2">CR {{ cr || '1020304050607' }}</p>
+                </div>
+                <app-badge color="amber">{{ 'dashboard.under_review' | t }}</app-badge>
               </div>
-              <h2 class="card-title" style="font-size: 20px;">Company registered!</h2>
-              <p class="card-desc">Al Jazeera Development Co. has been submitted for review.</p>
-            </div>
-          </app-card>
+            </app-card>
 
-          <!-- Company status card -->
-          <app-card [padding]="24" style="margin-top: 16px;">
-            <div style="display: flex; align-items: center; justify-content: space-between;">
-              <div>
-                <p [style.font-size.px]="15" [style.font-weight]="700" [style.color]="C.g900">Al Jazeera Development Co.</p>
-                <p [style.font-size.px]="13" [style.color]="C.g500" [style.margin-top.px]="2">CR {{ cr || '1020304050607' }}</p>
-              </div>
-              <app-badge color="amber">{{ 'dashboard.under_review' | t }}</app-badge>
+            <div style="margin-top: 24px;">
+              <app-btn variant="primary" [full]="true" size="lg" (clicked)="goToCompanyVerify()">
+                {{ 'company.verify_btn' | t }} &rarr;
+              </app-btn>
             </div>
-          </app-card>
-
-          <div style="margin-top: 24px;">
-            <app-btn variant="primary" [full]="true" size="lg" (clicked)="goToCompanyVerify()">
-              {{ 'company.verify_btn' | t }} &rarr;
-            </app-btn>
-          </div>
-          <div style="margin-top: 12px;">
-            <app-btn variant="secondary" [full]="true" size="md" (clicked)="go('/dashboard')">
-              &larr; {{ 'nav.dashboard' | t }}
-            </app-btn>
-          </div>
+            <div style="margin-top: 12px;">
+              <app-btn variant="secondary" [full]="true" size="md" (clicked)="go('/dashboard')">
+                &larr; {{ 'nav.dashboard' | t }}
+              </app-btn>
+            </div>
+          </app-result-screen>
         </div>
 
       </div>
@@ -600,20 +575,6 @@ type Step =
     }
 
     .cr-error {
-      color: ${C.red500};
-    }
-
-    .error-box {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-top: 12px;
-      padding: 10px 14px;
-      background: ${C.red50};
-      border: 1px solid ${C.red500};
-      border-radius: 10px;
-      font-size: 13px;
-      font-weight: 600;
       color: ${C.red500};
     }
 
@@ -734,44 +695,6 @@ type Step =
       color: ${C.g700};
     }
 
-    .pending-confirm {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 12px 16px;
-      background: ${C.greenLt};
-      border: 1px solid ${C.green};
-      border-radius: 12px;
-      font-size: 13px;
-      font-weight: 600;
-      color: ${C.g800};
-    }
-
-    .delegate-alert {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      padding: 14px 16px;
-      background: #fffcf5;
-      border: 1px solid #fec84b;
-      border-radius: 12px;
-    }
-
-    .delegate-alert-title {
-      display: block;
-      font-size: 13px;
-      font-weight: 700;
-      color: ${C.g900};
-    }
-
-    .delegate-alert-desc {
-      display: block;
-      font-size: 12px;
-      color: ${C.g500};
-      line-height: 1.5;
-      margin-top: 2px;
-    }
-
     /* SMS sent icon */
     .sms-sent-icon {
       width: 56px;
@@ -872,18 +795,6 @@ type Step =
       font-size: 12px; color: ${C.g400};
     }
 
-    /* Success circle */
-    .success-circle {
-      width: 64px;
-      height: 64px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, ${C.green}, ${C.greenDk});
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 16px;
-    }
-
     /* Footer link */
     .form-footer {
       text-align: center;
@@ -947,30 +858,60 @@ export class AddCompanyComponent implements OnInit, OnDestroy {
   finFriends = 15;
 
   // Documents
-  companyDocSlots = [
-    { name: 'Owner ID', desc: 'National ID or Iqama of the company owner.', required: true, uploaded: false, fileName: '' },
-    { name: 'Owner Credit History Report', desc: 'Recent credit report from SIMAH (within last 3 months).', required: true, uploaded: false, fileName: '' },
+  private _docSlots = [
+    { nameKey: 'add_company.doc_owner_id', descKey: 'add_company.doc_owner_id_desc', required: true, uploaded: false, fileName: '' },
+    { nameKey: 'add_company.doc_credit_history', descKey: 'add_company.doc_credit_history_desc', required: true, uploaded: false, fileName: '' },
   ];
+
+  get companyDocSlots() {
+    return this._docSlots.map(d => ({
+      ...d,
+      name: this.i18n.t(d.nameKey),
+      desc: this.i18n.t(d.descKey),
+    }));
+  }
 
   shareLink = 'https://portal.safqah.com/verify/owner/def456';
 
-  progressSteps = ['Verify CR', 'Verify ownership', 'Review & register', 'Credentials', 'Documents'];
+  get progressSteps() {
+    return [
+      this.i18n.t('add_company.step_verify_cr'),
+      this.i18n.t('add_company.step_verify_ownership'),
+      this.i18n.t('add_company.step_review_register'),
+      this.i18n.t('add_company.step_credentials'),
+      this.i18n.t('add_company.step_documents'),
+    ];
+  }
 
-  companyFields: string[][] = [
-    ['Legal Name (EN)', 'Al Jazeera Development Co.'],
-    ['Legal Name (AR)', '\u0634\u0631\u0643\u0629 \u0627\u0644\u062c\u0632\u064a\u0631\u0629 \u0644\u0644\u062a\u0637\u0648\u064a\u0631'],
-    ['CR Number', ''],
-    ['Legal Form', 'LLC'],
-    ['Status', 'Active'],
-    ['Capital', '30M SAR'],
-    ['Company Size', 'Small'],
-    ['Activity Type', 'RE Development'],
-    ['Unified No.', '7009876543'],
+  private _companyFieldValues = [
+    'Al Jazeera Development Co.',
+    '\u0634\u0631\u0643\u0629 \u0627\u0644\u062c\u0632\u064a\u0631\u0629 \u0644\u0644\u062a\u0637\u0648\u064a\u0631',
+    '',
+    'LLC',
+    'Active',
+    '30M SAR',
+    'Small',
+    'RE Development',
+    '7009876543',
   ];
+
+  get companyFields(): string[][] {
+    return [
+      [this.i18n.t('add_company.field_legal_name_en'), this._companyFieldValues[0]],
+      [this.i18n.t('add_company.field_legal_name_ar'), this._companyFieldValues[1]],
+      [this.i18n.t('add_company.field_cr_number'), this._companyFieldValues[2]],
+      [this.i18n.t('add_company.field_legal_form'), this._companyFieldValues[3]],
+      [this.i18n.t('add_company.field_status'), this._companyFieldValues[4]],
+      [this.i18n.t('add_company.field_capital'), this._companyFieldValues[5]],
+      [this.i18n.t('add_company.field_company_size'), this._companyFieldValues[6]],
+      [this.i18n.t('add_company.field_activity_type'), this._companyFieldValues[7]],
+      [this.i18n.t('add_company.field_unified_no'), this._companyFieldValues[8]],
+    ];
+  }
 
   private timers: ReturnType<typeof setTimeout>[] = [];
 
-  constructor(private router: Router, private route: ActivatedRoute) {}
+  constructor(private router: Router, private route: ActivatedRoute, private i18n: I18nService) {}
 
   ngOnInit(): void {
     const startStep = this.route.snapshot.queryParamMap.get('step');
@@ -987,26 +928,26 @@ export class AddCompanyComponent implements OnInit, OnDestroy {
     switch (this.step) {
       case 'cr':
       case 'crVerifying':
-        return 'Register a New Company';
+        return this.i18n.t('add_company.title_register');
       case 'verify':
       case 'otp':
-        return 'Verify Ownership';
+        return this.i18n.t('add_company.title_verify_ownership');
       case 'checking':
-        return 'Checking Ownership';
+        return this.i18n.t('add_company.title_checking');
       case 'delegate':
-        return 'Request Owner Verification';
+        return this.i18n.t('add_company.title_request_owner');
       case 'smsSent':
-        return 'SMS Sent';
+        return this.i18n.t('add_company.title_sms_sent');
       case 'pending':
-        return 'Waiting for owner verification';
+        return this.i18n.t('add_company.title_waiting_owner');
       case 'details':
-        return 'Review & Register';
+        return this.i18n.t('add_company.title_review_register');
       case 'prevProjects':
-        return 'Previous Credentials';
+        return this.i18n.t('add_company.title_prev_credentials');
       case 'uploadDocs':
-        return 'Upload Company Documents';
+        return this.i18n.t('add_company.title_upload_docs');
       case 'success':
-        return 'Registration Complete';
+        return this.i18n.t('add_company.title_complete');
       default:
         return '';
     }
@@ -1048,7 +989,7 @@ export class AddCompanyComponent implements OnInit, OnDestroy {
     this.step = 'checking';
     const t = setTimeout(() => {
       // Update CR Number in companyFields
-      this.companyFields[2][1] = this.cr || '1020304050607';
+      this._companyFieldValues[2] = this.cr || '1020304050607';
       this.step = 'details';
     }, 1500);
     this.timers.push(t);
@@ -1088,17 +1029,23 @@ export class AddCompanyComponent implements OnInit, OnDestroy {
   }
 
   get companyRequiredDocsDone(): boolean {
-    return this.companyDocSlots.filter(d => d.required).every(d => d.uploaded);
+    return this._docSlots.filter(d => d.required).every(d => d.uploaded);
   }
 
   simulateUpload(doc: any): void {
-    doc.uploaded = true;
-    doc.fileName = doc.name.toLowerCase().replace(/\s+/g, '_') + '.pdf';
+    const slot = this._docSlots.find(d => d.nameKey === doc.nameKey);
+    if (slot) {
+      slot.uploaded = true;
+      slot.fileName = doc.name.toLowerCase().replace(/\s+/g, '_') + '.pdf';
+    }
   }
 
   removeDoc(doc: any): void {
-    doc.uploaded = false;
-    doc.fileName = '';
+    const slot = this._docSlots.find(d => d.nameKey === doc.nameKey);
+    if (slot) {
+      slot.uploaded = false;
+      slot.fileName = '';
+    }
   }
 
   goToCompanyVerify(): void {

@@ -2,16 +2,19 @@ import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { C } from '../../shared/theme';
-import { NavComponent } from '../../shared/components/nav/nav.component';
-import { BackLinkComponent } from '../../shared/components/back-link/back-link.component';
-import { ButtonComponent } from '../../shared/components/button/button.component';
-import { CardComponent } from '../../shared/components/card/card.component';
-import { TranslatePipe } from '../../shared';
+import {
+  NavComponent,
+  BackLinkComponent,
+  ButtonComponent,
+  CardComponent,
+  AlertBannerComponent,
+  TranslatePipe,
+} from '../../shared';
 
 @Component({
   selector: 'app-offer',
   standalone: true,
-  imports: [CommonModule, NavComponent, BackLinkComponent, ButtonComponent, CardComponent, TranslatePipe],
+  imports: [CommonModule, NavComponent, BackLinkComponent, ButtonComponent, CardComponent, AlertBannerComponent, TranslatePipe],
   template: `
     <div class="page">
       <app-nav></app-nav>
@@ -48,43 +51,38 @@ import { TranslatePipe } from '../../shared';
             <div class="detail-grid">
               <div class="detail-item">
                 <span class="detail-label">{{ 'offer.product' | t }}</span>
-                <span class="detail-value">Development</span>
+                <span class="detail-value">{{ 'offer.ts_value_development' | t }}</span>
               </div>
               <div class="detail-item">
                 <span class="detail-label">{{ 'offer.tenure' | t }}</span>
-                <span class="detail-value">24 months</span>
+                <span class="detail-value">{{ 'offer.ts_value_months' | t:{count: '24'} }}</span>
               </div>
               <div class="detail-item">
                 <span class="detail-label">{{ 'offer.structure' | t }}</span>
-                <span class="detail-value">Murabaha</span>
+                <span class="detail-value">{{ 'offer.ts_value_murabaha' | t }}</span>
               </div>
               <div class="detail-item">
                 <span class="detail-label">{{ 'offer.disbursement' | t }}</span>
-                <span class="detail-value">Milestone</span>
+                <span class="detail-value">{{ 'offer.ts_value_milestone' | t }}</span>
               </div>
               <div class="detail-item">
                 <span class="detail-label">{{ 'offer.grace' | t }}</span>
-                <span class="detail-value">6 months</span>
+                <span class="detail-value">{{ 'offer.ts_value_grace' | t:{count: '6'} }}</span>
               </div>
               <div class="detail-item">
                 <span class="detail-label">{{ 'offer.repayment' | t }}</span>
-                <span class="detail-value">Quarterly</span>
+                <span class="detail-value">{{ 'offer.ts_value_quarterly' | t }}</span>
               </div>
             </div>
           </div>
         </app-card>
 
-        <!-- Warning card -->
-        <div class="warning-card">
-          <div class="warning-row">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${C.amber600}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-            </svg>
-            <div>
-              <span class="warning-title">{{ 'offer.valid_until' | t:{date: 'March 23, 2026'} }}</span>
-            </div>
-          </div>
-        </div>
+        <!-- Validity warning -->
+        <app-alert-banner
+          type="warning"
+          [title]="('offer.valid_until' | t:{date: 'March 23, 2026'})"
+          style="display: block; margin-top: 16px;"
+        ></app-alert-banner>
 
         <!-- Actions -->
         <div class="actions">
@@ -195,34 +193,6 @@ import { TranslatePipe } from '../../shared';
       color: ${C.g800};
     }
 
-    .warning-card {
-      margin-top: 16px;
-      background: ${C.amber50};
-      border: 1px solid ${C.amber100};
-      border-radius: 12px;
-      padding: 16px 20px;
-    }
-
-    .warning-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .warning-title {
-      font-size: 14px;
-      font-weight: 700;
-      color: ${C.amber600};
-      display: block;
-    }
-
-    .warning-sub {
-      font-size: 13px;
-      color: ${C.g500};
-      display: block;
-      margin-top: 2px;
-    }
-
     .actions {
       display: flex;
       gap: 12px;
@@ -244,7 +214,6 @@ import { TranslatePipe } from '../../shared';
       .highlight-cell { padding: 14px 12px; }
       .detail-grid { grid-template-columns: 1fr 1fr; padding: 14px 12px; gap: 14px; }
       .actions { flex-direction: column; }
-      .warning-card { padding: 12px 14px; }
     }
   `]
 })

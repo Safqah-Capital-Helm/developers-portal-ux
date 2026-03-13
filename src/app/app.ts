@@ -60,7 +60,10 @@ export class AppComponent implements OnInit {
         { path: '/not-eligible', label: 'Not Eligible' },
         { path: '/verify', label: 'Absher Verify' },
         { path: '/sign-in', label: 'Sign In' },
+        { path: '/onboarding/company-verify', label: 'Company Verify' },
         { path: '/onboarding/team', label: 'Team Invite' },
+        { path: '/onboarding/project', label: 'Project Onboard' },
+        { path: '/onboarding/financing', label: 'Financing Onboard' },
         { path: '/invite/accept', label: 'Invite Accept' },
       ]
     },
@@ -92,6 +95,7 @@ export class AppComponent implements OnInit {
         { path: '/application/1/activity', label: 'Activity Log' },
         { path: '/application/1/accepted', label: 'Accepted' },
         { path: '/application/1/declined', label: 'Declined' },
+        { path: '/submit-success', label: 'Submit Success' },
       ]
     },
     {
@@ -100,6 +104,7 @@ export class AppComponent implements OnInit {
         { path: '/profile', label: 'Profile' },
         { path: '/support', label: 'Support' },
         { path: '/verify/owner/demo', label: 'Owner Verify' },
+        { path: '/company/0/credentials', label: 'Edit Credentials' },
         { path: '/design-system', label: 'Design System' },
       ]
     },

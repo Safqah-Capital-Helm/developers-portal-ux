@@ -9,6 +9,7 @@ import {
   ProgressStepsComponent,
   CardComponent,
   TranslatePipe,
+  I18nService,
 } from '../../shared';
 
 @Component({
@@ -27,7 +28,7 @@ import {
 
         <!-- Progress Steps -->
         <app-progress-steps
-          [steps]="['Verify identity', 'Invite team']"
+          [steps]="[i18n.t('team_invite.step_verify'), i18n.t('team_invite.step_invite')]"
           [current]="1">
         </app-progress-steps>
 
@@ -45,7 +46,7 @@ import {
 
         <!-- Welcome text -->
         <div class="welcome-section">
-          <p class="welcome-name">Welcome, Ahmed Al-Salem</p>
+          <p class="welcome-name">{{ 'team_invite.welcome' | t:{name: 'Ahmed Al-Salem'} }}</p>
           <h1 class="welcome-title">{{ 'team_invite.title' | t }}</h1>
           <p class="welcome-subtitle">
             {{ 'team_invite.subtitle' | t }}
@@ -54,8 +55,8 @@ import {
 
         <!-- Demo toggle -->
         <div class="demo-bar">
-          <button class="demo-toggle" [class.active]="!noCrMode" (click)="setMode(false)">With CR Owners</button>
-          <button class="demo-toggle" [class.active]="noCrMode" (click)="setMode(true)">No CR Owners</button>
+          <button class="demo-toggle" [class.active]="!noCrMode" (click)="setMode(false)">{{ 'team_invite.with_cr_owners' | t }}</button>
+          <button class="demo-toggle" [class.active]="noCrMode" (click)="setMode(true)">{{ 'team_invite.no_cr_owners' | t }}</button>
         </div>
 
         <!-- CR Owners Section -->
@@ -64,8 +65,8 @@ import {
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.blue500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/>
             </svg>
-            <span>Owners from CR <strong>1551515151516515</strong></span>
-            <span class="cr-badge">Auto-detected</span>
+            <span>{{ 'team_invite.owners_from_cr' | t }} <strong>1551515151516515</strong></span>
+            <span class="cr-badge">{{ 'team_invite.auto_detected' | t }}</span>
           </div>
 
           <app-card [padding]="28">
@@ -79,7 +80,7 @@ import {
                         <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>
                       </svg>
                       {{ owner.name }}
-                      <span class="owner-role-tag">{{ owner.crRole }}</span>
+                      <span class="owner-role-tag">{{ translateCrRole(owner.crRole) }}</span>
                     </div>
                   </div>
                   <div class="invite-field">
@@ -89,10 +90,10 @@ import {
                   <div class="invite-field">
                     <label class="field-label">{{ 'team_invite.role_label' | t }}</label>
                     <select class="field-select" [(ngModel)]="owner.role">
-                      <option value="">Select role...</option>
-                      <option value="Admin">Admin</option>
-                      <option value="Editor">Editor</option>
-                      <option value="Viewer">Viewer</option>
+                      <option value="">{{ 'team_invite.select_role' | t }}</option>
+                      <option value="Admin">{{ 'team_invite.role_admin' | t }}</option>
+                      <option value="Editor">{{ 'team_invite.role_editor' | t }}</option>
+                      <option value="Viewer">{{ 'team_invite.role_viewer' | t }}</option>
                     </select>
                   </div>
                 </div>
@@ -112,8 +113,8 @@ import {
             <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/>
             <line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/>
           </svg>
-          <span>{{ crOwners.length > 0 ? 'Additional members' : 'Invite members' }}</span>
-          <span *ngIf="crOwners.length > 0" class="optional-tag">Optional</span>
+          <span>{{ crOwners.length > 0 ? ('team_invite.additional_members' | t) : ('team_invite.invite_members' | t) }}</span>
+          <span *ngIf="crOwners.length > 0" class="optional-tag">{{ 'team_invite.optional' | t }}</span>
         </div>
 
         <app-card [padding]="28">
@@ -128,9 +129,9 @@ import {
                 <div class="invite-field">
                   <label class="field-label">{{ 'team_invite.role_label' | t }}</label>
                   <select class="field-select" [(ngModel)]="inv.role">
-                    <option value="Admin">Admin</option>
-                    <option value="Editor">Editor</option>
-                    <option value="Viewer">Viewer</option>
+                    <option value="Admin">{{ 'team_invite.role_admin' | t }}</option>
+                    <option value="Editor">{{ 'team_invite.role_editor' | t }}</option>
+                    <option value="Viewer">{{ 'team_invite.role_viewer' | t }}</option>
                   </select>
                 </div>
               </div>
@@ -506,7 +507,16 @@ export class TeamInviteComponent {
   // Additional members added manually
   additionalInvites: { email: string; role: string }[] = [];
 
-  constructor(private router: Router) {}
+  private crRoleKeyMap: Record<string, string> = {
+    Partner: 'common.role_partner',
+    'Authorized Signatory': 'common.role_authorized_signatory',
+  };
+
+  constructor(private router: Router, public i18n: I18nService) {}
+
+  translateCrRole(role: string): string {
+    return this.crRoleKeyMap[role] ? this.i18n.t(this.crRoleKeyMap[role]) : role;
+  }
 
   get hasValidInvite(): boolean {
     const hasCR = this.crOwners.some(o => o.email.trim() !== '');

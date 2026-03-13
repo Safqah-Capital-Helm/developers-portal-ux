@@ -64,7 +64,7 @@ import { I18nService } from '../../shared/i18n/i18n.service';
               </div>
             </div>
             <div class="sh-right">
-              <app-badge color="amber">{{ infoRequests.length }} item{{ infoRequests.length > 1 ? 's' : '' }}</app-badge>
+              <app-badge color="amber">{{ infoRequests.length }} {{ infoRequests.length > 1 ? ('submitted.items' | t) : ('submitted.item' | t) }}</app-badge>
               <svg class="chevron" [class.chevron-open]="expandedSection === 'info-request'" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="${C.g400}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
             </div>
           </div>
@@ -143,7 +143,7 @@ import { I18nService } from '../../shared/i18n/i18n.service';
               </div>
             </div>
             <div class="sh-right">
-              <button *ngIf="pReview !== 'approved'" class="demo-section-btn" (click)="$event.stopPropagation(); approveProject()">Demo: Approve</button>
+              <button *ngIf="pReview !== 'approved'" class="demo-section-btn" (click)="$event.stopPropagation(); approveProject()">{{ 'submitted.demo_approve' | t }}</button>
               <app-badge [color]="reviewBadgeColor(pReview)">{{ reviewBadgeLabel(pReview) }}</app-badge>
               <svg class="chevron" [class.chevron-open]="expandedSection === 'project-review'" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="${C.g400}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
             </div>
@@ -167,7 +167,7 @@ import { I18nService } from '../../shared/i18n/i18n.service';
                     <span class="tl-name" [class.tl-name-done]="i < ps" [class.tl-name-active]="i === ps && ps < projectStages.length">{{ stage.name }}</span>
                     <span class="tl-desc" *ngIf="stage.desc">{{ stage.desc }}</span>
                     <span class="tl-sla" *ngIf="stage.sla">{{ stage.sla }}</span>
-                    <button *ngIf="i === ps && ps < projectStages.length" class="demo-advance" (click)="$event.stopPropagation(); advanceProject()">Demo &darr;</button>
+                    <button *ngIf="i === ps && ps < projectStages.length" class="demo-advance" (click)="$event.stopPropagation(); advanceProject()">{{ 'submitted.demo_advance' | t }} &darr;</button>
                   </div>
                 </div>
               </ng-container>
@@ -206,7 +206,7 @@ import { I18nService } from '../../shared/i18n/i18n.service';
               </div>
             </div>
             <div class="sh-right">
-              <button *ngIf="cReview !== 'approved'" class="demo-section-btn" (click)="$event.stopPropagation(); approveCompany()">Demo: Approve</button>
+              <button *ngIf="cReview !== 'approved'" class="demo-section-btn" (click)="$event.stopPropagation(); approveCompany()">{{ 'submitted.demo_approve' | t }}</button>
               <app-badge [color]="reviewBadgeColor(cReview)">{{ reviewBadgeLabel(cReview) }}</app-badge>
               <svg class="chevron" [class.chevron-open]="expandedSection === 'company-review'" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="${C.g400}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
             </div>
@@ -230,7 +230,7 @@ import { I18nService } from '../../shared/i18n/i18n.service';
                     <span class="tl-name" [class.tl-name-done]="i < cs" [class.tl-name-active]="i === cs && cs < companyStages.length">{{ stage.name }}</span>
                     <span class="tl-desc" *ngIf="stage.desc">{{ stage.desc }}</span>
                     <span class="tl-sla" *ngIf="stage.sla">{{ stage.sla }}</span>
-                    <button *ngIf="i === cs && cs < companyStages.length" class="demo-advance" (click)="$event.stopPropagation(); advanceCompany()">Demo &darr;</button>
+                    <button *ngIf="i === cs && cs < companyStages.length" class="demo-advance" (click)="$event.stopPropagation(); advanceCompany()">{{ 'submitted.demo_advance' | t }} &darr;</button>
                   </div>
                 </div>
               </ng-container>
@@ -295,15 +295,15 @@ import { I18nService } from '../../shared/i18n/i18n.service';
                   <div class="ts-details">
                     <div class="ts-detail">
                       <span class="ts-d-label">{{ 'submitted.product' | t }}</span>
-                      <span class="ts-d-value">Development</span>
+                      <span class="ts-d-value">{{ 'submitted.ts_value_development' | t }}</span>
                     </div>
                     <div class="ts-detail">
                       <span class="ts-d-label">{{ 'submitted.tenor' | t }}</span>
-                      <span class="ts-d-value">24 months</span>
+                      <span class="ts-d-value">{{ 'submitted.ts_value_months' | t:{count: '24'} }}</span>
                     </div>
                     <div class="ts-detail">
                       <span class="ts-d-label">{{ 'submitted.structure' | t }}</span>
-                      <span class="ts-d-value">Murabaha</span>
+                      <span class="ts-d-value">{{ 'submitted.ts_value_murabaha' | t }}</span>
                     </div>
                   </div>
                 </div>
@@ -453,7 +453,7 @@ import { I18nService } from '../../shared/i18n/i18n.service';
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="${C.g400}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
                       {{ 'submitted.processed_by_safqah' | t }}
                     </span>
-                    <button *ngIf="i === ls && ls < launchStages.length" class="demo-advance" (click)="$event.stopPropagation(); advanceLaunch()">Demo: Complete step &darr;</button>
+                    <button *ngIf="i === ls && ls < launchStages.length" class="demo-advance" (click)="$event.stopPropagation(); advanceLaunch()">{{ 'submitted.demo_complete_step' | t }} &darr;</button>
                   </div>
                 </div>
               </ng-container>
@@ -779,6 +779,14 @@ import { I18nService } from '../../shared/i18n/i18n.service';
     .cancel-prompt { font-size: 13px; font-weight: 600; color: ${C.g700}; margin: 0 0 12px 0; }
     .radio-row { display: flex; align-items: center; gap: 8px; font-size: 13px; color: ${C.g600}; cursor: pointer; padding: 6px 0; }
     .radio-row input[type="radio"] { accent-color: ${C.red500}; cursor: pointer; }
+
+    /* ---- RTL ---- */
+    :host-context([dir="rtl"]) .timeline { padding-left: 0; padding-right: 4px; }
+    :host-context([dir="rtl"]) .ag-actions { padding-left: 0; padding-right: 52px; }
+    :host-context([dir="rtl"]) .ag-signed { padding-left: 0; padding-right: 52px; }
+    :host-context([dir="rtl"]) .ir-response { padding-left: 0; padding-right: 42px; }
+    :host-context([dir="rtl"]) .ts-actions { justify-content: flex-start; }
+    :host-context([dir="rtl"]) .ir-actions { justify-content: flex-start; }
   `]
 })
 export class SubmittedComponent {
@@ -807,24 +815,30 @@ export class SubmittedComponent {
     return [this.i18n.t('submitted.pipe_review'), this.i18n.t('submitted.pipe_termsheet'), this.i18n.t('submitted.pipe_signing'), this.i18n.t('submitted.pipe_launch'), this.i18n.t('submitted.pipe_completed')];
   }
 
-  projectStages = [
-    { name: 'Eligibility screening', desc: 'Initial check of project eligibility criteria', sla: '~2 business hours' },
-    { name: 'Execution underwriting', desc: 'Detailed assessment of execution plan and milestones', sla: '~4 business hours' },
-    { name: 'Exit & market underwriting', desc: 'Market analysis and exit strategy evaluation', sla: '~4 business hours' },
-    { name: 'Term-sheet generated', desc: 'Financing terms prepared for review', sla: '' },
-  ];
+  get projectStages() {
+    return [
+      { name: this.i18n.t('submitted.stage_eligibility'), desc: this.i18n.t('submitted.stage_eligibility_desc'), sla: this.i18n.t('submitted.stage_eligibility_sla'), done: false },
+      { name: this.i18n.t('submitted.stage_execution'), desc: this.i18n.t('submitted.stage_execution_desc'), sla: this.i18n.t('submitted.stage_execution_sla'), done: false },
+      { name: this.i18n.t('submitted.stage_exit'), desc: this.i18n.t('submitted.stage_exit_desc'), sla: this.i18n.t('submitted.stage_exit_sla'), done: false },
+      { name: this.i18n.t('submitted.stage_termsheet'), desc: this.i18n.t('submitted.stage_termsheet_desc'), sla: '', done: false },
+    ];
+  }
 
-  companyStages = [
-    { name: 'Document verification', desc: 'Verification of corporate documents and licenses', sla: '~2 business hours' },
-    { name: 'Credit assessment', desc: 'Financial health and creditworthiness evaluation', sla: '~4 business hours' },
-    { name: 'Approved', desc: 'Company review complete', sla: '' },
-  ];
+  get companyStages() {
+    return [
+      { name: this.i18n.t('submitted.stage_doc_verify'), desc: this.i18n.t('submitted.stage_doc_verify_desc'), sla: this.i18n.t('submitted.stage_doc_verify_sla'), done: false },
+      { name: this.i18n.t('submitted.stage_credit'), desc: this.i18n.t('submitted.stage_credit_desc'), sla: this.i18n.t('submitted.stage_credit_sla'), done: false },
+      { name: this.i18n.t('submitted.stage_approved'), desc: this.i18n.t('submitted.stage_approved_desc'), sla: '', done: false },
+    ];
+  }
 
-  launchStages = [
-    { name: 'Complete guarantee package', desc: 'Land pledge and promissory notes verification' },
-    { name: 'Deal preparation for listing', desc: 'Final deal structuring and listing preparation' },
-    { name: 'Deal launch', desc: 'Project goes live on the Safqah platform' },
-  ];
+  get launchStages() {
+    return [
+      { name: this.i18n.t('submitted.stage_guarantee'), desc: this.i18n.t('submitted.stage_guarantee_desc'), done: false },
+      { name: this.i18n.t('submitted.stage_deal_prep'), desc: this.i18n.t('submitted.stage_deal_prep_desc'), done: false },
+      { name: this.i18n.t('submitted.stage_deal_launch'), desc: this.i18n.t('submitted.stage_deal_launch_desc'), done: false },
+    ];
+  }
 
   get cancelReasons() {
     return [
@@ -837,14 +851,16 @@ export class SubmittedComponent {
     ];
   }
 
-  demoStates = [
-    { key: 'initial', label: 'In Review' },
-    { key: 'info-request', label: 'Info Request' },
-    { key: 'termsheet', label: 'Term-sheet Ready' },
-    { key: 'signing', label: 'Signing' },
-    { key: 'launch', label: 'Launch Phase' },
-    { key: 'completed', label: 'Completed' },
-  ];
+  get demoStates() {
+    return [
+      { key: 'initial', label: this.i18n.t('submitted.demo_in_review') },
+      { key: 'info-request', label: this.i18n.t('submitted.demo_info_request') },
+      { key: 'termsheet', label: this.i18n.t('submitted.demo_termsheet_ready') },
+      { key: 'signing', label: this.i18n.t('submitted.demo_signing') },
+      { key: 'launch', label: this.i18n.t('submitted.demo_launch_phase') },
+      { key: 'completed', label: this.i18n.t('submitted.demo_completed') },
+    ];
+  }
 
   constructor(private router: Router, private route: ActivatedRoute, private i18n: I18nService) {}
 
@@ -1062,20 +1078,20 @@ export class SubmittedComponent {
     this.infoRequests = [
       {
         type: 'clarification',
-        title: 'Source of equity',
-        description: 'Please clarify the source of equity contribution for this project and provide supporting documentation if available.',
+        title: this.i18n.t('submitted.info_equity_title'),
+        description: this.i18n.t('submitted.info_equity_desc'),
         response: '', fileUploaded: false, fileName: '', files: []
       },
       {
         type: 'document',
-        title: 'Recent bank statement',
-        description: 'Upload a bank statement for the company\'s primary account from the last 3 months.',
+        title: this.i18n.t('submitted.info_bank_title'),
+        description: this.i18n.t('submitted.info_bank_desc'),
         response: '', fileUploaded: false, fileName: '', files: []
       },
       {
         type: 'information',
-        title: 'Construction timeline',
-        description: 'Provide the expected construction start date and estimated completion date for the project.',
+        title: this.i18n.t('submitted.info_timeline_title'),
+        description: this.i18n.t('submitted.info_timeline_desc'),
         response: '', fileUploaded: false, fileName: '', files: []
       },
     ];

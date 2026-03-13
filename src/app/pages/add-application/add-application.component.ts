@@ -9,7 +9,9 @@ import {
   CardComponent,
   InputComponent,
   ProgressStepsComponent,
+  ResultScreenComponent,
   TranslatePipe,
+  I18nService,
 } from '../../shared';
 
 @Component({
@@ -23,6 +25,7 @@ import {
     CardComponent,
     InputComponent,
     ProgressStepsComponent,
+    ResultScreenComponent,
     TranslatePipe,
   ],
   template: `
@@ -31,20 +34,11 @@ import {
 
       <!-- ============ SUCCESS PAGE ============ -->
       <div *ngIf="submitted" class="success-page animate-in">
-        <div class="success-card">
-          <!-- Animated check circle -->
-          <div class="success-icon-wrap">
-            <div class="success-ring"></div>
-            <div class="success-check-circle">
-              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="20 6 9 17 4 12"/>
-              </svg>
-            </div>
-          </div>
-
-          <h1 class="success-title">{{ 'add_application.success_title' | t }}</h1>
-          <p class="success-desc">{{ 'add_application.success_desc' | t }}</p>
-
+        <app-result-screen
+          type="success"
+          [title]="('add_application.success_title' | t)"
+          [subtitle]="('add_application.success_desc' | t)"
+        >
           <!-- Summary card -->
           <div class="success-summary">
             <div class="summary-row">
@@ -73,7 +67,7 @@ import {
               </div>
               <div class="summary-info">
                 <div class="summary-label">{{ 'financing.amount' | t }}</div>
-                <div class="summary-value">{{ formatAmount(financingAmount) }} SAR</div>
+                <div class="summary-value">{{ formatAmount(financingAmount) }} {{ 'common.sar' | t }}</div>
               </div>
             </div>
           </div>
@@ -104,7 +98,7 @@ import {
               {{ 'nav.dashboard' | t }}
             </app-btn>
           </div>
-        </div>
+        </app-result-screen>
       </div>
 
       <!-- ============ FORM WIZARD ============ -->
@@ -129,7 +123,7 @@ import {
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.green" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h7l2 2h9v16H3z"/></svg>
           </div>
           <div class="preselected-info">
-            <div class="preselected-label">Applying for</div>
+            <div class="preselected-label">{{ 'add_application.applying_for' | t }}</div>
             <div class="preselected-name">{{ selectedProject }}</div>
           </div>
           <div class="preselected-sub">{{ getSelectedProjectType() }} &middot; {{ getSelectedProjectCompany() }}</div>
@@ -177,7 +171,7 @@ import {
         <div *ngIf="step === 1" class="animate-in">
           <app-card [padding]="32">
             <div class="section-title">{{ 'financing.product_label' | t }}</div>
-            <div class="section-desc">Choose the type of financing that best suits your project needs.</div>
+            <div class="section-desc">{{ 'add_application.product_desc' | t }}</div>
 
             <div class="product-list">
               <div
@@ -215,12 +209,12 @@ import {
         <div *ngIf="step === 2" class="animate-in">
           <app-card [padding]="32">
             <div class="section-title">{{ 'financing.amount' | t }}</div>
-            <div class="section-desc">Enter the financing amount you need and see how it compares to your project metrics.</div>
+            <div class="section-desc">{{ 'add_application.amount_desc' | t }}</div>
 
             <app-input
               [label]="('financing.amount' | t)"
               [placeholder]="('financing.total_cost_placeholder' | t)"
-              suffix="SAR"
+              [suffix]="('common.sar' | t)"
               [helper]="('financing.total_cost_helper' | t)"
               [value]="financingAmount"
               (valueChange)="financingAmount = $event"
@@ -249,7 +243,7 @@ import {
                 <div class="ratio-bar-fill" [style.width.%]="Math.min(financingToProjectCost, 100)" [style.background]="getRatioColor(financingToProjectCost)"></div>
               </div>
               <div class="ratio-amounts">
-                <span>{{ formatShort(parsedAmount) }} of {{ formatShort(selectedProjectData?.cost || 0) }}</span>
+                <span>{{ formatShort(parsedAmount) }} {{ 'add_application.of' | t }} {{ formatShort(selectedProjectData?.cost || 0) }}</span>
               </div>
             </div>
 
@@ -268,7 +262,7 @@ import {
                 <div class="ratio-bar-fill" [style.width.%]="Math.min(financingToLandValue, 100)" [style.background]="getRatioColor(financingToLandValue)"></div>
               </div>
               <div class="ratio-amounts">
-                <span>{{ formatShort(parsedAmount) }} of {{ formatShort(selectedProjectData?.land || 0) }}</span>
+                <span>{{ formatShort(parsedAmount) }} {{ 'add_application.of' | t }} {{ formatShort(selectedProjectData?.land || 0) }}</span>
               </div>
             </div>
 
@@ -287,7 +281,7 @@ import {
                 <div class="ratio-bar-fill" [style.width.%]="Math.min(financingToRevenue, 100)" [style.background]="getRatioColor(financingToRevenue)"></div>
               </div>
               <div class="ratio-amounts">
-                <span>{{ formatShort(parsedAmount) }} of {{ formatShort(selectedProjectData?.revenue || 0) }}</span>
+                <span>{{ formatShort(parsedAmount) }} {{ 'add_application.of' | t }} {{ formatShort(selectedProjectData?.revenue || 0) }}</span>
               </div>
             </div>
           </div>
@@ -303,7 +297,7 @@ import {
               </div>
               <div class="review-top-text">
                 <div class="review-top-title">{{ 'add_application.step_review' | t }}</div>
-                <div class="review-top-desc">Please verify all details before submitting.</div>
+                <div class="review-top-desc">{{ 'add_application.review_verify_desc' | t }}</div>
               </div>
             </div>
 
@@ -348,11 +342,11 @@ import {
                   <button class="edit-link" (click)="step = 2">{{ 'common.edit' | t }}</button>
                 </div>
                 <div class="review-block-content">
-                  <div class="review-block-value">{{ formatAmount(financingAmount) }} SAR</div>
+                  <div class="review-block-value">{{ formatAmount(financingAmount) }} {{ 'common.sar' | t }}</div>
                   <div class="review-ratios-mini">
-                    <span class="ratio-chip" [style.background]="C.blue50" [style.color]="C.blue500">{{ financingToProjectCost }}% of project cost</span>
-                    <span class="ratio-chip" [style.background]="C.amber50" [style.color]="C.amber600">{{ financingToLandValue }}% of land value</span>
-                    <span class="ratio-chip" [style.background]="C.greenLt" [style.color]="C.green">{{ financingToRevenue }}% of revenue</span>
+                    <span class="ratio-chip" [style.background]="C.blue50" [style.color]="C.blue500">{{ 'add_application.pct_of_project_cost' | t:{pct: '' + financingToProjectCost} }}</span>
+                    <span class="ratio-chip" [style.background]="C.amber50" [style.color]="C.amber600">{{ 'add_application.pct_of_land_value' | t:{pct: '' + financingToLandValue} }}</span>
+                    <span class="ratio-chip" [style.background]="C.greenLt" [style.color]="C.green">{{ 'add_application.pct_of_revenue' | t:{pct: '' + financingToRevenue} }}</span>
                   </div>
                 </div>
               </div>
@@ -368,7 +362,7 @@ import {
             </div>
             <div class="confirm-text">
               <div class="confirm-title">{{ 'common.confirm' | t }}</div>
-              <div class="confirm-desc">I confirm that all information provided is accurate to the best of my knowledge and I authorize Safqah to review my application.</div>
+              <div class="confirm-desc">{{ 'add_application.confirm_text' | t }}</div>
             </div>
           </div>
         </div>
@@ -376,7 +370,7 @@ import {
         <!-- ============ NAVIGATION BAR ============ -->
         <div class="wizard-nav">
           <app-btn *ngIf="step > firstStep" variant="ghost" (clicked)="prevStep()">
-            &#8592; Back
+            &#8592; {{ 'common.back' | t }}
           </app-btn>
           <div *ngIf="step === firstStep" class="nav-spacer"></div>
 
@@ -887,65 +881,6 @@ import {
       padding: 48px 32px 60px;
     }
 
-    .success-card {
-      text-align: center;
-    }
-
-    .success-icon-wrap {
-      position: relative;
-      width: 88px;
-      height: 88px;
-      margin: 0 auto 28px;
-    }
-
-    .success-ring {
-      position: absolute;
-      inset: 0;
-      border-radius: 50%;
-      border: 3px solid ${C.green}20;
-      animation: ringPulse 1.5s ease-out;
-    }
-
-    @keyframes ringPulse {
-      0% { transform: scale(0.5); opacity: 0; }
-      50% { transform: scale(1.2); opacity: 1; }
-      100% { transform: scale(1); opacity: 1; }
-    }
-
-    .success-check-circle {
-      position: absolute;
-      inset: 8px;
-      border-radius: 50%;
-      background: ${C.green};
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      animation: checkPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-      box-shadow: 0 8px 24px ${C.green}30;
-    }
-
-    @keyframes checkPop {
-      0% { transform: scale(0); opacity: 0; }
-      100% { transform: scale(1); opacity: 1; }
-    }
-
-    .success-title {
-      font-size: 24px;
-      font-weight: 900;
-      color: ${C.g900};
-      margin: 0 0 8px 0;
-    }
-
-    .success-desc {
-      font-size: 14px;
-      color: ${C.g500};
-      line-height: 1.6;
-      margin: 0 0 32px 0;
-      max-width: 400px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
     .success-summary {
       background: #fff;
       border: 1px solid ${C.g200};
@@ -1061,6 +996,11 @@ import {
       .page-title { font-size: 18px; }
       .section-title { font-size: 15px; }
     }
+
+    /* RTL */
+    :host-context([dir="rtl"]) .review-block-content { padding-left: 0; padding-right: 38px; }
+    :host-context([dir="rtl"]) .success-summary { text-align: right; }
+    :host-context([dir="rtl"]) .next-steps { text-align: right; }
   `],
 })
 export class AddApplicationComponent implements OnInit {
@@ -1090,15 +1030,17 @@ export class AddApplicationComponent implements OnInit {
   financingAmount = '';
   accuracy = false;
 
-  products = [
-    { id: 'land', t: 'Land Acquisition Financing', d: 'Acquire the right land at the right time.' },
-    { id: 'residential', t: 'Residential Development Financing', d: 'Develop residential communities and contribute to increasing the localization rate.' },
-    { id: 'commercial', t: 'Commercial Development Financing', d: 'Expand the range of projects available, including modern office spaces, retail, and industrial developments.' },
-    { id: 'rawland', t: 'Raw Land Development Financing', d: 'Transform raw land; successful investment starts from the ground up.' },
-    { id: 'bridge', t: 'Bridging Financing', d: 'Quick, short-term, low-cost financing that protects you from liquidity delays.' },
-  ];
+  get products() {
+    return [
+      { id: 'land', t: this.i18n.t('add_application.product_land'), d: this.i18n.t('add_application.product_land_desc') },
+      { id: 'residential', t: this.i18n.t('add_application.product_residential'), d: this.i18n.t('add_application.product_residential_desc') },
+      { id: 'commercial', t: this.i18n.t('add_application.product_commercial'), d: this.i18n.t('add_application.product_commercial_desc') },
+      { id: 'rawland', t: this.i18n.t('add_application.product_rawland'), d: this.i18n.t('add_application.product_rawland_desc') },
+      { id: 'bridge', t: this.i18n.t('add_application.product_bridge'), d: this.i18n.t('add_application.product_bridge_desc') },
+    ];
+  }
 
-  constructor(private router: Router, private route: ActivatedRoute) {}
+  constructor(private router: Router, private route: ActivatedRoute, private i18n: I18nService) {}
 
   ngOnInit(): void {
     const projectParam = this.route.snapshot.queryParamMap.get('project');
@@ -1112,8 +1054,8 @@ export class AddApplicationComponent implements OnInit {
   /** The step labels shown in the progress bar */
   get stepLabels(): string[] {
     return this.projectPreSelected
-      ? ['Financing Product', 'Financing Amount', 'Review & Submit']
-      : ['Select Project', 'Financing Product', 'Financing Amount', 'Review & Submit'];
+      ? [this.i18n.t('add_application.step_financing_product'), this.i18n.t('add_application.step_financing_amount'), this.i18n.t('add_application.step_review_submit')]
+      : [this.i18n.t('add_application.step_select_project'), this.i18n.t('add_application.step_financing_product'), this.i18n.t('add_application.step_financing_amount'), this.i18n.t('add_application.step_review_submit')];
   }
 
   /** Maps internal step (0-3) to display step for the progress bar */
@@ -1229,10 +1171,10 @@ export class AddApplicationComponent implements OnInit {
   }
 
   formatShort(val: number): string {
-    if (val >= 1_000_000_000) return (val / 1_000_000_000).toFixed(1).replace(/\.0$/, '') + 'B SAR';
-    if (val >= 1_000_000) return (val / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M SAR';
-    if (val >= 1_000) return (val / 1_000).toFixed(0) + 'K SAR';
-    return val.toLocaleString() + ' SAR';
+    if (val >= 1_000_000_000) return (val / 1_000_000_000).toFixed(1).replace(/\.0$/, '') + ' ' + this.i18n.t('add_application.suffix_b_sar');
+    if (val >= 1_000_000) return (val / 1_000_000).toFixed(1).replace(/\.0$/, '') + ' ' + this.i18n.t('add_application.suffix_m_sar');
+    if (val >= 1_000) return (val / 1_000).toFixed(0) + ' ' + this.i18n.t('add_application.suffix_k_sar');
+    return val.toLocaleString() + ' ' + this.i18n.t('common.sar');
   }
 
   // Helpers

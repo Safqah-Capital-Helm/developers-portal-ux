@@ -74,13 +74,13 @@ import { ButtonComponent, BadgeComponent, InputComponent, StatCardComponent, Lis
               </div>
               <div class="step-info">
                 <div class="step-name">{{ s.title }}</div>
-                <div class="step-desc">{{ !s.done && !isStepUnlocked(newUserSteps, i) ? 'Complete the steps above first.' : s.desc }}</div>
+                <div class="step-desc">{{ !s.done && !isStepUnlocked(newUserSteps, i) ? ('common.complete_steps_above' | t) : s.desc }}</div>
               </div>
               <div class="step-actions">
                 <app-btn *ngIf="!s.done && isStepUnlocked(newUserSteps, i)" variant="primary" size="sm" (clicked)="go(s.route)">{{ s.action }}</app-btn>
-                <app-badge *ngIf="s.done" color="green">Done</app-badge>
-                <button *ngIf="i < newUserSteps.length - 1 && !s.done && isStepUnlocked(newUserSteps, i)" class="demo-advance" (click)="toggleStep(newUserSteps, i)">{{ 'dashboard.demo_mark_done' | t }}</button>
-                <button *ngIf="i < newUserSteps.length - 1 && s.done" class="demo-advance" (click)="toggleStep(newUserSteps, i)">{{ 'dashboard.demo_undo' | t }}</button>
+                <app-badge *ngIf="s.done" color="green">{{ 'common.done' | t }}</app-badge>
+                <button *ngIf="i < newUserSteps.length - 1 && !s.done && isStepUnlocked(newUserSteps, i)" class="demo-advance" (click)="toggleStep(_newUserStepsDone, i)">{{ 'dashboard.demo_mark_done' | t }}</button>
+                <button *ngIf="i < newUserSteps.length - 1 && s.done" class="demo-advance" (click)="toggleStep(_newUserStepsDone, i)">{{ 'dashboard.demo_undo' | t }}</button>
               </div>
             </div>
           </div>
@@ -111,13 +111,13 @@ import { ButtonComponent, BadgeComponent, InputComponent, StatCardComponent, Lis
               </div>
               <div class="step-info">
                 <div class="step-name">{{ s.title }}</div>
-                <div class="step-desc">{{ !s.done && !isStepUnlocked(singleUserSteps, i) ? 'Complete the steps above first.' : s.desc }}</div>
+                <div class="step-desc">{{ !s.done && !isStepUnlocked(singleUserSteps, i) ? ('common.complete_steps_above' | t) : s.desc }}</div>
               </div>
               <div class="step-actions">
                 <app-btn *ngIf="!s.done && isStepUnlocked(singleUserSteps, i)" variant="primary" size="sm" (clicked)="go(s.route)">{{ s.action }}</app-btn>
-                <app-badge *ngIf="s.done" color="green">Done</app-badge>
-                <button *ngIf="i < singleUserSteps.length - 1 && !s.done && isStepUnlocked(singleUserSteps, i)" class="demo-advance" (click)="toggleStep(singleUserSteps, i)">Demo: Mark done</button>
-                <button *ngIf="i < singleUserSteps.length - 1 && s.done" class="demo-advance" (click)="toggleStep(singleUserSteps, i)">Demo: Undo</button>
+                <app-badge *ngIf="s.done" color="green">{{ 'common.done' | t }}</app-badge>
+                <button *ngIf="i < singleUserSteps.length - 1 && !s.done && isStepUnlocked(singleUserSteps, i)" class="demo-advance" (click)="toggleStep(_singleUserStepsDone, i)">{{ 'dashboard.demo_mark_done' | t }}</button>
+                <button *ngIf="i < singleUserSteps.length - 1 && s.done" class="demo-advance" (click)="toggleStep(_singleUserStepsDone, i)">{{ 'dashboard.demo_undo' | t }}</button>
               </div>
             </div>
           </div>
@@ -205,18 +205,18 @@ import { ButtonComponent, BadgeComponent, InputComponent, StatCardComponent, Lis
             [style.color]="referralSource === r ? C.green : C.g600"
             (click)="referralSource = r">{{ r }}</div>
         </div>
-        <div *ngIf="referralSource === 'A friend' || referralSource === 'Other'" style="margin-top: 12px;">
-          <app-input [label]="referralSource === 'A friend' ? 'Friend\\'s name' : 'Please specify'" placeholder="Enter details" [value]="referralExtra" (valueChange)="referralExtra = $event"></app-input>
+        <div *ngIf="referralSource === i18n.t('dashboard.referral_friend') || referralSource === i18n.t('dashboard.referral_other')" style="margin-top: 12px;">
+          <app-input [label]="referralSource === i18n.t('dashboard.referral_friend') ? ('dashboard.referral_friend_name' | t) : ('dashboard.referral_specify' | t)" [placeholder]="'dashboard.enter_details' | t" [value]="referralExtra" (valueChange)="referralExtra = $event"></app-input>
         </div>
         <div *ngIf="referralSource" class="referral-save">
-          <app-btn variant="primary" size="sm" (clicked)="showReferral = false">Submit</app-btn>
+          <app-btn variant="primary" size="sm" (clicked)="showReferral = false">{{ 'common.submit' | t }}</app-btn>
         </div>
       </div>
     </div>
   `,
   styles: [`
     :host { display: block; }
-    .container { max-width: 1200px; margin: 0 auto; padding: 28px 40px 60px; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 32px 32px 60px; }
 
     /* Demo controls */
     .demo-bar {
@@ -347,7 +347,7 @@ import { ButtonComponent, BadgeComponent, InputComponent, StatCardComponent, Lis
 
     @media (max-width: 480px) {
       .container { padding: 16px 12px 32px; }
-      .stats-row { grid-template-columns: 1fr; gap: 10px; }
+      .stats-row { grid-template-columns: repeat(2, 1fr); gap: 10px; }
       .step-card { flex-wrap: wrap; }
       .step-actions { width: 100%; justify-content: flex-end; }
       .recent-right { flex-direction: column; align-items: flex-end; gap: 4px; }
@@ -357,6 +357,13 @@ import { ButtonComponent, BadgeComponent, InputComponent, StatCardComponent, Lis
       .referral-chips { gap: 6px; }
       .referral-chip { padding: 6px 12px; font-size: 12px; }
     }
+
+    /* RTL support */
+    :host-context([dir="rtl"]) .view-all { margin-left: 0; margin-right: auto; }
+    :host-context([dir="rtl"]) .notif-count { margin-left: 0; margin-right: auto; }
+    :host-context([dir="rtl"]) .notif-card { border-left: 1px solid ${C.g200}; border-right: 3.5px solid ${C.g200}; }
+    :host-context([dir="rtl"]) .notif-arrow svg { transform: rotate(180deg); }
+    :host-context([dir="rtl"]) .referral-save { justify-content: flex-start; }
   `]
 })
 export class DashboardOverviewComponent implements OnInit {
@@ -380,95 +387,119 @@ export class DashboardOverviewComponent implements OnInit {
   ];
 
   singleApplications: any[] = [];
-  activeApplications = this.fullApplications;
+  activeApplications: any[] = [];
 
   // --- Stats ---
-  fullStats = [
-    { label: 'Total Applications', value: 3, iconBg: C.blue50, icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${C.blue500}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>` },
-    { label: 'Under Review', value: 1, iconBg: C.amber50, icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${C.amber500}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>` },
-    { label: 'Action Required', value: 1, iconBg: '#fff2ee', icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${C.orange}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>` },
-    { label: 'Term-sheet Ready', value: 1, iconBg: C.greenLt, icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${C.green}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><polyline points="16 13 12 17 9 14"/></svg>` },
-  ];
+  get fullStats() {
+    return [
+      { label: this.i18n.t('dashboard.total_apps'), value: 3, iconBg: C.blue50, icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${C.blue500}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>` },
+      { label: this.i18n.t('dashboard.under_review'), value: 1, iconBg: C.amber50, icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${C.amber500}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>` },
+      { label: this.i18n.t('dashboard.action_required'), value: 1, iconBg: '#fff2ee', icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${C.orange}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>` },
+      { label: this.i18n.t('dashboard.termsheet_ready'), value: 1, iconBg: C.greenLt, icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${C.green}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><polyline points="16 13 12 17 9 14"/></svg>` },
+    ];
+  }
 
-  clearStats = [
-    { label: 'Total Applications', value: 3, iconBg: C.blue50, icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${C.blue500}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>` },
-    { label: 'Under Review', value: 2, iconBg: C.amber50, icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${C.amber500}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>` },
-    { label: 'Action Required', value: 0, iconBg: '#fff2ee', icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${C.orange}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>` },
-    { label: 'Approved', value: 1, iconBg: C.greenLt, icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${C.green}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>` },
-  ];
+  get clearStats() {
+    return [
+      { label: this.i18n.t('dashboard.total_apps'), value: 3, iconBg: C.blue50, icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${C.blue500}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>` },
+      { label: this.i18n.t('dashboard.under_review'), value: 2, iconBg: C.amber50, icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${C.amber500}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>` },
+      { label: this.i18n.t('dashboard.action_required'), value: 0, iconBg: '#fff2ee', icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${C.orange}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>` },
+      { label: this.i18n.t('dashboard.approved'), value: 1, iconBg: C.greenLt, icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${C.green}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>` },
+    ];
+  }
 
-  singleStats = [
-    { label: 'Total Applications', value: 0, iconBg: C.blue50, icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${C.blue500}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>` },
-    { label: 'Under Review', value: 0, iconBg: C.amber50, icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${C.amber500}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>` },
-    { label: 'Action Required', value: 0, iconBg: '#fff2ee', icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${C.orange}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>` },
-    { label: 'Term-sheet Ready', value: 0, iconBg: C.greenLt, icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${C.green}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><polyline points="16 13 12 17 9 14"/></svg>` },
-  ];
+  get singleStats() {
+    return [
+      { label: this.i18n.t('dashboard.total_apps'), value: 0, iconBg: C.blue50, icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${C.blue500}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>` },
+      { label: this.i18n.t('dashboard.under_review'), value: 0, iconBg: C.amber50, icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${C.amber500}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>` },
+      { label: this.i18n.t('dashboard.action_required'), value: 0, iconBg: '#fff2ee', icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${C.orange}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>` },
+      { label: this.i18n.t('dashboard.termsheet_ready'), value: 0, iconBg: C.greenLt, icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${C.green}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><polyline points="16 13 12 17 9 14"/></svg>` },
+    ];
+  }
 
-  activeStats = this.fullStats;
+  activeStats: any[] = [];
 
   // --- Onboarding steps ---
-  newUserSteps = [
-    { title: 'Complete your profile', desc: 'Add your personal details and contact information.', action: 'Complete Profile', route: '/profile?from=onboarding', done: false },
-    { title: 'Verify your company', desc: 'Complete company verification to unlock financing.', action: 'Verify Now', route: '/onboarding/company-verify?from=dashboard', done: false },
-    { title: 'Add previous credentials', desc: 'Share previous credentials and track record.', action: 'Add Details', route: '/company/0/credentials', done: false },
-    { title: 'Add your first project', desc: 'Create a development project to apply for financing.', action: 'Add Project', route: '/project/new?fresh=true', done: false },
-    { title: 'Invite your team', desc: 'Add team members to collaborate on projects and applications.', action: 'Invite Team', route: '/dashboard/teams', done: false },
-    { title: 'Submit financing application', desc: 'Apply for financing on your project.', action: 'Apply Now', route: '/application/new', done: false },
-  ];
+  _newUserStepsDone = [false, false, false, false, false, false];
+  get newUserSteps() {
+    return [
+      { title: this.i18n.t('dashboard.step_profile'), desc: this.i18n.t('dashboard.step_profile_desc'), action: this.i18n.t('dashboard.step_profile_action'), route: '/profile?from=onboarding', done: this._newUserStepsDone[0] },
+      { title: this.i18n.t('dashboard.step_verify'), desc: this.i18n.t('dashboard.step_verify_desc'), action: this.i18n.t('dashboard.step_verify_action'), route: '/onboarding/company-verify?from=dashboard', done: this._newUserStepsDone[1] },
+      { title: this.i18n.t('dashboard.step_credentials'), desc: this.i18n.t('dashboard.step_credentials_desc'), action: this.i18n.t('dashboard.step_credentials_action'), route: '/company/0/credentials', done: this._newUserStepsDone[2] },
+      { title: this.i18n.t('dashboard.step_project'), desc: this.i18n.t('dashboard.step_project_desc'), action: this.i18n.t('dashboard.step_project_action'), route: '/project/new?fresh=true', done: this._newUserStepsDone[3] },
+      { title: this.i18n.t('dashboard.step_team'), desc: this.i18n.t('dashboard.step_team_desc'), action: this.i18n.t('dashboard.step_team_action'), route: '/dashboard/teams', done: this._newUserStepsDone[4] },
+      { title: this.i18n.t('dashboard.step_financing'), desc: this.i18n.t('dashboard.step_financing_desc'), action: this.i18n.t('dashboard.step_financing_action'), route: '/application/new', done: this._newUserStepsDone[5] },
+    ];
+  }
 
-  singleUserSteps = [
-    { title: 'Complete your profile', desc: 'Add your personal details and contact information.', action: 'Complete Profile', route: '/profile?from=onboarding', done: true },
-    { title: 'Verify your company', desc: 'Complete company verification to unlock financing.', action: 'Verify Now', route: '/onboarding/company-verify?from=dashboard', done: false },
-    { title: 'Add previous credentials', desc: 'Share previous credentials and track record.', action: 'Add Details', route: '/company/0/credentials', done: false },
-    { title: 'Add a project', desc: 'Create your first development project.', action: 'Create Project', route: '/project/new?fresh=true', done: true },
-    { title: 'Invite your team', desc: 'Add team members to collaborate on projects and applications.', action: 'Invite Team', route: '/dashboard/teams', done: false },
-    { title: 'Submit financing application', desc: 'Apply for financing on your project.', action: 'Apply Now', route: '/application/new', done: false },
-  ];
+  _singleUserStepsDone = [true, false, false, true, false, false];
+  get singleUserSteps() {
+    return [
+      { title: this.i18n.t('dashboard.step_profile'), desc: this.i18n.t('dashboard.step_profile_desc'), action: this.i18n.t('dashboard.step_profile_action'), route: '/profile?from=onboarding', done: this._singleUserStepsDone[0] },
+      { title: this.i18n.t('dashboard.step_verify'), desc: this.i18n.t('dashboard.step_verify_desc'), action: this.i18n.t('dashboard.step_verify_action'), route: '/onboarding/company-verify?from=dashboard', done: this._singleUserStepsDone[1] },
+      { title: this.i18n.t('dashboard.step_credentials'), desc: this.i18n.t('dashboard.step_credentials_desc'), action: this.i18n.t('dashboard.step_credentials_action'), route: '/company/0/credentials', done: this._singleUserStepsDone[2] },
+      { title: this.i18n.t('dashboard.step_project'), desc: this.i18n.t('dashboard.step_project_desc'), action: this.i18n.t('dashboard.step_project_action'), route: '/project/new?fresh=true', done: this._singleUserStepsDone[3] },
+      { title: this.i18n.t('dashboard.step_team'), desc: this.i18n.t('dashboard.step_team_desc'), action: this.i18n.t('dashboard.step_team_action'), route: '/dashboard/teams', done: this._singleUserStepsDone[4] },
+      { title: this.i18n.t('dashboard.step_financing'), desc: this.i18n.t('dashboard.step_financing_desc'), action: this.i18n.t('dashboard.step_financing_action'), route: '/application/new', done: this._singleUserStepsDone[5] },
+    ];
+  }
 
   // --- Notifications ---
-  fullNotifications = [
-    {
-      title: 'Pending Company Verification',
-      desc: 'Al Jazeera Development Co. needs to complete company verification.',
-      time: '2h ago',
-      route: '/onboarding/company-verify?from=dashboard',
-      borderColor: C.amber500,
-      iconBg: C.amber50,
-      icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${C.amber500}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,
-    },
-    {
-      title: 'Feedback Requested',
-      desc: 'Tabuk Residential Complex application requires additional documents.',
-      time: '5h ago',
-      route: '/application/3/status',
-      borderColor: C.orange,
-      iconBg: '#fff2ee',
-      icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${C.orange}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>`,
-    },
-    {
-      title: 'Term-sheet Ready for Acceptance',
-      desc: 'Al Noor Residential financing term-sheet is ready for your review.',
-      time: '1d ago',
-      route: '/application/1/status',
-      borderColor: C.green,
-      iconBg: C.greenLt,
-      icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${C.green}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><polyline points="16 13 12 17 9 14"/></svg>`,
-    },
-    {
-      title: 'Pending Signing Agreement',
-      desc: 'Riyadh Commercial Plaza agreement is ready for digital signature.',
-      time: '2d ago',
-      route: '/application/2/status',
-      borderColor: C.blue500,
-      iconBg: C.blue50,
-      icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${C.blue500}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>`,
-    },
-  ];
+  get fullNotifications() {
+    return [
+      {
+        title: this.i18n.t('dashboard.notif_pending_verify'),
+        desc: this.i18n.t('dashboard.notif_pending_verify_desc', { company: 'Al Jazeera Development Co.' }),
+        time: this.i18n.t('nav.time_2h'),
+        route: '/onboarding/company-verify?from=dashboard',
+        borderColor: C.amber500,
+        iconBg: C.amber50,
+        icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${C.amber500}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,
+      },
+      {
+        title: this.i18n.t('dashboard.notif_feedback'),
+        desc: this.i18n.t('dashboard.notif_feedback_desc', { project: 'Tabuk Residential Complex' }),
+        time: this.i18n.t('nav.time_5h'),
+        route: '/application/3/status',
+        borderColor: C.orange,
+        iconBg: '#fff2ee',
+        icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${C.orange}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>`,
+      },
+      {
+        title: this.i18n.t('dashboard.notif_termsheet'),
+        desc: this.i18n.t('dashboard.notif_termsheet_desc', { project: 'Al Noor Residential' }),
+        time: this.i18n.t('nav.time_1d'),
+        route: '/application/1/status',
+        borderColor: C.green,
+        iconBg: C.greenLt,
+        icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${C.green}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><polyline points="16 13 12 17 9 14"/></svg>`,
+      },
+      {
+        title: this.i18n.t('dashboard.notif_signing'),
+        desc: this.i18n.t('dashboard.notif_signing_desc', { project: 'Riyadh Commercial Plaza' }),
+        time: this.i18n.t('nav.time_2d'),
+        route: '/application/2/status',
+        borderColor: C.blue500,
+        iconBg: C.blue50,
+        icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${C.blue500}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>`,
+      },
+    ];
+  }
 
-  activeNotifications = this.fullNotifications;
+  activeNotifications: any[] = [];
 
   showReferral = true;
-  referralOptions = ['X (Twitter)', 'Instagram', 'Snapchat', 'LinkedIn', 'Website', 'A friend', 'Other'];
+  get referralOptions() {
+    return [
+      this.i18n.t('dashboard.referral_twitter'),
+      this.i18n.t('dashboard.referral_instagram'),
+      this.i18n.t('dashboard.referral_snapchat'),
+      this.i18n.t('dashboard.referral_linkedin'),
+      this.i18n.t('dashboard.referral_website'),
+      this.i18n.t('dashboard.referral_friend'),
+      this.i18n.t('dashboard.referral_other'),
+    ];
+  }
   referralSource = '';
   referralExtra = '';
 
@@ -523,12 +554,12 @@ export class DashboardOverviewComponent implements OnInit {
     return steps.slice(0, index).every((s: any) => s.done);
   }
 
-  toggleStep(steps: any[], index: number): void {
-    steps[index].done = !steps[index].done;
+  toggleStep(backing: boolean[], index: number): void {
+    backing[index] = !backing[index];
     // If undoing a step, also undo all subsequent steps
-    if (!steps[index].done) {
-      for (let i = index + 1; i < steps.length; i++) {
-        steps[i].done = false;
+    if (!backing[index]) {
+      for (let i = index + 1; i < backing.length; i++) {
+        backing[i] = false;
       }
     }
   }

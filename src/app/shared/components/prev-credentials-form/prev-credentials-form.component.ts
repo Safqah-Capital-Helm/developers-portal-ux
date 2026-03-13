@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { C } from '../../theme';
 import { InputComponent } from '../input/input.component';
 import { CardComponent } from '../card/card.component';
+import { TranslatePipe } from '../../i18n/translate.pipe';
 
 export interface PrevCredentialsData {
   hasPrevProjects: boolean;
@@ -18,7 +19,7 @@ export interface PrevCredentialsData {
 @Component({
   selector: 'app-prev-credentials-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, InputComponent, CardComponent],
+  imports: [CommonModule, FormsModule, InputComponent, CardComponent, TranslatePipe],
   template: `
     <app-card [padding]="32">
       <div class="section-header" *ngIf="showHeader">
@@ -29,10 +30,10 @@ export interface PrevCredentialsData {
             <line x1="6" y1="20" x2="6" y2="14"/>
           </svg>
         </div>
-        <h2 class="card-title" style="margin: 0;">Previous Credentials</h2>
+        <h2 class="card-title" style="margin: 0;">{{ 'credentials_form.title' | t }}</h2>
       </div>
 
-      <p *ngIf="showHeader" class="card-desc" style="margin: 16px 0 20px;">Tell us about your track record so we can better assess your application.</p>
+      <p *ngIf="showHeader" class="card-desc" style="margin: 16px 0 20px;">{{ 'credentials_form.desc' | t }}</p>
 
       <div class="toggle-row">
         <div class="toggle-opt"
@@ -41,23 +42,23 @@ export interface PrevCredentialsData {
           [style.color]="hasPrevProjects ? C.green : C.g500"
           (click)="hasPrevProjects = true">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-          Yes, we've completed projects
+          {{ 'credentials_form.yes_completed' | t }}
         </div>
         <div class="toggle-opt"
           [style.background]="!hasPrevProjects ? C.g50 : '#fff'"
           [style.borderColor]="!hasPrevProjects ? C.g400 : C.g200"
           [style.color]="!hasPrevProjects ? C.g700 : C.g500"
           (click)="hasPrevProjects = false">
-          No previous credentials
+          {{ 'credentials_form.no_prev' | t }}
         </div>
       </div>
 
       <div *ngIf="hasPrevProjects" class="prev-details">
-        <app-input label="Completed projects" placeholder="e.g. 5" [value]="prevCount" (valueChange)="prevCount = $event"></app-input>
-        <app-input label="Combined value (SAR)" placeholder="e.g. 50,000,000" [value]="prevValue" (valueChange)="prevValue = $event"></app-input>
+        <app-input [label]="'credentials_form.completed_label' | t" [placeholder]="'credentials_form.completed_placeholder' | t" [value]="prevCount" (valueChange)="prevCount = $event"></app-input>
+        <app-input [label]="'credentials_form.value_label' | t" [placeholder]="'credentials_form.value_placeholder' | t" [value]="prevValue" (valueChange)="prevValue = $event"></app-input>
 
         <div class="src-section">
-          <div class="src-label">Financing sources</div>
+          <div class="src-label">{{ 'credentials_form.sources_label' | t }}</div>
 
           <div class="src-bar">
             <div class="src-bar-seg" *ngIf="finBank > 0" [style.width.%]="finBank" [style.background]="C.green">{{ finBank }}%</div>
@@ -68,7 +69,7 @@ export interface PrevCredentialsData {
 
           <div class="src-row">
             <div class="src-dot" [style.background]="C.green"></div>
-            <span class="src-name">Bank</span>
+            <span class="src-name">{{ 'credentials_form.bank' | t }}</span>
             <div class="src-stepper">
               <button class="src-btn" [disabled]="finBank <= 0" (click)="adjustSource('bank', -5)">-</button>
               <span class="src-pct">{{ finBank }}%</span>
@@ -77,7 +78,7 @@ export interface PrevCredentialsData {
           </div>
           <div class="src-row">
             <div class="src-dot" [style.background]="C.blue500"></div>
-            <span class="src-name">Fintech</span>
+            <span class="src-name">{{ 'credentials_form.fintech' | t }}</span>
             <div class="src-stepper">
               <button class="src-btn" [disabled]="finFintech <= 0" (click)="adjustSource('fintech', -5)">-</button>
               <span class="src-pct">{{ finFintech }}%</span>
@@ -86,7 +87,7 @@ export interface PrevCredentialsData {
           </div>
           <div class="src-row">
             <div class="src-dot" [style.background]="C.amber500"></div>
-            <span class="src-name">Friends &amp; Family</span>
+            <span class="src-name">{{ 'credentials_form.friends' | t }}</span>
             <div class="src-stepper">
               <button class="src-btn" [disabled]="finFriends <= 0" (click)="adjustSource('friends', -5)">-</button>
               <span class="src-pct">{{ finFriends }}%</span>
@@ -95,7 +96,7 @@ export interface PrevCredentialsData {
           </div>
           <div class="src-row src-row-auto">
             <div class="src-dot" [style.background]="C.g300"></div>
-            <span class="src-name">Self-Funded</span>
+            <span class="src-name">{{ 'credentials_form.self_funded' | t }}</span>
             <span class="src-auto" [style.color]="C.green">{{ finSelf }}%</span>
           </div>
         </div>

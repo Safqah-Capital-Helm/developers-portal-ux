@@ -252,6 +252,11 @@ import { I18nService } from '../../shared/i18n/i18n.service';
       display: flex; align-items: center; justify-content: center;
       gap: 6px; font-size: 12px; color: ${C.g400};
     }
+
+    /* RTL */
+    :host-context([dir="rtl"]) .notice-card { text-align: right; }
+    :host-context([dir="rtl"]) .actions-section { text-align: right; }
+    :host-context([dir="rtl"]) .resource-text { text-align: right; }
   `]
 })
 export class NotDevComponent {

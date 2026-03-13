@@ -10,6 +10,7 @@ import {
   InputComponent,
   BadgeComponent,
   TranslatePipe,
+  I18nService,
 } from '../../shared';
 
 type Step = 'intro' | 'id' | 'otp' | 'verifying' | 'grant' | 'done';
@@ -54,24 +55,24 @@ type Step = 'intro' | 'id' | 'otp' | 'verifying' | 'grant' | 'done';
           </div>
 
           <div class="text-center" style="margin-bottom: 24px;">
-            <h1 class="page-title">Owner authorization requested</h1>
+            <h1 class="page-title">{{ 'owner_verify.auth_requested' | t }}</h1>
             <p class="page-subtitle">{{ 'owner_verify.subtitle' | t }}</p>
           </div>
 
           <!-- Request Details card -->
           <app-card [padding]="24">
-            <div class="card-label">Request Details</div>
+            <div class="card-label">{{ 'owner_verify.request_details' | t }}</div>
 
             <!-- Requester row -->
             <div class="requester-row">
               <div class="avatar-circle" [style.background]="C.greenLt" [style.color]="C.green">A</div>
               <div class="requester-info">
                 <div class="requester-name">{{ requester.name }}</div>
-                <div class="requester-meta">National ID: {{ requester.id }} &middot; {{ requester.phone }}</div>
+                <div class="requester-meta">{{ 'owner_verify.nid_label' | t }} {{ requester.id }} &middot; {{ requester.phone }}</div>
               </div>
             </div>
 
-            <p class="request-desc">is requesting <strong>Admin access</strong> to register and manage financing applications on behalf of your company.</p>
+            <p class="request-desc" [innerHTML]="'owner_verify.request_desc' | t"></p>
 
             <!-- Company info box -->
             <div class="company-box">
@@ -84,7 +85,7 @@ type Step = 'intro' | 'id' | 'otp' | 'verifying' | 'grant' | 'done';
               </div>
               <div>
                 <div class="company-name">{{ company.name }}</div>
-                <div class="company-cr">CR {{ company.cr }}</div>
+                <div class="company-cr">{{ 'common.cr_prefix' | t }} {{ company.cr }}</div>
               </div>
             </div>
           </app-card>
@@ -97,8 +98,8 @@ type Step = 'intro' | 'id' | 'otp' | 'verifying' | 'grant' | 'done';
               </svg>
             </div>
             <div>
-              <div class="warning-title">What this means</div>
-              <div class="warning-desc">By granting access, this person will be able to submit financing applications, manage projects, and act as an administrator for your company on Safqah.</div>
+              <div class="warning-title">{{ 'owner_verify.what_this_means' | t }}</div>
+              <div class="warning-desc">{{ 'owner_verify.what_this_means_desc' | t }}</div>
             </div>
           </div>
 
@@ -107,7 +108,7 @@ type Step = 'intro' | 'id' | 'otp' | 'verifying' | 'grant' | 'done';
               {{ 'owner_verify.verify_btn' | t }} &rarr;
             </app-btn>
           </div>
-          <p class="text-center footer-note">Not the right person? <span class="link">Contact support</span></p>
+          <p class="text-center footer-note">{{ 'owner_verify.not_right_person' | t }} <span class="link">{{ 'owner_verify.contact_support' | t }}</span></p>
         </div>
 
         <!-- ===== STEP: id ===== -->
@@ -129,8 +130,8 @@ type Step = 'intro' | 'id' | 'otp' | 'verifying' | 'grant' | 'done';
 
           <app-card [padding]="28">
             <app-input
-              label="National ID"
-              placeholder="Enter your 10-digit National ID"
+              [label]="'owner_verify.nid_input_label' | t"
+              [placeholder]="'owner_verify.nid_placeholder' | t"
               [value]="nid"
               (valueChange)="nid = $event"
             ></app-input>
@@ -160,9 +161,9 @@ type Step = 'intro' | 'id' | 'otp' | 'verifying' | 'grant' | 'done';
 
           <app-card [padding]="28">
             <app-input
-              label="Verification Code"
-              placeholder="Enter 6-digit code"
-              helper="Sent to your Absher app"
+              [label]="'owner_verify.otp_label' | t"
+              [placeholder]="'owner_verify.otp_placeholder' | t"
+              [helper]="'owner_verify.otp_helper' | t"
               [value]="otp"
               (valueChange)="otp = $event"
             ></app-input>
@@ -199,14 +200,14 @@ type Step = 'intro' | 'id' | 'otp' | 'verifying' | 'grant' | 'done';
           </div>
 
           <app-card [padding]="24">
-            <div class="card-label">Grant access to:</div>
+            <div class="card-label">{{ 'owner_verify.grant_access_to' | t }}</div>
 
             <!-- Requester gray box -->
             <div class="grant-requester-box">
               <div class="avatar-circle avatar-sm" [style.background]="C.greenLt" [style.color]="C.green">A</div>
               <div>
                 <div class="grant-name">{{ requester.name }}</div>
-                <div class="grant-id">National ID: {{ requester.id }}</div>
+                <div class="grant-id">{{ 'owner_verify.nid_label' | t }} {{ requester.id }}</div>
               </div>
             </div>
 
@@ -216,9 +217,9 @@ type Step = 'intro' | 'id' | 'otp' | 'verifying' | 'grant' | 'done';
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2e90fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
                 </svg>
-                <span class="grant-access-title">Admin Access</span>
+                <span class="grant-access-title">{{ 'owner_verify.admin_access' | t }}</span>
               </div>
-              <p class="grant-access-desc">Full access to register financing applications, manage projects, and administer company settings on Safqah.</p>
+              <p class="grant-access-desc">{{ 'owner_verify.admin_access_desc' | t }}</p>
             </div>
 
             <div style="margin-top: 20px;">
@@ -242,7 +243,7 @@ type Step = 'intro' | 'id' | 'otp' | 'verifying' | 'grant' | 'done';
 
           <div class="text-center" style="margin-bottom: 24px;">
             <h1 class="page-title">{{ 'owner_verify.success_title' | t }}</h1>
-            <p class="page-subtitle">{{ requester.name }} now has <strong>Admin access</strong> to {{ company.name }}.</p>
+            <p class="page-subtitle" [innerHTML]="requester.name + ' ' + ('owner_verify.now_has_admin' | t) + ' ' + company.name + '.'"></p>
           </div>
 
           <app-card [padding]="24">
@@ -252,7 +253,7 @@ type Step = 'intro' | 'id' | 'otp' | 'verifying' | 'grant' | 'done';
                 <div class="avatar-circle avatar-sm" [style.background]="C.greenLt" [style.color]="C.green">A</div>
                 <span class="status-row-name">{{ requester.name }}</span>
               </div>
-              <app-badge color="green">Admin</app-badge>
+              <app-badge color="green">{{ 'owner_verify.badge_admin' | t }}</app-badge>
             </div>
 
             <div class="status-divider"></div>
@@ -269,13 +270,13 @@ type Step = 'intro' | 'id' | 'otp' | 'verifying' | 'grant' | 'done';
                 </div>
                 <span class="status-row-name">{{ company.name }}</span>
               </div>
-              <app-badge color="green">Verified</app-badge>
+              <app-badge color="green">{{ 'owner_verify.badge_verified' | t }}</app-badge>
             </div>
           </app-card>
 
           <div style="margin-top: 24px;">
             <app-btn variant="primary" [full]="true" size="lg" (clicked)="goToCompanyVerify()">
-              Complete Company Verification &rarr;
+              {{ 'owner_verify.complete_verify_btn' | t }}
             </app-btn>
           </div>
           <div style="margin-top: 12px;">
@@ -636,7 +637,7 @@ export class OwnerVerifyComponent implements OnDestroy {
 
   private timers: ReturnType<typeof setTimeout>[] = [];
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, public i18n: I18nService) {}
 
   ngOnDestroy(): void {
     this.timers.forEach(t => clearTimeout(t));

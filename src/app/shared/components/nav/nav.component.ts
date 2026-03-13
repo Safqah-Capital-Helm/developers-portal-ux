@@ -110,15 +110,15 @@ const TYPE_COLORS: Record<string, { bg: string; fg: string }> = {
         <!-- Avatar dropdown -->
         <div class="dd-wrap">
           <div class="avatar-area" (click)="toggleAvatar()" [style.background]="open ? C.g50 : 'transparent'">
-            <span class="name">Ahmed</span>
+            <span class="name">{{ 'nav.user_name' | t }}</span>
             <div class="avatar">A</div>
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g400" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
           </div>
           <div *ngIf="open" class="overlay" (click)="open=false"></div>
           <div *ngIf="open" class="dropdown">
             <div class="dd-header">
-              <div class="dd-name">Ahmed Al-Salem</div>
-              <div class="dd-email">ahmed&#64;alomran.com</div>
+              <div class="dd-name">{{ 'nav.user_full_name' | t }}</div>
+              <div class="dd-email">{{ 'nav.user_email' | t }}</div>
             </div>
             <div class="dd-sep"></div>
             <div class="dd-item" (click)="go('/profile')">
@@ -171,6 +171,20 @@ const TYPE_COLORS: Record<string, { bg: string; fg: string }> = {
     @media (max-width: 480px) {
       .top-nav { padding: 12px 12px; }
       .notif-panel { width: calc(100vw - 24px); right: -60px; }
+    }
+
+    /* RTL support */
+    :host-context([dir="rtl"]) .notif-panel { right: auto; left: 0; }
+    :host-context([dir="rtl"]) .dropdown { right: auto; left: 0; }
+    :host-context([dir="rtl"]) .view-all { margin-left: 0; margin-right: auto; }
+    :host-context([dir="rtl"]) .notif-item { border-left: none; border-right: 3px solid transparent; }
+    :host-context([dir="rtl"]) .notif-item.unread { border-right-color: inherit; }
+
+    @media (max-width: 900px) {
+      :host-context([dir="rtl"]) .notif-panel { right: auto; left: -60px; }
+    }
+    @media (max-width: 480px) {
+      :host-context([dir="rtl"]) .notif-panel { right: auto; left: -60px; }
     }
 
     /* Bell */
@@ -271,16 +285,20 @@ export class NavComponent implements OnInit {
   open = false;
   notifOpen = false;
 
-  notifications: AppNotification[] = [
-    { id: 1, type: 'status',    title: 'Application Under Review',  message: 'Your application for Al Noor Residential is now being reviewed by our team.', time: '2 hours ago', read: false },
-    { id: 2, type: 'termsheet', title: 'Term Sheet Ready',          message: 'A term sheet has been prepared for your Al Noor Residential project.',        time: '5 hours ago', read: false },
-    { id: 3, type: 'invite',    title: 'Team Invitation Sent',      message: 'An invitation has been sent to omar@alnoor.com to join your team.',           time: '1 day ago',   read: false },
-    { id: 4, type: 'feedback',  title: 'Feedback Requested',        message: 'Our team has requested additional details about your project timeline.',      time: '2 days ago',  read: true },
-    { id: 5, type: 'agreement', title: 'Agreement Available',       message: 'Your financing agreement is ready for review and signature.',                 time: '3 days ago',  read: true },
-    { id: 6, type: 'status',    title: 'Application Approved',      message: 'Congratulations! Your preliminary application has been approved.',            time: '5 days ago',  read: true },
-    { id: 7, type: 'feedback',  title: 'Document Review Complete',  message: 'Your uploaded documents have been reviewed successfully.',                    time: '1 week ago',  read: true },
-    { id: 8, type: 'invite',    title: 'Team Member Joined',        message: 'sara@alnoor.com has accepted your team invitation.',                         time: '1 week ago',  read: true },
-  ];
+  private readState: Record<number, boolean> = { 1: false, 2: false, 3: false, 4: true, 5: true, 6: true, 7: true, 8: true };
+
+  get notifications(): AppNotification[] {
+    return [
+      { id: 1, type: 'status',    title: this.i18n.t('nav.notif_under_review'),    message: this.i18n.t('nav.notif_under_review_desc'),    time: this.i18n.t('nav.time_2h'), read: this.readState[1] },
+      { id: 2, type: 'termsheet', title: this.i18n.t('nav.notif_termsheet_ready'), message: this.i18n.t('nav.notif_termsheet_ready_desc'), time: this.i18n.t('nav.time_5h'), read: this.readState[2] },
+      { id: 3, type: 'invite',    title: this.i18n.t('nav.notif_invite_sent'),     message: this.i18n.t('nav.notif_invite_sent_desc'),     time: this.i18n.t('nav.time_1d'), read: this.readState[3] },
+      { id: 4, type: 'feedback',  title: this.i18n.t('nav.notif_feedback'),        message: this.i18n.t('nav.notif_feedback_desc'),        time: this.i18n.t('nav.time_2d'), read: this.readState[4] },
+      { id: 5, type: 'agreement', title: this.i18n.t('nav.notif_agreement'),       message: this.i18n.t('nav.notif_agreement_desc'),       time: this.i18n.t('nav.time_3d'), read: this.readState[5] },
+      { id: 6, type: 'status',    title: this.i18n.t('nav.notif_approved'),        message: this.i18n.t('nav.notif_approved_desc'),        time: this.i18n.t('nav.time_5d'), read: this.readState[6] },
+      { id: 7, type: 'feedback',  title: this.i18n.t('nav.notif_doc_review'),      message: this.i18n.t('nav.notif_doc_review_desc'),      time: this.i18n.t('nav.time_1w'), read: this.readState[7] },
+      { id: 8, type: 'invite',    title: this.i18n.t('nav.notif_member_joined'),   message: this.i18n.t('nav.notif_member_joined_desc'),   time: this.i18n.t('nav.time_1w'), read: this.readState[8] },
+    ];
+  }
 
   constructor(private router: Router, public i18n: I18nService) {}
 
@@ -300,12 +318,9 @@ export class NavComponent implements OnInit {
     if (this.open) this.notifOpen = false;
   }
 
-  markAllRead() { this.notifications.forEach(n => n.read = true); }
+  markAllRead() { Object.keys(this.readState).forEach(k => this.readState[+k] = true); }
 
-  markRead(id: number) {
-    const n = this.notifications.find(x => x.id === id);
-    if (n) n.read = true;
-  }
+  markRead(id: number) { this.readState[id] = true; }
 
   go(path: string) { this.open = false; this.router.navigate([path]); }
 }

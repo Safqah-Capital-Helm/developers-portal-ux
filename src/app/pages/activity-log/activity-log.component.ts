@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { C, BadgeColor, BADGE_STYLES } from '../../shared/theme';
 import { NavComponent, BackLinkComponent, BadgeComponent, TranslatePipe } from '../../shared';
+import { I18nService } from '../../shared/i18n/i18n.service';
 
 interface ActivityEvent {
   id: number;
@@ -145,7 +146,7 @@ interface ActivityEvent {
     .container {
       max-width: 720px;
       margin: 0 auto;
-      padding: 28px 32px 60px;
+      padding: 32px 32px 60px;
     }
 
     /* Header */
@@ -280,30 +281,33 @@ interface ActivityEvent {
     }
   `]
 })
-export class ActivityLogComponent {
+export class ActivityLogComponent implements OnInit {
   C = C;
   appId = '1';
+  events: ActivityEvent[] = [];
 
-  constructor(private router: Router, private route: ActivatedRoute) {
+  constructor(private router: Router, private route: ActivatedRoute, private i18n: I18nService) {
     this.appId = this.route.snapshot.paramMap.get('id') || '1';
   }
 
   go(path: string) { this.router.navigateByUrl(path); }
 
-  events: ActivityEvent[] = [
-    { id: 1,  type: 'termsheet',   title: 'Term Sheet Accepted',         description: 'Ahmed Al-Salem accepted the financing term sheet for Al Noor Residential.',                    actor: 'Ahmed Al-Salem',  time: 'Mar 8, 2026 at 2:15 PM',   badge: 'green', badgeLabel: 'Accepted' },
-    { id: 2,  type: 'termsheet',   title: 'Term Sheet Viewed',           description: 'The financing term sheet was opened and reviewed.',                                            actor: 'Ahmed Al-Salem',  time: 'Mar 7, 2026 at 11:30 AM',  badge: 'blue',  badgeLabel: 'Info' },
-    { id: 3,  type: 'termsheet',   title: 'Term Sheet Issued',           description: 'A financing term sheet has been prepared and is ready for review.',                             actor: 'Safqah Team',     time: 'Mar 6, 2026 at 9:00 AM',   badge: 'blue',  badgeLabel: 'Info' },
-    { id: 4,  type: 'review',      title: 'Company Review Approved',     description: 'Company details and credit check have been approved.',                                          actor: 'Safqah Team',     time: 'Mar 5, 2026 at 4:20 PM',   badge: 'green', badgeLabel: 'Approved' },
-    { id: 5,  type: 'review',      title: 'Project Review Approved',     description: 'Project details have been reviewed and approved.',                                              actor: 'Safqah Team',     time: 'Mar 4, 2026 at 3:45 PM',   badge: 'green', badgeLabel: 'Approved' },
-    { id: 6,  type: 'declaration', title: 'Declaration Signed',          description: 'Declaration of no legal proceedings was digitally signed.',                                     actor: 'Ahmed Al-Salem',  time: 'Mar 3, 2026 at 10:00 AM',  badge: 'green', badgeLabel: 'Completed' },
-    { id: 7,  type: 'document',    title: 'Documents Uploaded',          description: 'Land Title Deed and Owner ID uploaded successfully.',                                           actor: 'Ahmed Al-Salem',  time: 'Mar 2, 2026 at 2:30 PM',   badge: 'blue',  badgeLabel: 'Info' },
-    { id: 8,  type: 'team',        title: 'Team Member Joined',          description: 'sara@alnoor.com accepted the team invitation.',                                                 actor: 'Sara Al-Noor',    time: 'Mar 2, 2026 at 11:15 AM',  badge: 'blue',  badgeLabel: 'Info' },
-    { id: 9,  type: 'team',        title: 'Team Invitation Sent',        description: 'An invitation was sent to sara@alnoor.com to join the team.',                                   actor: 'Ahmed Al-Salem',  time: 'Mar 1, 2026 at 4:00 PM',   badge: 'gray',  badgeLabel: 'Sent' },
-    { id: 10, type: 'credit',      title: 'Credit Check Authorized',     description: 'Credit bureau check authorized for Al Omran Real Estate Dev Co.',                              actor: 'Ahmed Al-Salem',  time: 'Feb 28, 2026 at 1:45 PM',  badge: 'amber', badgeLabel: 'Authorized' },
-    { id: 11, type: 'submit',      title: 'Application Submitted',       description: 'Financing application submitted for review.',                                                   actor: 'Ahmed Al-Salem',  time: 'Feb 28, 2026 at 1:30 PM',  badge: 'green', badgeLabel: 'Submitted' },
-    { id: 12, type: 'system',      title: 'Application Created',         description: 'New financing application created for Al Noor Residential.',                                    actor: 'System',          time: 'Feb 27, 2026 at 9:00 AM',  badge: 'gray',  badgeLabel: 'Created' },
-  ];
+  ngOnInit(): void {
+    this.events = [
+      { id: 1,  type: 'termsheet',   title: this.i18n.t('activity.ev_ts_accepted'),        description: this.i18n.t('activity.ev_ts_accepted_desc'),        actor: 'Ahmed Al-Salem',  time: 'Mar 8, 2026 at 2:15 PM',   badge: 'green', badgeLabel: this.i18n.t('activity.badge_accepted') },
+      { id: 2,  type: 'termsheet',   title: this.i18n.t('activity.ev_ts_viewed'),           description: this.i18n.t('activity.ev_ts_viewed_desc'),           actor: 'Ahmed Al-Salem',  time: 'Mar 7, 2026 at 11:30 AM',  badge: 'blue',  badgeLabel: this.i18n.t('activity.badge_info') },
+      { id: 3,  type: 'termsheet',   title: this.i18n.t('activity.ev_ts_issued'),           description: this.i18n.t('activity.ev_ts_issued_desc'),           actor: 'Safqah Team',     time: 'Mar 6, 2026 at 9:00 AM',   badge: 'blue',  badgeLabel: this.i18n.t('activity.badge_info') },
+      { id: 4,  type: 'review',      title: this.i18n.t('activity.ev_company_approved'),    description: this.i18n.t('activity.ev_company_approved_desc'),    actor: 'Safqah Team',     time: 'Mar 5, 2026 at 4:20 PM',   badge: 'green', badgeLabel: this.i18n.t('activity.badge_approved') },
+      { id: 5,  type: 'review',      title: this.i18n.t('activity.ev_project_approved'),    description: this.i18n.t('activity.ev_project_approved_desc'),    actor: 'Safqah Team',     time: 'Mar 4, 2026 at 3:45 PM',   badge: 'green', badgeLabel: this.i18n.t('activity.badge_approved') },
+      { id: 6,  type: 'declaration', title: this.i18n.t('activity.ev_declaration_signed'),  description: this.i18n.t('activity.ev_declaration_signed_desc'),  actor: 'Ahmed Al-Salem',  time: 'Mar 3, 2026 at 10:00 AM',  badge: 'green', badgeLabel: this.i18n.t('activity.badge_completed') },
+      { id: 7,  type: 'document',    title: this.i18n.t('activity.ev_docs_uploaded'),       description: this.i18n.t('activity.ev_docs_uploaded_desc'),       actor: 'Ahmed Al-Salem',  time: 'Mar 2, 2026 at 2:30 PM',   badge: 'blue',  badgeLabel: this.i18n.t('activity.badge_info') },
+      { id: 8,  type: 'team',        title: this.i18n.t('activity.ev_member_joined'),       description: this.i18n.t('activity.ev_member_joined_desc'),       actor: 'Sara Al-Noor',    time: 'Mar 2, 2026 at 11:15 AM',  badge: 'blue',  badgeLabel: this.i18n.t('activity.badge_info') },
+      { id: 9,  type: 'team',        title: this.i18n.t('activity.ev_invite_sent'),         description: this.i18n.t('activity.ev_invite_sent_desc'),         actor: 'Ahmed Al-Salem',  time: 'Mar 1, 2026 at 4:00 PM',   badge: 'gray',  badgeLabel: this.i18n.t('activity.badge_sent') },
+      { id: 10, type: 'credit',      title: this.i18n.t('activity.ev_credit_authorized'),   description: this.i18n.t('activity.ev_credit_authorized_desc'),   actor: 'Ahmed Al-Salem',  time: 'Feb 28, 2026 at 1:45 PM',  badge: 'amber', badgeLabel: this.i18n.t('activity.badge_authorized') },
+      { id: 11, type: 'submit',      title: this.i18n.t('activity.ev_app_submitted'),       description: this.i18n.t('activity.ev_app_submitted_desc'),       actor: 'Ahmed Al-Salem',  time: 'Feb 28, 2026 at 1:30 PM',  badge: 'green', badgeLabel: this.i18n.t('activity.badge_submitted') },
+      { id: 12, type: 'system',      title: this.i18n.t('activity.ev_app_created'),         description: this.i18n.t('activity.ev_app_created_desc'),         actor: 'System',          time: 'Feb 27, 2026 at 9:00 AM',  badge: 'gray',  badgeLabel: this.i18n.t('activity.badge_created') },
+    ];
+  }
 
   dotColor(badge: BadgeColor): string {
     return BADGE_STYLES[badge].c;

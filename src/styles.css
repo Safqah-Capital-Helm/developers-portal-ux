@@ -179,6 +179,13 @@ a { text-decoration: none; color: inherit; }
   font-family: 'IBM Plex Sans Arabic', 'IBM Plex Sans', -apple-system, system-ui, sans-serif;
 }
 
+/* Back links: flip the arrow in RTL */
+[dir="rtl"] .back-link svg,
+[dir="rtl"] .back-arrow {
+  transform: rotate(180deg);
+}
+
+/* Proto nav RTL */
 [dir="rtl"] .proto-toggle-path {
   margin-left: 0;
   margin-right: auto;

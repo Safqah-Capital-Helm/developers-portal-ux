@@ -47,6 +47,14 @@ import { C } from '../../theme';
       .review-item:nth-child(even) { padding-left: 0; }
       .review-item:nth-child(odd) { padding-right: 0; }
     }
+
+    :host-context([dir="rtl"]) .review-item:nth-child(even) { padding-left: 0; padding-right: 16px; }
+    :host-context([dir="rtl"]) .review-item:nth-child(odd) { padding-right: 0; padding-left: 16px; }
+
+    @media (max-width: 480px) {
+      :host-context([dir="rtl"]) .review-item:nth-child(even) { padding-right: 0; }
+      :host-context([dir="rtl"]) .review-item:nth-child(odd) { padding-left: 0; }
+    }
   `]
 })
 export class ReviewGridComponent {

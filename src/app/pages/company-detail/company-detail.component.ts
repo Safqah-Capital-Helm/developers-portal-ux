@@ -3,7 +3,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { C } from '../../shared/theme';
-import { BadgeComponent, BackLinkComponent, ButtonComponent, AvatarComponent, EmptyStateComponent, AlertBannerComponent, getCompanyLogo, TranslatePipe } from '../../shared';
+import { BadgeComponent, BackLinkComponent, ButtonComponent, AvatarComponent, EmptyStateComponent, AlertBannerComponent, getCompanyLogo, TranslatePipe, I18nService } from '../../shared';
 
 @Component({
   selector: 'app-company-detail',
@@ -40,7 +40,7 @@ import { BadgeComponent, BackLinkComponent, ButtonComponent, AvatarComponent, Em
               <div class="hero-meta">
                 <span class="meta-chip">
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="18" rx="2"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-                  CR {{ company.cr }}
+                  {{ 'common.cr_prefix' | t }} {{ company.cr }}
                 </span>
                 <span class="meta-chip">
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><line x1="9" y1="10" x2="15" y2="10"/><line x1="9" y1="14" x2="15" y2="14"/></svg>
@@ -70,7 +70,7 @@ import { BadgeComponent, BackLinkComponent, ButtonComponent, AvatarComponent, Em
             <input
               class="domain-input"
               [(ngModel)]="domainDraft"
-              placeholder="e.g. alomran.com"
+              [placeholder]="i18n.t('company.domain_example')"
               (keydown.enter)="saveDomain()"
               (keydown.escape)="cancelEditDomain()"
               #domainInput
@@ -241,7 +241,7 @@ import { BadgeComponent, BackLinkComponent, ButtonComponent, AvatarComponent, Em
     .container {
       max-width: 880px;
       margin: 0 auto;
-      padding: 28px 40px 60px;
+      padding: 32px 32px 60px;
     }
 
     /* ═══ Hero Card ═══ */
@@ -249,7 +249,7 @@ import { BadgeComponent, BackLinkComponent, ButtonComponent, AvatarComponent, Em
       background: #fff;
       border: 1px solid ${C.g200};
       border-radius: 20px;
-      padding: 28px 28px 0;
+      padding: 32px 32px 0;
       margin-bottom: 20px;
     }
     .hero-top {
@@ -579,115 +579,121 @@ export class CompanyDetailComponent implements OnInit {
   editingDomain = false;
   domainDraft = '';
 
-  companies = [
-    {
-      name: "Al Omran Real Estate Dev Co.", cr: "1551515151516515",
-      status: "Approved", sc: "green" as const,
-      verified: true, hasPrevProjects: true, initials: "AO",
-      logoBg: `linear-gradient(135deg, ${C.green}, ${C.greenDk})`,
-      logoUrl: getCompanyLogo("1551515151516515"),
-      legalForm: "LLC", activity: "RE Development",
-      capital: "50M", size: "Medium",
-      domain: "alomran.com",
-      prevCount: 12, prevValue: "SAR 180M",
-      finBank: 40, finFintech: 20, finFriends: 15, finSelf: 25
-    },
-    {
-      name: "Al Jazeera Development Co.", cr: "1020304050607",
-      status: "Pending Verification", sc: "amber" as const,
-      verified: false, hasPrevProjects: false, initials: "AJ",
-      logoBg: `linear-gradient(135deg, ${C.purple}, ${C.purpleDk})`,
-      logoUrl: getCompanyLogo("1020304050607"),
-      legalForm: "LLC", activity: "RE Development",
-      capital: "30M", size: "Small",
-      domain: "",
-      prevCount: 0, prevValue: "",
-      finBank: 0, finFintech: 0, finFriends: 0, finSelf: 0
-    },
-    {
-      name: "Riyad Construction Group", cr: "3080706050403",
-      status: "Missing Credentials", sc: "red" as const,
-      verified: true, hasPrevProjects: false, initials: "RC",
-      logoBg: `linear-gradient(135deg, ${C.orange}, ${C.orangeDk})`,
-      logoUrl: getCompanyLogo("3080706050403"),
-      legalForm: "LLC", activity: "Construction",
-      capital: "20M", size: "Small",
-      domain: "riyadconstruction.sa",
-      prevCount: 0, prevValue: "",
-      finBank: 0, finFintech: 0, finFriends: 0, finSelf: 0
-    }
-  ];
+  get companies() {
+    return [
+      {
+        name: "Al Omran Real Estate Dev Co.", cr: "1551515151516515",
+        status: this.i18n.t('common.status_approved'), sc: "green" as const,
+        verified: true, hasPrevProjects: true, initials: "AO",
+        logoBg: `linear-gradient(135deg, ${C.green}, ${C.greenDk})`,
+        logoUrl: getCompanyLogo("1551515151516515"),
+        legalForm: this.i18n.t('common.legal_form_llc'), activity: this.i18n.t('common.activity_re_dev'),
+        capital: "50M", size: this.i18n.t('common.size_medium'),
+        domain: "alomran.com",
+        prevCount: 12, prevValue: "SAR 180M",
+        finBank: 40, finFintech: 20, finFriends: 15, finSelf: 25
+      },
+      {
+        name: "Al Jazeera Development Co.", cr: "1020304050607",
+        status: this.i18n.t('common.status_pending_verification'), sc: "amber" as const,
+        verified: false, hasPrevProjects: false, initials: "AJ",
+        logoBg: `linear-gradient(135deg, ${C.purple}, ${C.purpleDk})`,
+        logoUrl: getCompanyLogo("1020304050607"),
+        legalForm: this.i18n.t('common.legal_form_llc'), activity: this.i18n.t('common.activity_re_dev'),
+        capital: "30M", size: this.i18n.t('common.size_small'),
+        domain: "",
+        prevCount: 0, prevValue: "",
+        finBank: 0, finFintech: 0, finFriends: 0, finSelf: 0
+      },
+      {
+        name: "Riyad Construction Group", cr: "3080706050403",
+        status: this.i18n.t('common.status_missing_credentials'), sc: "red" as const,
+        verified: true, hasPrevProjects: false, initials: "RC",
+        logoBg: `linear-gradient(135deg, ${C.orange}, ${C.orangeDk})`,
+        logoUrl: getCompanyLogo("3080706050403"),
+        legalForm: this.i18n.t('common.legal_form_llc'), activity: this.i18n.t('common.activity_construction'),
+        capital: "20M", size: this.i18n.t('common.size_small'),
+        domain: "riyadconstruction.sa",
+        prevCount: 0, prevValue: "",
+        finBank: 0, finFintech: 0, finFriends: 0, finSelf: 0
+      }
+    ];
+  }
 
-  allTeams: Record<number, any[]> = {
-    0: [
-      { name: "Ahmed Al-Salem", email: "ahmed@alomran.com", role: "Admin", active: true },
-      { name: "Mohammad Al-Salem", email: "mohammad@alomran.com", role: "Admin", active: true },
-      { name: "Fahad Al-Harbi", email: "fahad@alomran.com", role: "Viewer", active: true },
-      { name: "Sarah Ahmad", email: "sarah@alomran.com", role: "Editor", active: false }
-    ],
-    1: [
-      { name: "Omar Al-Rashid", email: "omar@aljazeera-dev.com", role: "Admin", active: true }
-    ],
-    2: [
-      { name: "Saad Al-Dosari", email: "saad@riyadconstruction.sa", role: "Admin", active: true },
-      { name: "Nasser Al-Mutairi", email: "nasser@riyadconstruction.sa", role: "Viewer", active: true }
-    ]
-  };
+  get allTeams(): Record<number, any[]> {
+    return {
+      0: [
+        { name: "Ahmed Al-Salem", email: "ahmed@alomran.com", role: this.i18n.t('common.role_admin'), active: true },
+        { name: "Mohammad Al-Salem", email: "mohammad@alomran.com", role: this.i18n.t('common.role_admin'), active: true },
+        { name: "Fahad Al-Harbi", email: "fahad@alomran.com", role: this.i18n.t('common.role_viewer'), active: true },
+        { name: "Sarah Ahmad", email: "sarah@alomran.com", role: this.i18n.t('common.role_editor'), active: false }
+      ],
+      1: [
+        { name: "Omar Al-Rashid", email: "omar@aljazeera-dev.com", role: this.i18n.t('common.role_admin'), active: true }
+      ],
+      2: [
+        { name: "Saad Al-Dosari", email: "saad@riyadconstruction.sa", role: this.i18n.t('common.role_admin'), active: true },
+        { name: "Nasser Al-Mutairi", email: "nasser@riyadconstruction.sa", role: this.i18n.t('common.role_viewer'), active: true }
+      ]
+    };
+  }
 
-  projects: any[] = [
-    {
-      name: "Al Noor Residential", type: "Mixed Use", loc: "Dammam",
-      comp: "Al Omran Real Estate Dev Co.", idx: 1, cost: "SAR 28M",
-      img: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=480&h=320&fit=crop"
-    },
-    {
-      name: "Riyadh Commercial Plaza", type: "Commercial", loc: "Riyadh",
-      comp: "Al Omran Real Estate Dev Co.", idx: 2, cost: "SAR 65M",
-      img: "https://images.unsplash.com/photo-1577495508048-b635879837f1?w=480&h=320&fit=crop"
-    },
-    {
-      name: "Tabuk Residential Complex", type: "Residential", loc: "Tabuk",
-      comp: "Al Omran Real Estate Dev Co.", idx: 3, cost: "SAR 12M",
-      img: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=480&h=320&fit=crop"
-    },
-    {
-      name: "Jeddah Waterfront Villas", type: "Residential", loc: "Jeddah",
-      comp: "Al Omran Real Estate Dev Co.", idx: 4, cost: "SAR 32M",
-      img: "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=480&h=320&fit=crop"
-    },
-    {
-      name: "Abha Mountain Villas", type: "Residential", loc: "Abha",
-      comp: "Al Omran Real Estate Dev Co.", idx: 5, cost: "SAR 14M",
-      img: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=480&h=320&fit=crop"
-    },
-    {
-      name: "Al Rawdah Gardens", type: "Residential", loc: "Riyadh",
-      comp: "Al Omran Real Estate Dev Co.", idx: 6, cost: "SAR 30M",
-      img: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=480&h=320&fit=crop"
-    },
-    {
-      name: "Khobar Mixed-Use Tower", type: "Mixed Use", loc: "Khobar",
-      comp: "Al Omran Real Estate Dev Co.", idx: 0, draft: true,
-      img: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=480&h=320&fit=crop"
-    },
-    {
-      name: "Eastern Industrial Park", type: "Industrial", loc: "Dammam",
-      comp: "Al Jazeera Development Co.", idx: 7, cost: "SAR 75M",
-      img: "https://images.unsplash.com/photo-1565008447742-97f6f38c985c?w=480&h=320&fit=crop"
-    },
-    {
-      name: "Madinah Commercial Hub", type: "Commercial", loc: "Madinah",
-      comp: "Al Jazeera Development Co.", idx: 8, cost: "SAR 40M",
-      img: "https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=480&h=320&fit=crop"
-    },
-    {
-      name: "Al Khalij Residential", type: "Residential", loc: "Riyadh",
-      comp: "Riyad Construction Group", idx: 9, cost: "SAR 22M",
-      img: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=480&h=320&fit=crop"
-    },
-  ];
+  get projects(): any[] {
+    return [
+      {
+        name: "Al Noor Residential", type: this.i18n.t('common.type_mixed_use'), loc: "Dammam",
+        comp: "Al Omran Real Estate Dev Co.", idx: 1, cost: "SAR 28M",
+        img: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=480&h=320&fit=crop"
+      },
+      {
+        name: "Riyadh Commercial Plaza", type: this.i18n.t('common.type_commercial'), loc: "Riyadh",
+        comp: "Al Omran Real Estate Dev Co.", idx: 2, cost: "SAR 65M",
+        img: "https://images.unsplash.com/photo-1577495508048-b635879837f1?w=480&h=320&fit=crop"
+      },
+      {
+        name: "Tabuk Residential Complex", type: this.i18n.t('common.type_residential'), loc: "Tabuk",
+        comp: "Al Omran Real Estate Dev Co.", idx: 3, cost: "SAR 12M",
+        img: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=480&h=320&fit=crop"
+      },
+      {
+        name: "Jeddah Waterfront Villas", type: this.i18n.t('common.type_residential'), loc: "Jeddah",
+        comp: "Al Omran Real Estate Dev Co.", idx: 4, cost: "SAR 32M",
+        img: "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=480&h=320&fit=crop"
+      },
+      {
+        name: "Abha Mountain Villas", type: this.i18n.t('common.type_residential'), loc: "Abha",
+        comp: "Al Omran Real Estate Dev Co.", idx: 5, cost: "SAR 14M",
+        img: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=480&h=320&fit=crop"
+      },
+      {
+        name: "Al Rawdah Gardens", type: this.i18n.t('common.type_residential'), loc: "Riyadh",
+        comp: "Al Omran Real Estate Dev Co.", idx: 6, cost: "SAR 30M",
+        img: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=480&h=320&fit=crop"
+      },
+      {
+        name: "Khobar Mixed-Use Tower", type: this.i18n.t('common.type_mixed_use'), loc: "Khobar",
+        comp: "Al Omran Real Estate Dev Co.", idx: 0, draft: true,
+        img: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=480&h=320&fit=crop"
+      },
+      {
+        name: "Eastern Industrial Park", type: this.i18n.t('common.type_industrial'), loc: "Dammam",
+        comp: "Al Jazeera Development Co.", idx: 7, cost: "SAR 75M",
+        img: "https://images.unsplash.com/photo-1565008447742-97f6f38c985c?w=480&h=320&fit=crop"
+      },
+      {
+        name: "Madinah Commercial Hub", type: this.i18n.t('common.type_commercial'), loc: "Madinah",
+        comp: "Al Jazeera Development Co.", idx: 8, cost: "SAR 40M",
+        img: "https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=480&h=320&fit=crop"
+      },
+      {
+        name: "Al Khalij Residential", type: this.i18n.t('common.type_residential'), loc: "Riyadh",
+        comp: "Riyad Construction Group", idx: 9, cost: "SAR 22M",
+        img: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=480&h=320&fit=crop"
+      },
+    ];
+  }
 
-  constructor(private route: ActivatedRoute, private router: Router) {}
+  constructor(private route: ActivatedRoute, private router: Router, public i18n: I18nService) {}
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
@@ -708,7 +714,10 @@ export class CompanyDetailComponent implements OnInit {
 
   roleBadgeColor(role: string): 'green' | 'amber' | 'gray' | 'blue' | 'red' {
     const map: Record<string, 'green' | 'amber' | 'gray' | 'blue' | 'red'> = {
-      Admin: 'blue', Editor: 'green', Contributor: 'amber', Viewer: 'gray'
+      [this.i18n.t('common.role_admin')]: 'blue',
+      [this.i18n.t('common.role_editor')]: 'green',
+      [this.i18n.t('common.role_contributor')]: 'amber',
+      [this.i18n.t('common.role_viewer')]: 'gray'
     };
     return map[role] || 'gray';
   }

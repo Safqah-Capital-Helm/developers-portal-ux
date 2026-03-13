@@ -9,6 +9,7 @@ import { ButtonComponent } from '../../shared/components/button/button.component
 import { CardComponent } from '../../shared/components/card/card.component';
 import { BadgeComponent } from '../../shared/components/badge/badge.component';
 import { ResultScreenComponent, TranslatePipe } from '../../shared';
+import { I18nService } from '../../shared/i18n/i18n.service';
 
 @Component({
   selector: 'app-offer-result',
@@ -31,7 +32,7 @@ import { ResultScreenComponent, TranslatePipe } from '../../shared';
                   </div>
                   <span class="status-name">Al Noor Residential</span>
                 </div>
-                <app-badge color="blue">Pending Signing</app-badge>
+                <app-badge color="blue">{{ 'offer_result.pending_signing' | t }}</app-badge>
               </div>
               <div class="status-divider"></div>
               <div class="status-row">
@@ -43,7 +44,7 @@ import { ResultScreenComponent, TranslatePipe } from '../../shared';
                   </div>
                   <span class="status-name">Al Omran Real Estate</span>
                 </div>
-                <app-badge color="green">Approved</app-badge>
+                <app-badge color="green">{{ 'offer_result.approved' | t }}</app-badge>
               </div>
             </app-card>
 
@@ -106,7 +107,7 @@ import { ResultScreenComponent, TranslatePipe } from '../../shared';
             </div>
 
             <!-- Other reason textarea -->
-            <div class="other-textarea" *ngIf="reason === 'Other reason'">
+            <div class="other-textarea" *ngIf="reason === otherReasonLabel">
               <textarea
                 class="textarea-field"
                 [placeholder]="('offer.decline_reason_placeholder' | t)"
@@ -137,7 +138,7 @@ import { ResultScreenComponent, TranslatePipe } from '../../shared';
                   </div>
                   <span class="status-name">Al Noor Residential</span>
                 </div>
-                <app-badge color="red">Declined</app-badge>
+                <app-badge color="red">{{ 'offer_result.declined' | t }}</app-badge>
               </div>
               <div class="status-divider"></div>
               <div class="status-row">
@@ -149,12 +150,12 @@ import { ResultScreenComponent, TranslatePipe } from '../../shared';
                   </div>
                   <span class="status-name">Al Omran Real Estate</span>
                 </div>
-                <app-badge color="green">Approved</app-badge>
+                <app-badge color="green">{{ 'offer_result.approved' | t }}</app-badge>
               </div>
               <div class="status-divider"></div>
               <div class="reason-display">
                 <span class="reason-label">{{ 'offer.decline_reason' | t }}</span>
-                <span class="reason-value">{{ reason }}{{ reason === 'Other reason' && extra ? ': ' + extra : '' }}</span>
+                <span class="reason-value">{{ reason }}{{ reason === otherReasonLabel && extra ? ': ' + extra : '' }}</span>
               </div>
             </app-card>
 
@@ -430,16 +431,20 @@ export class OfferResultComponent implements OnInit {
   extra = '';
   submitted = false;
 
-  reasons = [
-    'Pricing / return rate is too high',
-    'Tenor or repayment terms don\'t work',
-    'Found better terms elsewhere',
-    'Project plans have changed',
-    'Need different financing structure',
-    'Other reason',
-  ];
+  get reasons() {
+    return [
+      this.i18n.t('offer_result.reason_pricing'),
+      this.i18n.t('offer_result.reason_tenor'),
+      this.i18n.t('offer_result.reason_better_terms'),
+      this.i18n.t('offer_result.reason_plans_changed'),
+      this.i18n.t('offer_result.reason_different_structure'),
+      this.i18n.t('offer_result.reason_other'),
+    ];
+  }
 
-  constructor(private router: Router, private route: ActivatedRoute) {}
+  get otherReasonLabel() { return this.i18n.t('offer_result.reason_other'); }
+
+  constructor(private router: Router, private route: ActivatedRoute, public i18n: I18nService) {}
 
   ngOnInit() {
     this.accepted = this.route.snapshot.data['accepted'] ?? true;

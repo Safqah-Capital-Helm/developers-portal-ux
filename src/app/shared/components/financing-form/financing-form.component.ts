@@ -3,29 +3,31 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { C } from '../../theme';
 import { InputComponent } from '../input/input.component';
+import { TranslatePipe } from '../../i18n/translate.pipe';
+import { I18nService } from '../../i18n/i18n.service';
 
 @Component({
   selector: 'app-financing-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, InputComponent],
+  imports: [CommonModule, FormsModule, InputComponent, TranslatePipe],
   template: `
     <!-- 1. Total Project Cost -->
     <app-input
-      label="Estimated Total Project Cost"
-      placeholder="e.g. 50,000,000"
-      suffix="SAR"
-      helper="Total estimated project cost including land, construction, and other expenses"
+      [label]="'financing_form.total_cost_label' | t"
+      [placeholder]="'financing_form.total_cost_placeholder' | t"
+      [suffix]="'common.sar' | t"
+      [helper]="'financing_form.total_cost_helper' | t"
       [value]="totalCost"
       (valueChange)="totalCost = $event; totalCostChange.emit($event)"
     ></app-input>
 
     <!-- 2. Cost Breakdown (shown when cost entered) -->
     <div *ngIf="parsedCost > 0" class="section">
-      <div class="section-label">Cost Breakdown</div>
+      <div class="section-label">{{ 'financing_form.cost_breakdown' | t }}</div>
       <div class="breakdown-slider">
         <div class="slider-header">
-          <span class="slider-tag" [style.color]="C.amber600">Land {{ landCostPct }}%</span>
-          <span class="slider-tag" [style.color]="C.blue500">Development {{ 100 - landCostPct }}%</span>
+          <span class="slider-tag" [style.color]="C.amber600">{{ 'financing_form.land' | t }} {{ landCostPct }}%</span>
+          <span class="slider-tag" [style.color]="C.blue500">{{ 'financing_form.development' | t }} {{ 100 - landCostPct }}%</span>
         </div>
         <div class="dual-track">
           <div class="track-fill-land" [style.width.%]="landCostPct"></div>
@@ -44,30 +46,30 @@ import { InputComponent } from '../input/input.component';
             (ngModelChange)="landCostPct = $event; landCostPctChange.emit($event)"
           />
         </div>
-        <div class="drag-hint">Drag to adjust split</div>
+        <div class="drag-hint">{{ 'financing_form.drag_hint' | t }}</div>
       </div>
       <div class="stat-row">
         <div class="stat-box" [style.borderColor]="C.amber100" [style.background]="C.amber50">
-          <div class="stat-label" [style.color]="C.amber600">Land Cost</div>
-          <div class="stat-value">{{ fmt(landCostVal) }} <span class="stat-unit">SAR</span></div>
-          <div class="stat-sub" [style.color]="C.amber500">{{ landCostPct }}% of total</div>
+          <div class="stat-label" [style.color]="C.amber600">{{ 'financing_form.land_cost' | t }}</div>
+          <div class="stat-value">{{ fmt(landCostVal) }} <span class="stat-unit">{{ 'common.sar' | t }}</span></div>
+          <div class="stat-sub" [style.color]="C.amber500">{{ landCostPct }}% {{ 'financing_form.of_total' | t }}</div>
         </div>
         <div class="stat-box" [style.borderColor]="C.blue100" [style.background]="C.blue50">
-          <div class="stat-label" [style.color]="C.blue500">Development Cost</div>
-          <div class="stat-value">{{ fmt(devCostVal) }} <span class="stat-unit">SAR</span></div>
-          <div class="stat-sub" [style.color]="C.blue500">{{ 100 - landCostPct }}% of total</div>
+          <div class="stat-label" [style.color]="C.blue500">{{ 'financing_form.dev_cost' | t }}</div>
+          <div class="stat-value">{{ fmt(devCostVal) }} <span class="stat-unit">{{ 'common.sar' | t }}</span></div>
+          <div class="stat-sub" [style.color]="C.blue500">{{ 100 - landCostPct }}% {{ 'financing_form.of_total' | t }}</div>
         </div>
       </div>
     </div>
 
     <!-- 3. Financing Request (shown when cost entered) -->
     <div *ngIf="parsedCost > 0" class="section">
-      <div class="section-label">Financing Request</div>
+      <div class="section-label">{{ 'financing_form.financing_request' | t }}</div>
       <div class="amount-display">
         <div class="amount-num">{{ fmt(financingAmount) }}</div>
-        <div class="amount-sar">SAR</div>
+        <div class="amount-sar">{{ 'common.sar' | t }}</div>
       </div>
-      <div class="amount-pct">{{ financingPct }}% of total project cost</div>
+      <div class="amount-pct">{{ financingPct }}% {{ 'financing_form.of_total_project_cost' | t }}</div>
       <div class="slider-wrap">
         <div class="slider-labels">
           <span>10%</span>
@@ -85,7 +87,7 @@ import { InputComponent } from '../input/input.component';
 
     <!-- 4. Financing Product -->
     <div class="section">
-      <div class="section-label">Financing Product</div>
+      <div class="section-label">{{ 'financing_form.financing_product' | t }}</div>
       <div class="product-grid">
         <div
           *ngFor="let p of products"
@@ -110,24 +112,24 @@ import { InputComponent } from '../input/input.component';
     <!-- 5. Expected Revenue -->
     <div class="section">
       <app-input
-        label="Expected Revenue"
-        placeholder="e.g. 75,000,000"
-        suffix="SAR"
-        helper="Total expected revenue from sales"
+        [label]="'financing_form.expected_revenue_label' | t"
+        [placeholder]="'financing_form.expected_revenue_placeholder' | t"
+        [suffix]="'common.sar' | t"
+        [helper]="'financing_form.expected_revenue_helper' | t"
         [value]="expectedRevenue"
         (valueChange)="expectedRevenue = $event; expectedRevenueChange.emit($event)"
       ></app-input>
 
       <div *ngIf="parsedRevenue > 0 && (parsedUnits > 0 || parsedArea > 0)" class="stat-row">
         <div *ngIf="parsedUnits > 0" class="stat-box" [style.borderColor]="C.greenMd" [style.background]="C.greenLt">
-          <div class="stat-label" [style.color]="C.green">Avg. Revenue per Unit</div>
-          <div class="stat-value">{{ fmt(revenuePerUnit) }} <span class="stat-unit">SAR</span></div>
-          <div class="stat-sub" [style.color]="C.green">Based on {{ expectedUnits }} units</div>
+          <div class="stat-label" [style.color]="C.green">{{ 'financing_form.avg_revenue_unit' | t }}</div>
+          <div class="stat-value">{{ fmt(revenuePerUnit) }} <span class="stat-unit">{{ 'common.sar' | t }}</span></div>
+          <div class="stat-sub" [style.color]="C.green">{{ 'financing_form.based_on_units' | t:{count: expectedUnits} }}</div>
         </div>
         <div *ngIf="parsedArea > 0" class="stat-box" [style.borderColor]="C.greenMd" [style.background]="C.greenLt">
-          <div class="stat-label" [style.color]="C.green">Avg. Revenue per m\u00B2</div>
-          <div class="stat-value">{{ fmt(revenuePerSqm) }} <span class="stat-unit">SAR/m\u00B2</span></div>
-          <div class="stat-sub" [style.color]="C.green">Based on {{ totalSellingArea }} m\u00B2</div>
+          <div class="stat-label" [style.color]="C.green">{{ 'financing_form.avg_revenue_sqm' | t }}</div>
+          <div class="stat-value">{{ fmt(revenuePerSqm) }} <span class="stat-unit">{{ 'common.sar' | t }}/m\u00B2</span></div>
+          <div class="stat-sub" [style.color]="C.green">{{ 'financing_form.based_on_sqm' | t:{area: totalSellingArea} }}</div>
         </div>
       </div>
     </div>
@@ -397,6 +399,8 @@ import { InputComponent } from '../input/input.component';
 export class FinancingFormComponent {
   C = C;
 
+  constructor(private i18n: I18nService) {}
+
   @Input() totalCost = '';
   @Output() totalCostChange = new EventEmitter<string>();
 
@@ -416,12 +420,14 @@ export class FinancingFormComponent {
   @Input() expectedUnits = '';
   @Input() totalSellingArea = '';
 
-  products = [
-    { id: 'land', t: 'Land Acquisition', d: 'Acquire a land for development purposes' },
-    { id: 'dev', t: 'Development', d: 'Develop residential or commercial units' },
-    { id: 'rawland', t: 'Raw Lands Development', d: 'Develop raw lands' },
-    { id: 'bridge', t: 'Bridge Financing', d: 'Short-term financing < 9 months' },
-  ];
+  get products() {
+    return [
+      { id: 'land', t: this.i18n.t('financing_form.product_land'), d: this.i18n.t('financing_form.product_land_desc') },
+      { id: 'dev', t: this.i18n.t('financing_form.product_dev'), d: this.i18n.t('financing_form.product_dev_desc') },
+      { id: 'rawland', t: this.i18n.t('financing_form.product_rawland'), d: this.i18n.t('financing_form.product_rawland_desc') },
+      { id: 'bridge', t: this.i18n.t('financing_form.product_bridge'), d: this.i18n.t('financing_form.product_bridge_desc') },
+    ];
+  }
 
   private parseNum(s: string): number {
     return parseFloat(s.replace(/,/g, '')) || 0;

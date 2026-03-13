@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { C } from '../../shared/theme';
-import { PageHeaderComponent, ButtonComponent, getCompanyLogoByName, TranslatePipe } from '../../shared';
+import { PageHeaderComponent, ButtonComponent, getCompanyLogoByName, TranslatePipe, I18nService } from '../../shared';
 
 @Component({
   selector: 'app-projects-page',
@@ -87,7 +87,7 @@ import { PageHeaderComponent, ButtonComponent, getCompanyLogoByName, TranslatePi
 
             <!-- Financing row -->
             <div *ngIf="!p.draft" class="financing-row">
-              <div *ngIf="p.finStatus" class="fin-badge" [class.fin-green]="p.finStatus === 'Active'" [class.fin-amber]="p.finStatus === 'In Review'" [class.fin-blue]="p.finStatus === 'Pending'">
+              <div *ngIf="p.finStatus" class="fin-badge" [class.fin-green]="p.finStatus === i18n.t('common.status_active')" [class.fin-amber]="p.finStatus === i18n.t('common.status_in_review')" [class.fin-blue]="p.finStatus === i18n.t('common.status_pending')">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
                 {{ p.fin }} · {{ p.finStatus }}
               </div>
@@ -107,7 +107,7 @@ import { PageHeaderComponent, ButtonComponent, getCompanyLogoByName, TranslatePi
     .container {
       max-width: 960px;
       margin: 0 auto;
-      padding: 28px 40px 60px;
+      padding: 32px 32px 60px;
     }
 
     /* Filter bar */
@@ -284,72 +284,74 @@ import { PageHeaderComponent, ButtonComponent, getCompanyLogoByName, TranslatePi
 export class ProjectsPageComponent {
   C = C;
 
-  projects: any[] = [
-    {
-      name: "Khobar Mixed-Use Tower", type: "Mixed Use", loc: "Khobar",
-      compShort: "Al Omran Real Estate", compLogo: getCompanyLogoByName("Al Omran Real Estate"),
-      cost: "20-50M", fin: "", prod: "Development",
-      route: "/project/new", draft: true,
-      img: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=480&h=320&fit=crop"
-    },
-    {
-      name: "Al Noor Residential", type: "Mixed Use", loc: "Dammam",
-      compShort: "Al Omran Real Estate", compLogo: getCompanyLogoByName("Al Omran Real Estate"),
-      cost: "SAR 28M", fin: "~21M", prod: "Development",
-      finStatus: "Active",
-      img: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=480&h=320&fit=crop"
-    },
-    {
-      name: "Riyadh Commercial Plaza", type: "Commercial", loc: "Riyadh",
-      compShort: "Al Omran Real Estate", compLogo: getCompanyLogoByName("Al Omran Real Estate"),
-      cost: "SAR 65M", fin: "~45M", prod: "Construction",
-      finStatus: "In Review",
-      img: "https://images.unsplash.com/photo-1577495508048-b635879837f1?w=480&h=320&fit=crop"
-    },
-    {
-      name: "Tabuk Residential Complex", type: "Residential", loc: "Tabuk",
-      compShort: "Al Omran Real Estate", compLogo: getCompanyLogoByName("Al Omran Real Estate"),
-      cost: "SAR 12M", fin: "~8M", prod: "Development",
-      finStatus: "In Review",
-      img: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=480&h=320&fit=crop"
-    },
-    {
-      name: "Jeddah Waterfront Villas", type: "Residential", loc: "Jeddah",
-      compShort: "Al Omran Real Estate", compLogo: getCompanyLogoByName("Al Omran Real Estate"),
-      cost: "SAR 32M", fin: "~18M", prod: "Development",
-      finStatus: "Pending",
-      img: "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=480&h=320&fit=crop"
-    },
-    {
-      name: "Abha Mountain Villas", type: "Residential", loc: "Abha",
-      compShort: "Al Omran Real Estate", compLogo: getCompanyLogoByName("Al Omran Real Estate"),
-      cost: "SAR 14M", fin: "", prod: "Land Acquisition",
-      img: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=480&h=320&fit=crop"
-    },
-    {
-      name: "Al Rawdah Gardens", type: "Residential", loc: "Riyadh",
-      compShort: "Al Omran Real Estate", compLogo: getCompanyLogoByName("Al Omran Real Estate"),
-      cost: "SAR 30M", fin: "", prod: "Development",
-      img: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=480&h=320&fit=crop"
-    },
-    {
-      name: "Eastern Industrial Park", type: "Industrial", loc: "Dammam",
-      compShort: "Al Jazeera Development", compLogo: getCompanyLogoByName("Al Jazeera Development"),
-      cost: "SAR 75M", fin: "~60M", prod: "Bridge",
-      finStatus: "Active",
-      img: "https://images.unsplash.com/photo-1565008447742-97f6f38c985c?w=480&h=320&fit=crop"
-    },
-    {
-      name: "Madinah Commercial Hub", type: "Commercial", loc: "Madinah",
-      compShort: "Al Jazeera Development", compLogo: getCompanyLogoByName("Al Jazeera Development"),
-      cost: "SAR 40M", fin: "", prod: "Construction",
-      img: "https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=480&h=320&fit=crop"
-    },
-  ];
+  get projects(): any[] {
+    return [
+      {
+        name: "Khobar Mixed-Use Tower", type: this.i18n.t('common.type_mixed_use'), loc: "Khobar",
+        compShort: "Al Omran Real Estate", compLogo: getCompanyLogoByName("Al Omran Real Estate"),
+        cost: "20-50M", fin: "", prod: this.i18n.t('common.stage_development'),
+        route: "/project/new", draft: true,
+        img: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=480&h=320&fit=crop"
+      },
+      {
+        name: "Al Noor Residential", type: this.i18n.t('common.type_mixed_use'), loc: "Dammam",
+        compShort: "Al Omran Real Estate", compLogo: getCompanyLogoByName("Al Omran Real Estate"),
+        cost: "SAR 28M", fin: "~21M", prod: this.i18n.t('common.stage_development'),
+        finStatus: this.i18n.t('common.status_active'),
+        img: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=480&h=320&fit=crop"
+      },
+      {
+        name: "Riyadh Commercial Plaza", type: this.i18n.t('common.type_commercial'), loc: "Riyadh",
+        compShort: "Al Omran Real Estate", compLogo: getCompanyLogoByName("Al Omran Real Estate"),
+        cost: "SAR 65M", fin: "~45M", prod: this.i18n.t('common.stage_construction'),
+        finStatus: this.i18n.t('common.status_in_review'),
+        img: "https://images.unsplash.com/photo-1577495508048-b635879837f1?w=480&h=320&fit=crop"
+      },
+      {
+        name: "Tabuk Residential Complex", type: this.i18n.t('common.type_residential'), loc: "Tabuk",
+        compShort: "Al Omran Real Estate", compLogo: getCompanyLogoByName("Al Omran Real Estate"),
+        cost: "SAR 12M", fin: "~8M", prod: this.i18n.t('common.stage_development'),
+        finStatus: this.i18n.t('common.status_in_review'),
+        img: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=480&h=320&fit=crop"
+      },
+      {
+        name: "Jeddah Waterfront Villas", type: this.i18n.t('common.type_residential'), loc: "Jeddah",
+        compShort: "Al Omran Real Estate", compLogo: getCompanyLogoByName("Al Omran Real Estate"),
+        cost: "SAR 32M", fin: "~18M", prod: this.i18n.t('common.stage_development'),
+        finStatus: this.i18n.t('common.status_pending'),
+        img: "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=480&h=320&fit=crop"
+      },
+      {
+        name: "Abha Mountain Villas", type: this.i18n.t('common.type_residential'), loc: "Abha",
+        compShort: "Al Omran Real Estate", compLogo: getCompanyLogoByName("Al Omran Real Estate"),
+        cost: "SAR 14M", fin: "", prod: this.i18n.t('common.stage_land_acquisition'),
+        img: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=480&h=320&fit=crop"
+      },
+      {
+        name: "Al Rawdah Gardens", type: this.i18n.t('common.type_residential'), loc: "Riyadh",
+        compShort: "Al Omran Real Estate", compLogo: getCompanyLogoByName("Al Omran Real Estate"),
+        cost: "SAR 30M", fin: "", prod: this.i18n.t('common.stage_development'),
+        img: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=480&h=320&fit=crop"
+      },
+      {
+        name: "Eastern Industrial Park", type: this.i18n.t('common.type_industrial'), loc: "Dammam",
+        compShort: "Al Jazeera Development", compLogo: getCompanyLogoByName("Al Jazeera Development"),
+        cost: "SAR 75M", fin: "~60M", prod: this.i18n.t('common.stage_bridge'),
+        finStatus: this.i18n.t('common.status_active'),
+        img: "https://images.unsplash.com/photo-1565008447742-97f6f38c985c?w=480&h=320&fit=crop"
+      },
+      {
+        name: "Madinah Commercial Hub", type: this.i18n.t('common.type_commercial'), loc: "Madinah",
+        compShort: "Al Jazeera Development", compLogo: getCompanyLogoByName("Al Jazeera Development"),
+        cost: "SAR 40M", fin: "", prod: this.i18n.t('common.stage_construction'),
+        img: "https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=480&h=320&fit=crop"
+      },
+    ];
+  }
 
   filterCompany = '';
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, public i18n: I18nService) {}
 
   get uniqueCompanies(): string[] {
     return [...new Set(this.projects.map(p => p.compShort))];

@@ -6,7 +6,8 @@ import { C, BadgeColor, borderColorForStatus } from '../../theme';
   standalone: true,
   template: `
     <div class="list-card" [class.clickable]="clickable"
-         [style.border-left-color]="accentColor">
+         [style.border-left-color]="accentColor"
+         [style.border-right-color]="accentColor">
       <ng-content></ng-content>
     </div>
   `,
@@ -21,6 +22,11 @@ import { C, BadgeColor, borderColorForStatus } from '../../theme';
     .list-card.clickable { cursor: pointer; }
     .list-card.clickable:hover {
       box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+    }
+
+    :host-context([dir="rtl"]) .list-card {
+      border-left: 1px solid ${C.g200};
+      border-right: 3.5px solid ${C.g300};
     }
   `]
 })

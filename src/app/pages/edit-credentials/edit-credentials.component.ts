@@ -54,7 +54,7 @@ import type { PrevCredentialsData } from '../../shared';
     .container {
       max-width: 640px;
       margin: 0 auto;
-      padding: 28px 40px 60px;
+      padding: 32px 32px 60px;
     }
     .page-title {
       font-size: 22px; font-weight: 900; color: ${C.g900};

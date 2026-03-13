@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { C } from '../../shared/theme';
-import { ButtonComponent, BadgeComponent, ModalComponent, InputComponent, AvatarComponent, PageHeaderComponent, TranslatePipe } from '../../shared';
+import { ButtonComponent, BadgeComponent, ModalComponent, InputComponent, AvatarComponent, PageHeaderComponent, TranslatePipe, I18nService } from '../../shared';
 
 @Component({
   selector: 'app-teams-page',
@@ -24,12 +24,12 @@ import { ButtonComponent, BadgeComponent, ModalComponent, InputComponent, Avatar
         <div class="member-info">
           <div class="member-name-row">
             <span class="member-name">{{ m.name }}</span>
-            <span *ngIf="m.you" class="you-tag">(you)</span>
+            <span *ngIf="m.you" class="you-tag">{{ 'teams.you' | t }}</span>
           </div>
           <div class="member-email">{{ m.email }}</div>
         </div>
         <div class="member-right">
-          <app-badge [color]="roleBadgeColor(m.role)">{{ m.role }}</app-badge>
+          <app-badge [color]="roleBadgeColor(m.role)">{{ translateRole(m.role) }}</app-badge>
           <span class="active-dot" [style.background]="m.active ? C.green : C.amber500"></span>
         </div>
       </div>
@@ -43,7 +43,7 @@ import { ButtonComponent, BadgeComponent, ModalComponent, InputComponent, Avatar
             <span class="mm-status-dot" [style.background]="selectedMember.active ? C.green : C.amber500"></span>
           </div>
           <div class="mm-profile-info">
-            <div class="mm-name">{{ selectedMember.name }} <span *ngIf="selectedMember.you" class="you-tag">(you)</span></div>
+            <div class="mm-name">{{ selectedMember.name }} <span *ngIf="selectedMember.you" class="you-tag">{{ 'teams.you' | t }}</span></div>
             <div class="mm-email">{{ selectedMember.email }}</div>
           </div>
         </div>
@@ -71,11 +71,11 @@ import { ButtonComponent, BadgeComponent, ModalComponent, InputComponent, Avatar
           </div>
           <div class="role-grid">
             <div *ngFor="let r of roleOptions" class="role-option"
-                 [class.selected]="memberEditRole === r.name"
-                 (click)="memberEditRole = r.name">
+                 [class.selected]="memberEditRole === r.key"
+                 (click)="memberEditRole = r.key">
               <div class="role-option-left">
                 <div class="role-option-radio">
-                  <div *ngIf="memberEditRole === r.name" class="role-option-dot"></div>
+                  <div *ngIf="memberEditRole === r.key" class="role-option-dot"></div>
                 </div>
                 <div class="role-option-text">
                   <span class="role-option-name">{{ r.name }}</span>
@@ -116,8 +116,8 @@ import { ButtonComponent, BadgeComponent, ModalComponent, InputComponent, Avatar
       <!-- Invite Modal -->
       <app-modal *ngIf="showInviteModal" [title]="('teams.invite_member' | t)" (closed)="showInviteModal = false; inviteSent = false">
         <div *ngIf="!inviteSent">
-          <app-input label="Full Name" placeholder="e.g. Omar Al-Harbi" [(value)]="inviteName"></app-input>
-          <app-input label="Email Address" placeholder="e.g. omar@company.com" [(value)]="inviteEmail"></app-input>
+          <app-input [label]="'teams.full_name' | t" [placeholder]="'teams.full_name_placeholder' | t" [(value)]="inviteName"></app-input>
+          <app-input [label]="'teams.email_address' | t" [placeholder]="'teams.email_placeholder' | t" [(value)]="inviteEmail"></app-input>
 
           <div class="mm-section" style="margin-top: 4px;">
             <div class="mm-section-header">
@@ -126,11 +126,11 @@ import { ButtonComponent, BadgeComponent, ModalComponent, InputComponent, Avatar
             </div>
             <div class="role-grid">
               <div *ngFor="let r of roleOptions" class="role-option"
-                   [class.selected]="inviteRole === r.name"
-                   (click)="inviteRole = r.name">
+                   [class.selected]="inviteRole === r.key"
+                   (click)="inviteRole = r.key">
                 <div class="role-option-left">
                   <div class="role-option-radio">
-                    <div *ngIf="inviteRole === r.name" class="role-option-dot"></div>
+                    <div *ngIf="inviteRole === r.key" class="role-option-dot"></div>
                   </div>
                   <div class="role-option-text">
                     <span class="role-option-name">{{ r.name }}</span>
@@ -171,8 +171,8 @@ import { ButtonComponent, BadgeComponent, ModalComponent, InputComponent, Avatar
               <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
             </svg>
           </div>
-          <div class="invite-success-title">Invitation Sent!</div>
-          <div class="invite-success-sub">An invitation has been sent to {{ inviteEmail }}. They will receive an email with instructions to join.</div>
+          <div class="invite-success-title">{{ 'teams.invitation_sent' | t }}</div>
+          <div class="invite-success-sub">{{ 'teams.invitation_sent_desc' | t }}</div>
           <div style="margin-top: 20px;">
             <app-btn variant="secondary" (clicked)="showInviteModal = false; inviteSent = false">{{ 'common.close' | t }}</app-btn>
           </div>
@@ -186,7 +186,7 @@ import { ButtonComponent, BadgeComponent, ModalComponent, InputComponent, Avatar
     .container {
       max-width: 800px;
       margin: 0 auto;
-      padding: 28px 40px 60px;
+      padding: 32px 32px 60px;
     }
 
     /* Member cards */
@@ -346,13 +346,29 @@ export class TeamsPageComponent {
     { name: "Al Jazeera Development Co." }
   ];
 
-  roles = ['Admin', 'Editor', 'Contributor', 'Viewer'];
-  roleOptions = [
-    { name: 'Admin', desc: 'Full access to all settings and data' },
-    { name: 'Editor', desc: 'Can edit projects and applications' },
-    { name: 'Contributor', desc: 'Can submit data but not edit others' },
-    { name: 'Viewer', desc: 'Read-only access to dashboards' },
-  ];
+  get roles() {
+    return [this.i18n.t('teams.role_admin'), this.i18n.t('teams.role_editor'), this.i18n.t('teams.role_contributor'), this.i18n.t('teams.role_viewer')];
+  }
+
+  get roleOptions() {
+    return [
+      { name: this.i18n.t('teams.role_admin'), desc: this.i18n.t('teams.role_admin_desc'), key: 'Admin' },
+      { name: this.i18n.t('teams.role_editor'), desc: this.i18n.t('teams.role_editor_desc'), key: 'Editor' },
+      { name: this.i18n.t('teams.role_contributor'), desc: this.i18n.t('teams.role_contributor_desc'), key: 'Contributor' },
+      { name: this.i18n.t('teams.role_viewer'), desc: this.i18n.t('teams.role_viewer_desc'), key: 'Viewer' },
+    ];
+  }
+
+  private roleKeyMap: Record<string, string> = {
+    Admin: 'teams.role_admin',
+    Editor: 'teams.role_editor',
+    Contributor: 'teams.role_contributor',
+    Viewer: 'teams.role_viewer',
+  };
+
+  translateRole(role: string): string {
+    return this.roleKeyMap[role] ? this.i18n.t(this.roleKeyMap[role]) : role;
+  }
 
   showMemberModal = false;
   selectedMember: any = null;
@@ -366,7 +382,7 @@ export class TeamsPageComponent {
   inviteCompanyAccess: boolean[] = [];
   inviteSent = false;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private i18n: I18nService) {}
 
   roleBadgeColor(role: string): 'green' | 'amber' | 'gray' | 'blue' | 'red' {
     const map: Record<string, 'green' | 'amber' | 'gray' | 'blue' | 'red'> = {

@@ -71,6 +71,16 @@ import { FormsModule } from '@angular/forms';
       color: #98a2b3;
       margin-top: 4px;
     }
+
+    :host-context([dir="rtl"]) .input-field.has-suffix {
+      padding-right: 14px;
+      padding-left: 56px;
+    }
+
+    :host-context([dir="rtl"]) .input-suffix {
+      right: auto;
+      left: 14px;
+    }
   `],
 })
 export class InputComponent {

@@ -18,6 +18,8 @@ import { Router } from '@angular/router';
       padding: 0; margin-bottom: 16px; font-family: inherit;
     }
     .back-link:hover { color: #344054; }
+
+    :host-context([dir="rtl"]) .back-link svg { transform: rotate(180deg); }
   `]
 })
 export class BackLinkComponent {

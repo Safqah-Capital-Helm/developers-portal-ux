@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { LogoComponent } from '../../shared/components/logo/logo.component';
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { TranslatePipe } from '../../shared';
+import { I18nService } from '../../shared/i18n/i18n.service';
 
 @Component({
   selector: 'app-landing',
@@ -14,7 +15,10 @@ import { TranslatePipe } from '../../shared';
       <header class="top-bar">
         <app-logo [size]="36"></app-logo>
         <div class="top-links">
-          <span class="link">{{ 'landing.arabic' | t }}</span>
+          <span class="link lang-switch" (click)="toggleLang()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+            {{ i18n.lang === 'en' ? 'العربية' : 'English' }}
+          </span>
           <span class="link">{{ 'landing.help' | t }}</span>
         </div>
       </header>
@@ -37,7 +41,7 @@ import { TranslatePipe } from '../../shared';
             <p class="form-sub">{{ 'landing.hero_subtitle' | t }}</p>
             <label class="input-label">{{ 'landing.cr_number' | t }}</label>
             <div class="cr-input-wrap">
-              <div class="cr-prefix"><span>CR</span></div>
+              <div class="cr-prefix"><span>{{ 'landing.cr_prefix' | t }}</span></div>
               <input [(ngModel)]="cr" placeholder="1010XXXXXX" (keydown.enter)="doCheck()" class="cr-input"/>
             </div>
             <app-btn variant="primary" [full]="true" size="lg" [disabled]="!cr || checking" (clicked)="doCheck()">
@@ -59,6 +63,11 @@ import { TranslatePipe } from '../../shared';
     }
     .top-links { display: flex; gap: 16px; }
     .link { font-size: 13px; color: #98a2b3; cursor: pointer; }
+    .lang-switch {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 5px 10px; border-radius: 8px; transition: all 0.15s;
+    }
+    .lang-switch:hover { background: #f1f3f5; color: #344054; }
     .hero {
       max-width: 1200px; margin: 0 auto; padding: 60px 40px 80px;
       display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
@@ -135,13 +144,21 @@ import { TranslatePipe } from '../../shared';
       h2 { font-size: 20px; }
       .form-sub { margin-bottom: 20px; }
     }
+
+    /* RTL */
+    :host-context([dir="rtl"]) .cr-prefix { border-right: none; border-left: 1px solid #e2e5e9; }
+    :host-context([dir="rtl"]) h1 { letter-spacing: 0; }
   `]
 })
 export class LandingComponent {
   cr = '';
   checking = false;
 
-  constructor(public router: Router) {}
+  constructor(public router: Router, public i18n: I18nService) {}
+
+  toggleLang() {
+    this.i18n.setLang(this.i18n.lang === 'en' ? 'ar' : 'en');
+  }
 
   doCheck() {
     if (!this.cr) return;

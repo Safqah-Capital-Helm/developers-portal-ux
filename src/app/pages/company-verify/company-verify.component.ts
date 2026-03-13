@@ -197,11 +197,18 @@ export class CompanyVerifyComponent implements OnInit {
     ];
   }
 
-  crOwners = [
-    { name: 'Mohammad Al-Omran', crRole: 'Partner', invited: false },
-    { name: 'Khalid Al-Salem', crRole: 'Partner', invited: true },
-    { name: 'Faisal Al-Rajhi', crRole: 'Authorized Signatory', invited: false },
+  private _crOwnersData = [
+    { name: 'Mohammad Al-Omran', roleKey: 'common.role_partner', invited: false },
+    { name: 'Khalid Al-Salem', roleKey: 'common.role_partner', invited: true },
+    { name: 'Faisal Al-Rajhi', roleKey: 'common.role_authorized_signatory', invited: false },
   ];
+
+  get crOwners() {
+    return this._crOwnersData.map(o => ({
+      ...o,
+      crRole: this.i18n.t(o.roleKey),
+    }));
+  }
 
   constructor(
     private router: Router,
@@ -218,7 +225,8 @@ export class CompanyVerifyComponent implements OnInit {
   }
 
   inviteOwner(owner: any) {
-    owner.invited = true;
+    const src = this._crOwnersData.find(o => o.name === owner.name);
+    if (src) src.invited = true;
   }
 
   onStepClick(i: number): void {

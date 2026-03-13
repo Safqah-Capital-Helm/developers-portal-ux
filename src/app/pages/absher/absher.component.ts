@@ -35,7 +35,7 @@ type IdentityStep = 'id' | 'otp' | 'verifying' | 'ownerCheck' | 'ownerFail' | 'd
         <!-- Header bar -->
         <div class="header-bar">
           <app-logo [size]="32"></app-logo>
-          <span class="header-right" *ngIf="mode === 'register'" [style.color]="C.g500" [style.font-size.px]="13" [style.font-weight]="600">Step {{ currentStepDisplay }} of 2</span>
+          <span class="header-right" *ngIf="mode === 'register'" [style.color]="C.g500" [style.font-size.px]="13" [style.font-weight]="600">{{ 'absher.step_of' | t:{current: '' + currentStepDisplay} }}</span>
         </div>
 
         <!-- Progress steps (register mode only, not on pending) -->
@@ -102,7 +102,7 @@ type IdentityStep = 'id' | 'otp' | 'verifying' | 'ownerCheck' | 'ownerFail' | 'd
                 {{ 'common.confirm' | t }}
               </app-btn>
               <div *ngIf="mode === 'register'" class="demo-bar">
-                <button class="demo-advance" (click)="identityStep = 'ownerFail'">Demo: Owner not found &rarr;</button>
+                <button class="demo-advance" (click)="identityStep = 'ownerFail'">{{ 'absher.demo_owner_not_found' | t }} &rarr;</button>
               </div>
             </div>
             <p class="form-footer">
@@ -189,7 +189,7 @@ type IdentityStep = 'id' | 'otp' | 'verifying' | 'ownerCheck' | 'ownerFail' | 'd
                 {{ 'absher.pending_desc' | t }}
               </p>
               <app-btn variant="secondary" [full]="true" size="md" (clicked)="router.navigate(['/verify/owner/abc123'])">
-                Demo: Open Owner Verification
+                {{ 'absher.demo_open_owner_verify' | t }}
               </app-btn>
             </div>
           </div>
@@ -252,7 +252,7 @@ type IdentityStep = 'id' | 'otp' | 'verifying' | 'ownerCheck' | 'ownerFail' | 'd
     .form-area {
       background: #f8f9fa;
       border-radius: 18px;
-      padding: 28px;
+      padding: 32px;
       border: 1px solid #e2e5e9;
     }
 
@@ -341,10 +341,12 @@ export class AbsherComponent implements OnInit, OnDestroy {
   copied = false;
   shareLink = 'https://portal.safqah.com/verify/owner/abc123';
 
-  progressSteps = [
-    'Verify Identity',
-    'Invite Team',
-  ];
+  get progressSteps(): string[] {
+    return [
+      this.i18n.t('team_invite.step_verify'),
+      this.i18n.t('team_invite.step_invite'),
+    ];
+  }
   private timers: ReturnType<typeof setTimeout>[] = [];
 
   constructor(

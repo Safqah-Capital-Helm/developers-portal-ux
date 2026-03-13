@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
 export class I18nService {
@@ -6,8 +6,9 @@ export class I18nService {
   dir: 'ltr' | 'rtl' = 'ltr';
   private translations: Record<string, string> = {};
   private loaded = false;
+  private initPromise: Promise<void> | null = null;
 
-  constructor() {
+  constructor(private zone: NgZone) {
     // Restore from localStorage
     const saved = localStorage.getItem('safqah_lang') as 'en' | 'ar' | null;
     if (saved) {
@@ -16,17 +17,18 @@ export class I18nService {
     }
   }
 
-  async init(): Promise<void> {
-    await this.loadTranslations(this.lang);
-    this.applyDir();
+  init(): Promise<void> {
+    if (this.initPromise) return this.initPromise;
+    this.initPromise = this.loadTranslations(this.lang).then(() => this.applyDir());
+    return this.initPromise;
   }
 
   async setLang(lang: 'en' | 'ar'): Promise<void> {
     this.lang = lang;
     this.dir = lang === 'ar' ? 'rtl' : 'ltr';
     localStorage.setItem('safqah_lang', lang);
-    await this.loadTranslations(lang);
-    this.applyDir();
+    // Reload to ensure all computed data uses new translations
+    window.location.reload();
   }
 
   t(key: string, params?: Record<string, string>): string {
@@ -42,9 +44,11 @@ export class I18nService {
   private async loadTranslations(lang: string): Promise<void> {
     try {
       const resp = await fetch(`assets/i18n/${lang}.json`);
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
       this.translations = await resp.json();
       this.loaded = true;
-    } catch {
+    } catch (err) {
+      console.error('[i18n] Failed to load translations for', lang, err);
       // Fallback: keys display as-is
       this.translations = {};
     }

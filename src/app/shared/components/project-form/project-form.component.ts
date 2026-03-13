@@ -4,22 +4,24 @@ import { FormsModule } from '@angular/forms';
 import { C } from '../../theme';
 import { InputComponent } from '../input/input.component';
 import { MapPickerComponent } from '../map-picker/map-picker.component';
+import { TranslatePipe } from '../../i18n/translate.pipe';
+import { I18nService } from '../../i18n/i18n.service';
 
 @Component({
   selector: 'app-project-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, InputComponent, MapPickerComponent],
+  imports: [CommonModule, FormsModule, InputComponent, MapPickerComponent, TranslatePipe],
   template: `
     <!-- Project Name -->
     <app-input
-      label="Project Name"
-      placeholder="e.g. Al Noor Residential"
+      [label]="'project_form.name_label' | t"
+      [placeholder]="'project_form.name_placeholder' | t"
       [value]="name"
       (valueChange)="name = $event; nameChange.emit($event)"
     ></app-input>
 
     <!-- Project Type -->
-    <div class="section-label">Project Type</div>
+    <div class="section-label">{{ 'project_form.type_label' | t }}</div>
     <div class="selector-grid">
       <div
         *ngFor="let t of types"
@@ -75,7 +77,7 @@ import { MapPickerComponent } from '../map-picker/map-picker.component';
     </div>
 
     <!-- Current Stage (Horizontal Stepper) -->
-    <div class="section-label" style="margin-top: 8px;">Current Stage</div>
+    <div class="section-label" style="margin-top: 8px;">{{ 'project_form.stage_label' | t }}</div>
     <div class="stepper">
       <ng-container *ngFor="let s of stages; let i = index; let last = last">
         <div class="stage-node" (click)="stage = s.id; stageChange.emit(s.id)">
@@ -103,40 +105,40 @@ import { MapPickerComponent } from '../map-picker/map-picker.component';
     </div>
 
     <!-- Project Location -->
-    <div class="section-label" style="margin-top: 24px;">Project Location</div>
+    <div class="section-label" style="margin-top: 24px;">{{ 'project_form.location_label' | t }}</div>
     <app-map-picker></app-map-picker>
 
     <!-- Project Specifications -->
-    <div class="section-label" style="margin-top: 24px;">Project Specifications</div>
+    <div class="section-label" style="margin-top: 24px;">{{ 'project_form.specs_label' | t }}</div>
     <div class="specs-grid">
       <app-input
-        label="Expected Units"
-        placeholder="e.g. 120"
-        helper="Total number of units planned for sale"
+        [label]="'project_form.units_label' | t"
+        [placeholder]="'project_form.units_placeholder' | t"
+        [helper]="'project_form.units_helper' | t"
         [value]="expectedUnits"
         (valueChange)="expectedUnits = $event; expectedUnitsChange.emit($event)"
       ></app-input>
       <app-input
-        label="Total Building Area"
-        placeholder="e.g. 15,000"
+        [label]="'project_form.building_area_label' | t"
+        [placeholder]="'project_form.building_area_placeholder' | t"
         suffix="m\u00B2"
-        helper="Gross floor area in square meters"
+        [helper]="'project_form.building_area_helper' | t"
         [value]="totalBuildingArea"
         (valueChange)="totalBuildingArea = $event; totalBuildingAreaChange.emit($event)"
       ></app-input>
       <app-input
-        label="Total Selling Area"
-        placeholder="e.g. 12,000"
+        [label]="'project_form.selling_area_label' | t"
+        [placeholder]="'project_form.selling_area_placeholder' | t"
         suffix="m\u00B2"
-        helper="Net sellable area in square meters"
+        [helper]="'project_form.selling_area_helper' | t"
         [value]="totalSellingArea"
         (valueChange)="totalSellingArea = $event; totalSellingAreaChange.emit($event)"
       ></app-input>
       <app-input
-        label="Project Period"
-        placeholder="e.g. 24"
-        suffix="months"
-        helper="Estimated project duration in months"
+        [label]="'project_form.period_label' | t"
+        [placeholder]="'project_form.period_placeholder' | t"
+        [suffix]="'project_form.period_suffix' | t"
+        [helper]="'project_form.period_helper' | t"
         [value]="projectPeriod"
         (valueChange)="projectPeriod = $event; projectPeriodChange.emit($event)"
       ></app-input>
@@ -245,6 +247,8 @@ import { MapPickerComponent } from '../map-picker/map-picker.component';
 export class ProjectFormComponent {
   C = C;
 
+  constructor(private i18n: I18nService) {}
+
   @Input() name = '';
   @Output() nameChange = new EventEmitter<string>();
 
@@ -266,21 +270,25 @@ export class ProjectFormComponent {
   @Input() projectPeriod = '';
   @Output() projectPeriodChange = new EventEmitter<string>();
 
-  types = [
-    { id: 'res', t: 'Residential', d: 'Homes' },
-    { id: 'com', t: 'Commercial', d: 'Offices' },
-    { id: 'mix', t: 'Mixed Use', d: 'Combined' },
-    { id: 'ind', t: 'Industrial', d: 'Warehouses' },
-    { id: 'land', t: 'Land Dev', d: 'Raw land' },
-  ];
+  get types() {
+    return [
+      { id: 'res', t: this.i18n.t('project_form.type_residential'), d: this.i18n.t('project_form.type_residential_desc') },
+      { id: 'com', t: this.i18n.t('project_form.type_commercial'), d: this.i18n.t('project_form.type_commercial_desc') },
+      { id: 'mix', t: this.i18n.t('project_form.type_mixed'), d: this.i18n.t('project_form.type_mixed_desc') },
+      { id: 'ind', t: this.i18n.t('project_form.type_industrial'), d: this.i18n.t('project_form.type_industrial_desc') },
+      { id: 'land', t: this.i18n.t('project_form.type_land'), d: this.i18n.t('project_form.type_land_desc') },
+    ];
+  }
 
-  stages = [
-    { id: 'plan', l: 'Planning', c: '#2e90fa' },
-    { id: 'design', l: 'Design', c: '#8b5cf6' },
-    { id: 'permit', l: 'Permits', c: '#f79009' },
-    { id: 'build', l: 'Construction', c: '#00a15a' },
-    { id: 'sale', l: 'Pre-Sale', c: '#ec4899' },
-  ];
+  get stages() {
+    return [
+      { id: 'plan', l: this.i18n.t('project_form.stage_planning'), c: '#2e90fa' },
+      { id: 'design', l: this.i18n.t('project_form.stage_design'), c: '#8b5cf6' },
+      { id: 'permit', l: this.i18n.t('project_form.stage_permits'), c: '#f79009' },
+      { id: 'build', l: this.i18n.t('project_form.stage_construction'), c: '#00a15a' },
+      { id: 'sale', l: this.i18n.t('project_form.stage_presale'), c: '#ec4899' },
+    ];
+  }
 
   get selectedIdx(): number {
     return this.stages.findIndex(s => s.id === this.stage);
