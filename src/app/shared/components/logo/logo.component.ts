@@ -26,4 +26,5 @@ import { Component, Input } from '@angular/core';
 export class LogoComponent {
   @Input() size = 36;
   @Input() color = '#101828';
+  @Input() set light(val: boolean) { if (val) this.color = '#ffffff'; }
 }
