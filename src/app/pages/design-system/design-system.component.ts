@@ -24,6 +24,7 @@ import {
   ConfirmDialogComponent,
   TimelineComponent,
   SelectGridComponent,
+  TranslatePipe,
 } from '../../shared';
 import type { TimelineEvent, SelectOption } from '../../shared';
 
@@ -54,6 +55,7 @@ import type { TimelineEvent, SelectOption } from '../../shared';
     ConfirmDialogComponent,
     TimelineComponent,
     SelectGridComponent,
+    TranslatePipe,
   ],
   template: `
     <div class="ds-page">
@@ -381,7 +383,7 @@ import type { TimelineEvent, SelectOption } from '../../shared';
 
             <h3 class="group-title" style="margin-top: 24px">Back Link</h3>
             <app-card [padding]="24">
-              <app-back-link to="/dashboard" label="Back to Dashboard"></app-back-link>
+              <app-back-link to="/dashboard" [label]="('common.back_to_dashboard' | t)"></app-back-link>
             </app-card>
 
             <h3 class="group-title" style="margin-top: 24px">Modal</h3>

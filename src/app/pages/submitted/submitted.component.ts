@@ -8,13 +8,13 @@ import { BackLinkComponent } from '../../shared/components/back-link/back-link.c
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { CardComponent } from '../../shared/components/card/card.component';
 import { BadgeComponent } from '../../shared/components/badge/badge.component';
-import { TranslatePipe } from '../../shared';
+import { TranslatePipe, AlertBannerComponent } from '../../shared';
 import { I18nService } from '../../shared/i18n/i18n.service';
 
 @Component({
   selector: 'app-submitted',
   standalone: true,
-  imports: [CommonModule, FormsModule, NavComponent, BackLinkComponent, ButtonComponent, CardComponent, BadgeComponent, TranslatePipe],
+  imports: [CommonModule, FormsModule, NavComponent, BackLinkComponent, ButtonComponent, CardComponent, BadgeComponent, TranslatePipe, AlertBannerComponent],
   template: `
     <div class="page">
       <app-nav></app-nav>
@@ -184,25 +184,8 @@ import { I18nService } from '../../shared/i18n/i18n.service';
               </ng-container>
             </div>
 
-            <div *ngIf="pReview === 'feedback'" class="alert-box alert-amber">
-              <div class="alert-icon">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${C.amber600}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-              </div>
-              <div class="alert-body">
-                <strong>{{ 'submitted.info_needed' | t }}</strong>
-                <p>{{ 'submitted.info_needed_project' | t }}</p>
-                <app-btn variant="secondary" size="sm" (clicked)="pReview = 'in_review'">{{ 'submitted.respond_feedback' | t }}</app-btn>
-              </div>
-            </div>
-            <div *ngIf="pReview === 'rejected'" class="alert-box alert-red">
-              <div class="alert-icon">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${C.red500}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
-              </div>
-              <div class="alert-body">
-                <strong>{{ 'submitted.not_approved_project' | t }}</strong>
-                <p>{{ 'submitted.not_approved_project_desc' | t }}</p>
-              </div>
-            </div>
+            <app-alert-banner *ngIf="pReview === 'feedback'" type="warning" [title]="('submitted.info_needed' | t)" [message]="('submitted.info_needed_project' | t)" [actionLabel]="('submitted.respond_feedback' | t)" (action)="pReview = 'in_review'" style="margin-top: 16px;"></app-alert-banner>
+            <app-alert-banner *ngIf="pReview === 'rejected'" type="error" [title]="('submitted.not_approved_project' | t)" [message]="('submitted.not_approved_project_desc' | t)" style="margin-top: 16px;"></app-alert-banner>
           </div>
         </div>
 
@@ -247,25 +230,8 @@ import { I18nService } from '../../shared/i18n/i18n.service';
               </ng-container>
             </div>
 
-            <div *ngIf="cReview === 'feedback'" class="alert-box alert-amber">
-              <div class="alert-icon">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${C.amber600}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-              </div>
-              <div class="alert-body">
-                <strong>{{ 'submitted.info_needed' | t }}</strong>
-                <p>{{ 'submitted.info_needed_company' | t }}</p>
-                <app-btn variant="secondary" size="sm" (clicked)="cReview = 'in_review'">{{ 'submitted.respond_feedback' | t }}</app-btn>
-              </div>
-            </div>
-            <div *ngIf="cReview === 'rejected'" class="alert-box alert-red">
-              <div class="alert-icon">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${C.red500}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
-              </div>
-              <div class="alert-body">
-                <strong>{{ 'submitted.not_approved_company' | t }}</strong>
-                <p>{{ 'submitted.not_approved_company_desc' | t }}</p>
-              </div>
-            </div>
+            <app-alert-banner *ngIf="cReview === 'feedback'" type="warning" [title]="('submitted.info_needed' | t)" [message]="('submitted.info_needed_company' | t)" [actionLabel]="('submitted.respond_feedback' | t)" (action)="cReview = 'in_review'" style="margin-top: 16px;"></app-alert-banner>
+            <app-alert-banner *ngIf="cReview === 'rejected'" type="error" [title]="('submitted.not_approved_company' | t)" [message]="('submitted.not_approved_company_desc' | t)" style="margin-top: 16px;"></app-alert-banner>
           </div>
         </div>
 
@@ -646,14 +612,6 @@ import { I18nService } from '../../shared/i18n/i18n.service';
       font-size: 11px; color: ${C.g400}; margin-top: 4px;
       background: ${C.g50}; padding: 3px 8px; border-radius: 6px;
     }
-
-    /* ---- Alerts ---- */
-    .alert-box { display: flex; gap: 12px; padding: 16px; border-radius: 12px; margin-top: 16px; }
-    .alert-amber { background: ${C.amber50}; border: 1px solid ${C.amber100}; }
-    .alert-red { background: ${C.red50}; border: 1px solid #fecaca; }
-    .alert-icon { flex-shrink: 0; padding-top: 2px; }
-    .alert-body strong { font-size: 14px; color: ${C.g800}; display: block; }
-    .alert-body p { font-size: 13px; color: ${C.g600}; margin: 4px 0 12px; line-height: 1.5; }
 
     /* ---- Waiting ---- */
     .waiting-box {

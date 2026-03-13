@@ -90,6 +90,8 @@ type Step =
                 [placeholder]="('add_company.cr_placeholder' | t)"
                 [(ngModel)]="cr"
                 [disabled]="step === 'crVerifying'"
+                inputmode="numeric"
+                maxlength="10"
               />
             </div>
             <p class="cr-helper" *ngIf="crRes !== 'bad'">{{ 'add_company.cr_helper' | t }}</p>
@@ -104,7 +106,7 @@ type Step =
             </div>
 
             <div *ngIf="step === 'cr'" style="margin-top: 20px;">
-              <app-btn variant="primary" [full]="true" size="lg" [disabled]="cr.length < 5" (clicked)="onCrSubmit()">
+              <app-btn variant="primary" [full]="true" size="lg" [disabled]="cr.length !== 10" (clicked)="onCrSubmit()">
                 {{ 'add_company.verify_cr' | t }}
               </app-btn>
             </div>
@@ -135,8 +137,12 @@ type Step =
                 [placeholder]="('absher.nid_placeholder' | t)"
                 [value]="nid"
                 (valueChange)="nid = $event"
+                inputmode="numeric"
+                [maxlength]="10"
+                mask="digits"
+                [error]="nid && nid.length > 0 && !isValidNid(nid) ? i18n.t('validation.nid_format') : ''"
               ></app-input>
-              <app-btn variant="primary" [full]="true" size="lg" [disabled]="nid.length < 10" (clicked)="step = 'otp'">
+              <app-btn variant="primary" [full]="true" size="lg" [disabled]="!this.isValidNid(nid)" (clicked)="step = 'otp'">
                 {{ 'absher.verify_btn' | t }}
               </app-btn>
               <div class="demo-bar" style="margin-top: 12px;">
@@ -158,6 +164,9 @@ type Step =
                 [value]="otp"
                 (valueChange)="otp = $event"
                 [helper]="('absher.otp_helper' | t)"
+                inputmode="numeric"
+                [maxlength]="6"
+                mask="digits"
               ></app-input>
               <app-btn variant="primary" [full]="true" size="lg" [disabled]="otp.length < 4" (clicked)="onOtpConfirm()">
                 {{ 'common.confirm' | t }}
@@ -245,6 +254,8 @@ type Step =
                 [placeholder]="('absher.owner_phone_placeholder' | t)"
                 [value]="ownerPhone"
                 (valueChange)="ownerPhone = $event"
+                inputmode="tel"
+                mask="phone"
               ></app-input>
               <app-btn variant="primary" [full]="true" size="lg" [disabled]="ownerPhone.length < 10" (clicked)="sendSms()">
                 {{ 'absher.send_sms' | t }}
@@ -913,7 +924,7 @@ export class AddCompanyComponent implements OnInit, OnDestroy {
 
   private timers: ReturnType<typeof setTimeout>[] = [];
 
-  constructor(private router: Router, private route: ActivatedRoute, private i18n: I18nService) {}
+  constructor(private router: Router, private route: ActivatedRoute, public i18n: I18nService) {}
 
   ngOnInit(): void {
     const startStep = this.route.snapshot.queryParamMap.get('step');
@@ -971,6 +982,10 @@ export class AddCompanyComponent implements OnInit, OnDestroy {
 
   get crField(): string {
     return this.cr || '1020304050607';
+  }
+
+  isValidNid(nid: string): boolean {
+    return /^[12]\d{9}$/.test(nid);
   }
 
   onCrSubmit(): void {

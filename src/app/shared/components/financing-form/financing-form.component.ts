@@ -19,6 +19,7 @@ import { I18nService } from '../../i18n/i18n.service';
       [helper]="'financing_form.total_cost_helper' | t"
       [value]="totalCost"
       (valueChange)="totalCost = $event; totalCostChange.emit($event)"
+      inputmode="decimal"
     ></app-input>
 
     <!-- 2. Cost Breakdown (shown when cost entered) -->
@@ -118,6 +119,7 @@ import { I18nService } from '../../i18n/i18n.service';
         [helper]="'financing_form.expected_revenue_helper' | t"
         [value]="expectedRevenue"
         (valueChange)="expectedRevenue = $event; expectedRevenueChange.emit($event)"
+        inputmode="decimal"
       ></app-input>
 
       <div *ngIf="parsedRevenue > 0 && (parsedUnits > 0 || parsedArea > 0)" class="stat-row">

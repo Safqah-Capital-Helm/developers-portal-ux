@@ -60,9 +60,10 @@ import { C } from '../../shared/theme';
             <label class="input-label">{{ 'landing.cr_number' | t }}</label>
             <div class="cr-input-wrap">
               <div class="cr-prefix"><span>{{ 'landing.cr_prefix' | t }}</span></div>
-              <input [(ngModel)]="cr" placeholder="1010XXXXXX" (keydown.enter)="doCheck()" class="cr-input"/>
+              <input [(ngModel)]="cr" placeholder="1010XXXXXX" (keydown.enter)="doCheck()" (input)="onCrInput($event)" inputmode="numeric" maxlength="10" class="cr-input"/>
             </div>
-            <app-btn variant="primary" [full]="true" size="lg" [disabled]="!cr || checking" (clicked)="doCheck()">
+            <p *ngIf="cr && cr.length !== 10" class="cr-error-text">{{ 'validation.cr_format' | t }}</p>
+            <app-btn variant="primary" [full]="true" size="lg" [disabled]="cr.length !== 10 || checking" (clicked)="doCheck()">
               {{ checking ? ('landing.verifying' | t) : ('landing.cta_button' | t) }} {{ checking ? '' : '→' }}
             </app-btn>
             <button class="demo-reject" (click)="doReject()">{{ 'landing.demo_not_eligible' | t }}</button>
@@ -401,6 +402,7 @@ import { C } from '../../shared/theme';
     }
 
     /* ═══ RTL ═══ */
+    .cr-error-text { font-size: 11px; color: #f04438; margin: 4px 0 0 0; font-weight: 600; }
     :host-context([dir="rtl"]) .cr-prefix { border-right: none; border-left: 1px solid ${C.g200}; }
     :host-context([dir="rtl"]) h1 { letter-spacing: 0; }
     :host-context([dir="rtl"]) .step-connector { left: auto; right: calc(50% + 32px); }
@@ -434,6 +436,12 @@ export class LandingComponent {
 
   toggleLang() {
     this.i18n.setLang(this.i18n.lang === 'en' ? 'ar' : 'en');
+  }
+
+  onCrInput(e: Event) {
+    const input = e.target as HTMLInputElement;
+    input.value = input.value.replace(/[^\d]/g, '');
+    this.cr = input.value;
   }
 
   doCheck() {

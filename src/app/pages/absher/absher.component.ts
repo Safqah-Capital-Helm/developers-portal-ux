@@ -78,8 +78,12 @@ type IdentityStep = 'id' | 'otp' | 'verifying' | 'ownerCheck' | 'ownerFail' | 'd
                 [placeholder]="'absher.nid_placeholder' | t"
                 [value]="nid"
                 (valueChange)="nid = $event"
+                inputmode="numeric"
+                [maxlength]="10"
+                mask="digits"
+                [error]="nid && nid.length > 0 && !isValidNid(nid) ? i18n.t('validation.nid_format') : ''"
               ></app-input>
-              <app-btn variant="primary" [full]="true" size="lg" [disabled]="nid.length < 10" (clicked)="onIdSubmit()">
+              <app-btn variant="primary" [full]="true" size="lg" [disabled]="!isValidNid(nid)" (clicked)="onIdSubmit()">
                 {{ 'absher.verify_btn' | t }}
               </app-btn>
             </div>
@@ -97,6 +101,9 @@ type IdentityStep = 'id' | 'otp' | 'verifying' | 'ownerCheck' | 'ownerFail' | 'd
                 [value]="otp"
                 (valueChange)="otp = $event"
                 [helper]="'absher.otp_helper' | t"
+                inputmode="numeric"
+                [maxlength]="6"
+                mask="digits"
               ></app-input>
               <app-btn variant="primary" [full]="true" size="lg" [disabled]="otp.length < 4" (clicked)="onOtpConfirm()">
                 {{ 'common.confirm' | t }}
@@ -417,6 +424,10 @@ export class AbsherComponent implements OnInit, OnDestroy {
       case 'pending': return this.i18n.t('absher.pending_subtitle');
       default: return '';
     }
+  }
+
+  isValidNid(nid: string): boolean {
+    return /^[12]\d{9}$/.test(nid);
   }
 
   onIdSubmit(): void {

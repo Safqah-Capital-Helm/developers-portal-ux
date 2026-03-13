@@ -8,6 +8,7 @@ import {
   ButtonComponent,
   ProgressStepsComponent,
   CardComponent,
+  InputComponent,
   TranslatePipe,
   I18nService,
 } from '../../shared';
@@ -15,7 +16,7 @@ import {
 @Component({
   selector: 'app-team-invite',
   standalone: true,
-  imports: [CommonModule, FormsModule, LogoComponent, ButtonComponent, ProgressStepsComponent, CardComponent, TranslatePipe],
+  imports: [CommonModule, FormsModule, LogoComponent, ButtonComponent, ProgressStepsComponent, CardComponent, InputComponent, TranslatePipe],
   template: `
     <!-- Header bar -->
     <div class="header-bar">
@@ -84,8 +85,7 @@ import {
                     </div>
                   </div>
                   <div class="invite-field">
-                    <label class="field-label">{{ 'team_invite.email_label' | t }}</label>
-                    <input class="field-input" [placeholder]="'e.g. ' + owner.name.split(' ')[0].toLowerCase() + '@company.com'" [(ngModel)]="owner.email" />
+                    <app-input [label]="('team_invite.email_label' | t)" [placeholder]="'e.g. ' + owner.name.split(' ')[0].toLowerCase() + '@company.com'" inputmode="email" type="email" [value]="owner.email" (valueChange)="owner.email = $event" [error]="owner.email && !isValidEmail(owner.email) ? ('team_invite.invalid_email' | t) : ''"></app-input>
                   </div>
                   <div class="invite-field">
                     <label class="field-label">{{ 'team_invite.role_label' | t }}</label>
@@ -123,8 +123,7 @@ import {
               <div class="invite-num extra">{{ crOwners.length + i + 1 }}</div>
               <div class="invite-fields">
                 <div class="invite-field">
-                  <label class="field-label">{{ 'team_invite.email_label' | t }}</label>
-                  <input class="field-input" [placeholder]="('team_invite.email_placeholder' | t)" [(ngModel)]="inv.email" />
+                  <app-input [label]="('team_invite.email_label' | t)" [placeholder]="('team_invite.email_placeholder' | t)" inputmode="email" type="email" [value]="inv.email" (valueChange)="inv.email = $event" [error]="inv.email && !isValidEmail(inv.email) ? ('team_invite.invalid_email' | t) : ''"></app-input>
                 </div>
                 <div class="invite-field">
                   <label class="field-label">{{ 'team_invite.role_label' | t }}</label>
@@ -391,22 +390,6 @@ import {
       letter-spacing: 0.3px;
     }
 
-    .field-input {
-      width: 100%;
-      box-sizing: border-box;
-      padding: 10px 12px;
-      border: 1.5px solid ${C.g200};
-      border-radius: 10px;
-      font-size: 13px;
-      font-family: inherit;
-      color: ${C.g900};
-      outline: none;
-      transition: border-color 0.2s;
-      background: ${C.white};
-    }
-    .field-input:focus { border-color: ${C.green}; }
-    .field-input::placeholder { color: ${C.g300}; }
-
     .field-select {
       width: 100%;
       box-sizing: border-box;
@@ -564,6 +547,10 @@ export class TeamInviteComponent {
 
   skip() {
     this.router.navigate(['/dashboard'], { queryParams: { state: 'new' } });
+  }
+
+  isValidEmail(email: string): boolean {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   }
 
   goToInviteAccept() {

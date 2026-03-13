@@ -10,7 +10,7 @@ export class I18nService {
 
   constructor(private zone: NgZone) {
     // Restore from localStorage
-    const saved = localStorage.getItem('safqah_lang') as 'en' | 'ar' | null;
+    const saved = this.getStoredLang() as 'en' | 'ar' | null;
     if (saved) {
       this.lang = saved;
       this.dir = saved === 'ar' ? 'rtl' : 'ltr';
@@ -26,7 +26,7 @@ export class I18nService {
   async setLang(lang: 'en' | 'ar'): Promise<void> {
     this.lang = lang;
     this.dir = lang === 'ar' ? 'rtl' : 'ltr';
-    localStorage.setItem('safqah_lang', lang);
+    this.storeLang(lang);
     // Reload to ensure all computed data uses new translations
     window.location.reload();
   }
@@ -39,6 +39,14 @@ export class I18nService {
       });
     }
     return val;
+  }
+
+  private getStoredLang(): string | null {
+    try { return localStorage.getItem('safqah_lang'); } catch { return null; }
+  }
+
+  private storeLang(lang: string): void {
+    try { localStorage.setItem('safqah_lang', lang); } catch {}
   }
 
   private async loadTranslations(lang: string): Promise<void> {

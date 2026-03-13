@@ -31,20 +31,20 @@ import { C } from '../../theme';
           </svg>
           <span>{{ 'nav.dashboard' | t }}</span>
         </a>
-        <a routerLink="/dashboard/companies" routerLinkActive="active" class="nav-item">
+        <a routerLink="/dashboard/companies" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-item">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/>
             <line x1="9" y1="9" x2="9" y2="9.01"/><line x1="9" y1="13" x2="9" y2="13.01"/><line x1="9" y1="17" x2="9" y2="17.01"/>
           </svg>
           <span>{{ 'nav.companies' | t }}</span>
         </a>
-        <a routerLink="/dashboard/projects" routerLinkActive="active" class="nav-item">
+        <a routerLink="/dashboard/projects" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-item">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M3 3h7l2 2h9v16H3z"/>
           </svg>
           <span>{{ 'nav.projects' | t }}</span>
         </a>
-        <a routerLink="/dashboard/applications" routerLinkActive="active" class="nav-item">
+        <a routerLink="/dashboard/applications" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-item">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
           </svg>
@@ -53,7 +53,7 @@ import { C } from '../../theme';
       </nav>
 
       <div class="sidebar-bottom">
-        <a routerLink="/dashboard/teams" routerLinkActive="active" class="support-link" style="text-decoration: none;">
+        <a routerLink="/dashboard/teams" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="support-link" style="text-decoration: none;">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/>
             <path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>

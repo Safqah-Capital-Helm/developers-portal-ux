@@ -7,13 +7,14 @@ import {
   LogoComponent,
   ButtonComponent,
   CardComponent,
+  InputComponent,
   TranslatePipe,
 } from '../../shared';
 
 @Component({
   selector: 'app-invite-accept',
   standalone: true,
-  imports: [CommonModule, FormsModule, LogoComponent, ButtonComponent, CardComponent, TranslatePipe],
+  imports: [CommonModule, FormsModule, LogoComponent, ButtonComponent, CardComponent, InputComponent, TranslatePipe],
   template: `
     <!-- Header bar -->
     <div class="header-bar">
@@ -56,13 +57,11 @@ import {
 
           <div class="form-fields">
             <div class="field-group">
-              <label class="field-label">{{ 'invite_accept.full_name' | t }}</label>
-              <input class="field-input" [placeholder]="('invite_accept.full_name_placeholder' | t)" [(ngModel)]="fullName" />
+              <app-input [label]="('invite_accept.full_name' | t)" [placeholder]="('invite_accept.full_name_placeholder' | t)" [value]="fullName" (valueChange)="fullName = $event"></app-input>
             </div>
 
             <div class="field-group">
-              <label class="field-label">{{ 'invite_accept.phone' | t }}</label>
-              <input class="field-input" [placeholder]="('invite_accept.phone_placeholder' | t)" [(ngModel)]="phone" />
+              <app-input [label]="('invite_accept.phone' | t)" [placeholder]="('invite_accept.phone_placeholder' | t)" inputmode="tel" type="tel" mask="phone" [value]="phone" (valueChange)="phone = $event"></app-input>
             </div>
           </div>
 
@@ -234,32 +233,6 @@ import {
     }
 
     .field-group {}
-
-    .field-label {
-      display: block;
-      font-size: 11px;
-      font-weight: 700;
-      color: ${C.g500};
-      margin-bottom: 4px;
-      text-transform: uppercase;
-      letter-spacing: 0.3px;
-    }
-
-    .field-input {
-      width: 100%;
-      box-sizing: border-box;
-      padding: 10px 12px;
-      border: 1.5px solid ${C.g200};
-      border-radius: 10px;
-      font-size: 13px;
-      font-family: inherit;
-      color: ${C.g900};
-      outline: none;
-      transition: border-color 0.2s;
-      background: ${C.white};
-    }
-    .field-input:focus { border-color: ${C.green}; }
-    .field-input::placeholder { color: ${C.g300}; }
 
     .email-display {
       display: flex;

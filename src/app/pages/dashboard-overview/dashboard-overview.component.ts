@@ -551,7 +551,7 @@ export class DashboardOverviewComponent implements OnInit {
 
   getProgress(steps: any[]): number {
     const done = steps.filter((s: any) => s.done).length;
-    return Math.round(35 + (done / steps.length) * 65);
+    return Math.round((done / steps.length) * 100);
   }
 
   safe(html: string): SafeHtml { return this.sanitizer.bypassSecurityTrustHtml(html); }

@@ -198,15 +198,20 @@ export class PrevCredentialsFormComponent {
   }
 
   adjustSource(source: 'bank' | 'fintech' | 'friends', delta: number): void {
-    const used = this.finBank + this.finFintech + this.finFriends;
-    const remaining = 100 - used;
-    if (source === 'bank') {
-      this.finBank = Math.max(0, Math.min(this.finBank + delta, this.finBank + remaining));
-    } else if (source === 'fintech') {
-      this.finFintech = Math.max(0, Math.min(this.finFintech + delta, this.finFintech + remaining));
-    } else {
-      this.finFriends = Math.max(0, Math.min(this.finFriends + delta, this.finFriends + remaining));
-    }
+    let bank = this.finBank;
+    let fintech = this.finFintech;
+    let friends = this.finFriends;
+
+    if (source === 'bank') bank = Math.max(0, bank + delta);
+    else if (source === 'fintech') fintech = Math.max(0, fintech + delta);
+    else if (source === 'friends') friends = Math.max(0, friends + delta);
+
+    const total = bank + fintech + friends;
+    if (total > 100) return; // prevent exceeding 100%
+
+    this.finBank = bank;
+    this.finFintech = fintech;
+    this.finFriends = friends;
   }
 
   /** Returns the current form data */

@@ -3,7 +3,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { C } from '../../shared/theme';
-import { NavComponent, BackLinkComponent, CardComponent, InputComponent, ButtonComponent, AvatarComponent, TranslatePipe } from '../../shared';
+import { NavComponent, BackLinkComponent, CardComponent, InputComponent, ButtonComponent, AvatarComponent, TranslatePipe, I18nService } from '../../shared';
 
 @Component({
   selector: 'app-profile',
@@ -51,6 +51,8 @@ import { NavComponent, BackLinkComponent, CardComponent, InputComponent, ButtonC
             (valueChange)="email = $event"
             [placeholder]="('profile.email_placeholder' | t)"
             [helper]="'profile.email_helper' | t"
+            [error]="email && email.length > 0 && !isValidEmail(email) ? i18n.t('validation.email_format') : ''"
+            inputmode="email"
           ></app-input>
 
           <app-input
@@ -59,6 +61,7 @@ import { NavComponent, BackLinkComponent, CardComponent, InputComponent, ButtonC
             (valueChange)="phone = $event"
             [placeholder]="('profile.phone_placeholder' | t)"
             [helper]="'profile.phone_helper' | t"
+            inputmode="tel"
           ></app-input>
 
           <!-- Language Preference -->
@@ -339,10 +342,14 @@ export class ProfileComponent implements OnInit {
   saved = false;
   fromOnboarding = false;
 
-  constructor(private router: Router, private route: ActivatedRoute) {}
+  constructor(private router: Router, private route: ActivatedRoute, public i18n: I18nService) {}
 
   ngOnInit(): void {
     this.fromOnboarding = this.route.snapshot.queryParamMap.get('from') === 'onboarding';
+  }
+
+  isValidEmail(email: string): boolean {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   }
 
   go(path: string) { this.router.navigateByUrl(path); }
