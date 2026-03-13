@@ -1163,7 +1163,7 @@ export class AddProjectComponent implements OnInit, OnDestroy {
       { id: 'plan', l: this.i18n.t('add_project.stage_planning'), c: '#2e90fa' },
       { id: 'design', l: this.i18n.t('add_project.stage_design'), c: '#8b5cf6' },
       { id: 'permit', l: this.i18n.t('add_project.stage_permits'), c: '#f79009' },
-      { id: 'build', l: this.i18n.t('add_project.stage_construction'), c: '#00a15a' },
+      { id: 'build', l: this.i18n.t('add_project.stage_construction'), c: '#00af3d' },
       { id: 'sale', l: this.i18n.t('add_project.stage_presale'), c: '#ec4899' },
     ];
   }

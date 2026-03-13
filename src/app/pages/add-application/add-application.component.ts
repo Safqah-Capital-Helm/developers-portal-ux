@@ -229,6 +229,7 @@ import {
               [helper]="('financing.total_cost_helper' | t)"
               [value]="financingAmount"
               (valueChange)="financingAmount = $event"
+              inputmode="decimal"
             ></app-input>
           </app-card>
 
@@ -400,9 +401,9 @@ import {
             {{ 'common.next' | t }}: {{ 'add_application.step_review' | t }} &rarr;
           </app-btn>
           <app-btn *ngIf="step === 3" variant="primary" size="lg"
-            [disabled]="!canSubmit"
+            [disabled]="!canSubmit || submitting"
             (clicked)="submit()">
-            {{ 'add_application.submit_application' | t }} &rarr;
+            {{ submitting ? ('common.loading' | t) : ('add_application.submit_application' | t) }}{{ submitting ? '' : ' &rarr;' }}
           </app-btn>
         </div>
 
@@ -1078,6 +1079,7 @@ export class AddApplicationComponent implements OnInit, OnDestroy {
 
   step = 0;
   submitted = false;
+  submitting = false;
   projectPreSelected = false;
 
   // Draft save state
@@ -1244,9 +1246,14 @@ export class AddApplicationComponent implements OnInit, OnDestroy {
   }
 
   submit(): void {
-    this.clearDraft();
-    this.submitted = true;
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (this.submitting) return;
+    this.submitting = true;
+    setTimeout(() => {
+      this.clearDraft();
+      this.submitted = true;
+      this.submitting = false;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 1500);
   }
 
   goToStatus(): void {

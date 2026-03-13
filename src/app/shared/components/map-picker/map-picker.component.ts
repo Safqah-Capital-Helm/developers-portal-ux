@@ -49,7 +49,7 @@ const LOCATIONS: Array<{ minX: number; maxX: number; minY: number; maxY: number;
     .map-wrap { border-radius: 12px; overflow: hidden; border: 1.5px solid #e2e5e9; }
     .search-bar { display: flex; background: #fff; border-bottom: 1px solid #e2e5e9; }
     .search-input { flex: 1; padding: 11px 14px; border: none; outline: none; font-size: 13px; font-family: inherit; }
-    .search-btn { padding: 0 14px; background: #e6f7ee; border: none; cursor: pointer; font-size: 12px; font-weight: 700; color: #00a15a; }
+    .search-btn { padding: 0 14px; background: #e6f7ee; border: none; cursor: pointer; font-size: 12px; font-weight: 700; color: #00af3d; }
     .canvas { width: 100%; height: 220px; display: block; }
     .footer { padding: 8px 14px; background: #f8f9fa; border-top: 1px solid #e2e5e9; display: flex; justify-content: space-between; align-items: center; }
     .addr { font-size: 12px; color: #667085; display: flex; align-items: center; gap: 4px; }

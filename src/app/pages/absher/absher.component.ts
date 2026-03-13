@@ -175,7 +175,7 @@ type IdentityStep = 'id' | 'otp' | 'verifying' | 'ownerCheck' | 'ownerFail' | 'd
           <!-- Step: smsSent -->
           <div *ngIf="identityStep === 'smsSent'" class="text-center" style="padding: 40px 0;">
             <div class="sms-sent-icon">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#00a15a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#00af3d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="20 6 9 17 4 12"/>
               </svg>
             </div>
@@ -271,7 +271,7 @@ type IdentityStep = 'id' | 'otp' | 'verifying' | 'ownerCheck' | 'ownerFail' | 'd
     }
 
     .link {
-      color: #00a15a;
+      color: #00af3d;
       cursor: pointer;
       font-weight: 600;
     }
@@ -299,7 +299,7 @@ type IdentityStep = 'id' | 'otp' | 'verifying' | 'ownerCheck' | 'ownerFail' | 'd
     }
 
     .copy-btn {
-      background: #00a15a;
+      background: #00af3d;
       color: #fff;
       border: none;
       border-radius: 8px;
@@ -398,7 +398,7 @@ export class AbsherComponent implements OnInit, OnDestroy {
     if (this.isErrorStep) {
       return { background: 'linear-gradient(135deg, #f04438, #d92d20)' };
     }
-    return { background: 'linear-gradient(135deg, #00a15a, #007a44)' };
+    return { background: 'linear-gradient(135deg, #00af3d, #007a44)' };
   }
 
   get identityTitle(): string {

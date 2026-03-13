@@ -34,7 +34,7 @@ export { SkeletonComponent } from './components/skeleton/skeleton.component';
 export { I18nService } from './i18n/i18n.service';
 export { TranslatePipe } from './i18n/translate.pipe';
 export { ApiService } from './services/api.service';
-export { C, S, BADGE_STYLES, borderColorForStatus } from './theme';
+export { C, BADGE_STYLES, borderColorForStatus } from './theme';
 export type { BadgeColor } from './theme';
 export { getCompanyLogo, getCompanyLogoByName } from './company-logos';
 export type { Company, CompanyOwner, Project, Application, TeamMember, Notification, DashboardStats, OnboardingStep, ActivityEvent, FaqItem, UserProfile } from './services/mock-data';

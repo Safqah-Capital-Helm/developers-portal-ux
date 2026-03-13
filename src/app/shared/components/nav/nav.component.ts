@@ -262,7 +262,7 @@ const TYPE_COLORS: Record<string, { bg: string; fg: string }> = {
     .avatar {
       width: 32px; height: 32px; border-radius: 50%; background: #e6f7ee;
       display: flex; align-items: center; justify-content: center;
-      font-size: 13px; font-weight: 700; color: #00a15a;
+      font-size: 13px; font-weight: 700; color: #00af3d;
     }
     .overlay { position: fixed; inset: 0; z-index: 99; }
     .dropdown {

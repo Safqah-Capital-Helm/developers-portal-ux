@@ -125,7 +125,12 @@ import { C } from '../../shared/theme';
         <h2 class="trust-heading">{{ 'landing.trust_title' | t }}</h2>
         <div class="trust-row">
           <div class="trust-badge" *ngFor="let b of trustBadges">
-            <div class="trust-icon" [innerHTML]="b.svg"></div>
+            <div class="trust-icon">
+              <svg *ngIf="b.icon==='shield'" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00af3d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              <svg *ngIf="b.icon==='shield-check'" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5034fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+              <svg *ngIf="b.icon==='building'" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2e90fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="18" rx="2"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="16" x2="12" y2="16"/></svg>
+              <svg *ngIf="b.icon==='monitor'" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ff825c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            </div>
             <span class="trust-label">{{ b.key | t }}</span>
           </div>
         </div>
@@ -202,7 +207,7 @@ import { C } from '../../shared/theme';
     }
     .tag span { font-size: 12px; color: ${C.green}; font-weight: 700; }
     h1 {
-      font-size: 46px; font-weight: 900; color: #fff;
+      font-family: var(--font-title); font-size: 46px; font-weight: 700; color: #fff;
       line-height: 1.1; letter-spacing: -1.5px; margin: 0 0 20px;
     }
     .subtitle {
@@ -223,7 +228,7 @@ import { C } from '../../shared/theme';
       background: #fff; border-radius: 24px; padding: 40px 36px;
       box-shadow: 0 32px 80px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.05);
     }
-    h2 { font-size: 22px; font-weight: 900; color: ${C.g900}; margin: 0 0 8px; }
+    h2 { font-family: var(--font-title); font-size: 22px; font-weight: 700; color: ${C.g900}; margin: 0 0 8px; }
     .form-sub { font-size: 13px; color: ${C.g500}; margin-bottom: 28px; line-height: 1.5; }
     .input-label {
       font-size: 11px; font-weight: 700; color: ${C.g500}; display: block;
@@ -269,7 +274,7 @@ import { C } from '../../shared/theme';
     .section-inner { max-width: 1000px; margin: 0 auto; }
     .section-header-centered { text-align: center; margin-bottom: 48px; }
     .section-title {
-      font-size: 28px; font-weight: 900; color: ${C.g900}; margin: 0 0 10px;
+      font-family: var(--font-title); font-size: 28px; font-weight: 700; color: ${C.g900}; margin: 0 0 10px;
       letter-spacing: -0.5px;
     }
     .section-subtitle { font-size: 15px; color: ${C.g500}; margin: 0; }
@@ -426,10 +431,10 @@ export class LandingComponent {
   ];
 
   trustBadges = [
-    { key: 'landing.trust_cma', svg: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00af3d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>' },
-    { key: 'landing.trust_sharia', svg: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5034fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>' },
-    { key: 'landing.trust_sama', svg: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2e90fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="18" rx="2"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="16" x2="12" y2="16"/></svg>' },
-    { key: 'landing.trust_digital', svg: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ff825c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>' },
+    { key: 'landing.trust_cma', icon: 'shield' },
+    { key: 'landing.trust_sharia', icon: 'shield-check' },
+    { key: 'landing.trust_sama', icon: 'building' },
+    { key: 'landing.trust_digital', icon: 'monitor' },
   ];
 
   constructor(public router: Router, public i18n: I18nService) {}

@@ -134,6 +134,10 @@ type Step = 'intro' | 'id' | 'otp' | 'verifying' | 'grant' | 'done';
               [placeholder]="'owner_verify.nid_placeholder' | t"
               [value]="nid"
               (valueChange)="nid = $event"
+              inputmode="numeric"
+              [maxlength]="10"
+              mask="digits"
+              [error]="nid.length > 0 && nid.length < 10 ? i18n.t('validation.nid_format') : ''"
             ></app-input>
             <app-btn variant="primary" [full]="true" size="lg" [disabled]="nid.length < 10" (clicked)="step = 'otp'">
               {{ 'common.next' | t }}
@@ -166,6 +170,9 @@ type Step = 'intro' | 'id' | 'otp' | 'verifying' | 'grant' | 'done';
               [helper]="'owner_verify.otp_helper' | t"
               [value]="otp"
               (valueChange)="otp = $event"
+              inputmode="numeric"
+              [maxlength]="6"
+              mask="digits"
             ></app-input>
             <app-btn variant="primary" [full]="true" size="lg" [disabled]="otp.length < 4" (clicked)="onOtpConfirm()">
               {{ 'common.confirm' | t }}

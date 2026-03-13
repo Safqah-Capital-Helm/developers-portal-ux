@@ -1,4 +1,58 @@
-/* Fonts loaded via index.html link tag */
+/* =============================================
+   Self-hosted fonts
+   ============================================= */
+
+/* IBM Plex Sans Arabic — body text (AR) */
+@font-face {
+  font-family: 'IBM Plex Sans Arabic';
+  src: url('/assets/fonts/IBMPlexSansArabic-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'IBM Plex Sans Arabic';
+  src: url('/assets/fonts/IBMPlexSansArabic-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'IBM Plex Sans Arabic';
+  src: url('/assets/fonts/IBMPlexSansArabic-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'IBM Plex Sans Arabic';
+  src: url('/assets/fonts/IBMPlexSansArabic-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* The Seasons — EN display titles */
+@font-face {
+  font-family: 'The Seasons';
+  src: url('/assets/fonts/The Seasons Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Manchette Fine — AR display titles */
+@font-face {
+  font-family: 'Manchette Fine';
+  src: url('/assets/fonts/ManchetteFine-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* =============================================
+   Design tokens
+   ============================================= */
 
 :root {
   --green: #00af3d;
@@ -7,8 +61,10 @@
   --green-md: #b3eacc;
   --purple: #5034fa;
   --purple-lt: #ede9fe;
+  --purple-dk: #3b23c4;
   --orange: #ff825c;
   --orange-lt: #fff2ee;
+  --orange-dk: #e5603a;
   --bg: #fafbfc;
   --white: #fff;
   --g50: #f8f9fa;
@@ -30,12 +86,17 @@
   --blue50: #eff8ff;
   --blue100: #d1e9ff;
   --blue500: #2e90fa;
+
+  /* Font stacks */
+  --font-body: 'IBM Plex Sans', -apple-system, system-ui, sans-serif;
+  --font-title: 'The Seasons', 'IBM Plex Sans', serif;
+  --font-mono: 'IBM Plex Mono', monospace;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-  font-family: 'IBM Plex Sans', -apple-system, system-ui, sans-serif;
+  font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
   color: var(--g900);
   background: var(--bg);
@@ -176,7 +237,9 @@ a { text-decoration: none; color: inherit; }
 
 /* === RTL Support === */
 [dir="rtl"] {
-  font-family: 'IBM Plex Sans Arabic', 'IBM Plex Sans', -apple-system, system-ui, sans-serif;
+  --font-body: 'IBM Plex Sans Arabic', 'IBM Plex Sans', -apple-system, system-ui, sans-serif;
+  --font-title: 'Manchette Fine', 'IBM Plex Sans Arabic', serif;
+  font-family: var(--font-body);
 }
 
 /* Back links: flip the arrow in RTL */

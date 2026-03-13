@@ -61,6 +61,7 @@ import { NavComponent, BackLinkComponent, CardComponent, InputComponent, ButtonC
             (valueChange)="phone = $event"
             [placeholder]="('profile.phone_placeholder' | t)"
             [helper]="'profile.phone_helper' | t"
+            [error]="phone && phone.length > 0 && !isValidPhone(phone) ? i18n.t('validation.phone_format') : ''"
             inputmode="tel"
           ></app-input>
 
@@ -350,6 +351,11 @@ export class ProfileComponent implements OnInit {
 
   isValidEmail(email: string): boolean {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
+  isValidPhone(phone: string): boolean {
+    const digits = phone.replace(/[\s\-\+]/g, '');
+    return /^(05|9665)\d{8}$/.test(digits);
   }
 
   go(path: string) { this.router.navigateByUrl(path); }
