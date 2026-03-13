@@ -93,7 +93,7 @@ import {
           <!-- Actions -->
           <div class="success-actions">
             <app-btn variant="primary" size="lg" (clicked)="goToStatus()">
-              {{ 'submitted.status' | t }} &rarr;
+              {{ 'submitted.status' | t }} <span class="dir-arrow">&rarr;</span>
             </app-btn>
             <app-btn variant="ghost" (clicked)="go('/dashboard')">
               {{ 'nav.dashboard' | t }}
@@ -398,12 +398,12 @@ import {
           <app-btn *ngIf="step === 2" variant="primary"
             [disabled]="!isStepValid(step)"
             (clicked)="nextStep()">
-            {{ 'common.next' | t }}: {{ 'add_application.step_review' | t }} &rarr;
+            {{ 'common.next' | t }}: {{ 'add_application.step_review' | t }} <span class="dir-arrow">&rarr;</span>
           </app-btn>
           <app-btn *ngIf="step === 3" variant="primary" size="lg"
             [disabled]="!canSubmit || submitting"
             (clicked)="submit()">
-            {{ submitting ? ('common.loading' | t) : ('add_application.submit_application' | t) }}{{ submitting ? '' : ' &rarr;' }}
+            {{ submitting ? ('common.loading' | t) : ('add_application.submit_application' | t) }}{{ submitting ? '' : ' ' }}<span *ngIf="!submitting" class="dir-arrow">&rarr;</span>
           </app-btn>
         </div>
 

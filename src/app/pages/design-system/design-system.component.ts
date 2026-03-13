@@ -364,8 +364,8 @@ import type { TimelineEvent, SelectOption } from '../../shared';
                 (stepClick)="demoStepCurrent = $event">
               </app-progress-steps>
               <div class="showcase-row" style="margin-top: 8px">
-                <app-btn variant="ghost" size="sm" [disabled]="demoStepCurrent === 0" (clicked)="demoStepCurrent = demoStepCurrent - 1">&#8592; Back</app-btn>
-                <app-btn variant="primary" size="sm" [disabled]="demoStepCurrent === 3" (clicked)="demoStepCurrent = demoStepCurrent + 1">Next &rarr;</app-btn>
+                <app-btn variant="ghost" size="sm" [disabled]="demoStepCurrent === 0" (clicked)="demoStepCurrent = demoStepCurrent - 1"><span class="dir-arrow">&#8592;</span> Back</app-btn>
+                <app-btn variant="primary" size="sm" [disabled]="demoStepCurrent === 3" (clicked)="demoStepCurrent = demoStepCurrent + 1">Next <span class="dir-arrow">&rarr;</span></app-btn>
               </div>
             </app-card>
           </div>
@@ -426,7 +426,7 @@ import type { TimelineEvent, SelectOption } from '../../shared';
             <div class="proto-demo-bar">
               <button class="proto-demo-advance">Demo &darr;</button>
               <button class="proto-demo-advance">Demo: Reset</button>
-              <button class="proto-demo-advance">Demo: Owner View &rarr;</button>
+              <button class="proto-demo-advance">Demo: Owner View <span class="dir-arrow">&rarr;</span></button>
             </div>
             <code class="usage">.demo-advance — border: 1px dashed g300, border-radius: 6px, padding: 4px 10px, font-size: 11px</code>
 

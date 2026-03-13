@@ -42,7 +42,7 @@ import { ButtonComponent, BadgeComponent, InputComponent, StatCardComponent, Lis
             </svg>
           </div>
           <span class="section-title">{{ 'dashboard.recent_apps' | t }}</span>
-          <span class="view-all" (click)="go('/dashboard/applications')">{{ 'common.view_all' | t }} &rarr;</span>
+          <span class="view-all" (click)="go('/dashboard/applications')">{{ 'common.view_all' | t }} <span class="dir-arrow">&rarr;</span></span>
         </div>
 
         <app-list-card *ngFor="let app of activeApplications" [statusColor]="app.sc" (click)="onAppClick(app)">

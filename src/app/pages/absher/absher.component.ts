@@ -109,7 +109,7 @@ type IdentityStep = 'id' | 'otp' | 'verifying' | 'ownerCheck' | 'ownerFail' | 'd
                 {{ 'common.confirm' | t }}
               </app-btn>
               <div *ngIf="mode === 'register'" class="demo-bar">
-                <button class="demo-advance" (click)="identityStep = 'ownerFail'">{{ 'absher.demo_owner_not_found' | t }} &rarr;</button>
+                <button class="demo-advance" (click)="identityStep = 'ownerFail'">{{ 'absher.demo_owner_not_found' | t }} <span class="dir-arrow">&rarr;</span></button>
               </div>
             </div>
             <p class="form-footer">

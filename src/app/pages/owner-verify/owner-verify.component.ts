@@ -105,7 +105,7 @@ type Step = 'intro' | 'id' | 'otp' | 'verifying' | 'grant' | 'done';
 
           <div style="margin-top: 24px;">
             <app-btn variant="primary" [full]="true" size="lg" (clicked)="step = 'id'">
-              {{ 'owner_verify.verify_btn' | t }} &rarr;
+              {{ 'owner_verify.verify_btn' | t }} <span class="dir-arrow">&rarr;</span>
             </app-btn>
           </div>
           <p class="text-center footer-note">{{ 'owner_verify.not_right_person' | t }} <span class="link">{{ 'owner_verify.contact_support' | t }}</span></p>
@@ -142,7 +142,7 @@ type Step = 'intro' | 'id' | 'otp' | 'verifying' | 'grant' | 'done';
             <app-btn variant="primary" [full]="true" size="lg" [disabled]="nid.length < 10" (clicked)="step = 'otp'">
               {{ 'common.next' | t }}
             </app-btn>
-            <p class="text-center back-link" (click)="step = 'intro'">&larr; {{ 'common.back' | t }}</p>
+            <p class="text-center back-link" (click)="step = 'intro'"><span class="dir-arrow">&larr;</span> {{ 'common.back' | t }}</p>
           </app-card>
         </div>
 
@@ -231,7 +231,7 @@ type Step = 'intro' | 'id' | 'otp' | 'verifying' | 'grant' | 'done';
 
             <div style="margin-top: 20px;">
               <app-btn variant="primary" [full]="true" size="lg" (clicked)="step = 'done'">
-                {{ 'common.confirm' | t }} &rarr;
+                {{ 'common.confirm' | t }} <span class="dir-arrow">&rarr;</span>
               </app-btn>
             </div>
           </app-card>
@@ -288,7 +288,7 @@ type Step = 'intro' | 'id' | 'otp' | 'verifying' | 'grant' | 'done';
           </div>
           <div style="margin-top: 12px;">
             <app-btn variant="secondary" [full]="true" size="md" (clicked)="go('/dashboard')">
-              &larr; {{ 'common.back' | t }}
+              <span class="dir-arrow">&larr;</span> {{ 'common.back' | t }}
             </app-btn>
           </div>
         </div>

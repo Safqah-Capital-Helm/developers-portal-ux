@@ -146,7 +146,7 @@ type Step =
                 {{ 'absher.verify_btn' | t }}
               </app-btn>
               <div class="demo-bar" style="margin-top: 12px;">
-                <button class="demo-advance" (click)="step = 'delegate'">{{ 'add_company.demo_owner_not_found' | t }} &rarr;</button>
+                <button class="demo-advance" (click)="step = 'delegate'">{{ 'add_company.demo_owner_not_found' | t }} <span class="dir-arrow">&rarr;</span></button>
               </div>
             </div>
 
@@ -315,7 +315,7 @@ type Step =
           </p>
 
           <div class="demo-bar">
-            <button class="demo-advance" (click)="go('/verify/owner/abc123')">{{ 'add_company.demo_owner_view' | t }} &rarr;</button>
+            <button class="demo-advance" (click)="go('/verify/owner/abc123')">{{ 'add_company.demo_owner_view' | t }} <span class="dir-arrow">&rarr;</span></button>
           </div>
         </div>
 
@@ -365,7 +365,7 @@ type Step =
 
           <div style="margin-top: 24px;">
             <app-btn variant="primary" [full]="true" size="lg" (clicked)="onRegister()">
-              {{ 'common.confirm' | t }} &rarr;
+              {{ 'common.confirm' | t }} <span class="dir-arrow">&rarr;</span>
             </app-btn>
           </div>
         </div>
@@ -378,9 +378,9 @@ type Step =
           ></app-prev-credentials-form>
 
           <div style="display: flex; gap: 12px; margin-top: 24px;">
-            <app-btn variant="ghost" [full]="true" size="lg" (clicked)="step = 'details'">&larr; {{ 'common.back' | t }}</app-btn>
+            <app-btn variant="ghost" [full]="true" size="lg" (clicked)="step = 'details'"><span class="dir-arrow">&larr;</span> {{ 'common.back' | t }}</app-btn>
             <app-btn variant="primary" [full]="true" size="lg" (clicked)="step = 'uploadDocs'">
-              {{ 'common.next' | t }} &rarr;
+              {{ 'common.next' | t }} <span class="dir-arrow">&rarr;</span>
             </app-btn>
           </div>
         </div>
@@ -446,9 +446,9 @@ type Step =
           </app-card>
 
           <div style="display: flex; gap: 12px; margin-top: 24px;">
-            <app-btn variant="ghost" [full]="true" size="lg" (clicked)="step = 'prevProjects'">&larr; {{ 'common.back' | t }}</app-btn>
+            <app-btn variant="ghost" [full]="true" size="lg" (clicked)="step = 'prevProjects'"><span class="dir-arrow">&larr;</span> {{ 'common.back' | t }}</app-btn>
             <app-btn variant="primary" [full]="true" size="lg" [disabled]="!companyRequiredDocsDone" (clicked)="step = 'success'">
-              {{ 'common.submit' | t }} &rarr;
+              {{ 'common.submit' | t }} <span class="dir-arrow">&rarr;</span>
             </app-btn>
           </div>
         </div>
@@ -469,12 +469,12 @@ type Step =
 
             <div style="margin-top: 24px;">
               <app-btn variant="primary" [full]="true" size="lg" (clicked)="goToCompanyVerify()">
-                {{ 'company.verify_btn' | t }} &rarr;
+                {{ 'company.verify_btn' | t }} <span class="dir-arrow">&rarr;</span>
               </app-btn>
             </div>
             <div style="margin-top: 12px;">
               <app-btn variant="secondary" [full]="true" size="md" (clicked)="go('/dashboard')">
-                &larr; {{ 'nav.dashboard' | t }}
+                <span class="dir-arrow">&larr;</span> {{ 'nav.dashboard' | t }}
               </app-btn>
             </div>
           </app-result-screen>

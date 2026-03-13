@@ -254,9 +254,12 @@ import { I18nService } from '../../shared/i18n/i18n.service';
     }
 
     /* RTL */
-    :host-context([dir="rtl"]) .notice-card { text-align: right; }
+    :host-context([dir="rtl"]) .reason-card { text-align: right; }
     :host-context([dir="rtl"]) .actions-section { text-align: right; }
-    :host-context([dir="rtl"]) .resource-text { text-align: right; }
+    :host-context([dir="rtl"]) .action-text { text-align: right; }
+    :host-context([dir="rtl"]) .actions-title { padding-left: 0; padding-right: 4px; }
+    :host-context([dir="rtl"]) .action-arrow { transform: scaleX(-1); }
+    :host-context([dir="rtl"]) .action-card:hover .action-arrow { transform: scaleX(-1) translateX(2px); }
 
     @media (max-width: 768px) {
       .top-bar { padding: 16px 16px; }

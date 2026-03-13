@@ -78,7 +78,7 @@ import {
         <!-- Actions -->
         <div class="actions">
           <app-btn variant="primary" size="lg" [disabled]="!fullName.trim() || !phone.trim()" (clicked)="accept()">
-            {{ 'invite_accept.accept' | t }} &rarr;
+            {{ 'invite_accept.accept' | t }} <span class="dir-arrow">&rarr;</span>
           </app-btn>
           <button class="decline-btn" (click)="showDecline = true">{{ 'invite_accept.decline_invitation' | t }}</button>
         </div>

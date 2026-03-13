@@ -518,7 +518,7 @@ import type { MapLocation } from '../../shared';
             <app-btn *ngIf="step === 5" variant="primary" size="lg"
               [disabled]="!canSubmit"
               (clicked)="submit()">
-              {{ 'add_project.submit' | t }} &rarr;
+              {{ 'add_project.submit' | t }} <span class="dir-arrow">&rarr;</span>
             </app-btn>
           </div>
         </div>

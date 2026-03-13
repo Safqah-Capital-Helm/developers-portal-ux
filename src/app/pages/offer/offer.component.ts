@@ -87,7 +87,7 @@ import {
         <!-- Actions -->
         <div class="actions">
           <app-btn variant="dangerOutline" size="lg" (clicked)="go('/application/1/declined')">{{ 'offer.decline' | t }}</app-btn>
-          <app-btn variant="primary" size="lg" (clicked)="go('/application/1/accepted')">{{ 'offer.accept' | t }} &rarr;</app-btn>
+          <app-btn variant="primary" size="lg" (clicked)="go('/application/1/accepted')">{{ 'offer.accept' | t }} <span class="dir-arrow">&rarr;</span></app-btn>
         </div>
       </div>
     </div>

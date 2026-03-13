@@ -66,7 +66,7 @@ import { C } from '../../shared/theme';
             </div>
             <p *ngIf="cr && cr.length !== 10" class="cr-error-text">{{ 'validation.cr_format' | t }}</p>
             <app-btn variant="primary" [full]="true" size="lg" [disabled]="cr.length !== 10 || checking" (clicked)="doCheck()">
-              {{ checking ? ('landing.verifying' | t) : ('landing.cta_button' | t) }} {{ checking ? '' : '→' }}
+              {{ checking ? ('landing.verifying' | t) : ('landing.cta_button' | t) }} <span class="dir-arrow" *ngIf="!checking">→</span>
             </app-btn>
             <button class="demo-reject" (click)="doReject()">{{ 'landing.demo_not_eligible' | t }}</button>
             <div class="absher-trust">

@@ -121,7 +121,7 @@ import { ReviewGridComponent } from '../review-grid/review-grid.component';
       <div class="nav-row" style="margin-top: 24px;">
         <div></div>
         <app-btn variant="primary" size="lg" (clicked)="nextStep()">
-          Next: Declaration &rarr;
+          Next: Declaration <span class="dir-arrow">&rarr;</span>
         </app-btn>
       </div>
     </div>
@@ -189,7 +189,7 @@ import { ReviewGridComponent } from '../review-grid/review-grid.component';
               <div class="decl-sign-desc">You will be redirected to an external signing service to digitally sign the declaration confirming no major legal proceedings.</div>
             </div>
             <app-btn variant="primary" size="md" [full]="true" (clicked)="declarationSignPending = true">
-              Sign Declaration &rarr;
+              Sign Declaration <span class="dir-arrow">&rarr;</span>
             </app-btn>
           </div>
 
@@ -222,9 +222,9 @@ import { ReviewGridComponent } from '../review-grid/review-grid.component';
       </app-card>
 
       <div class="nav-row" style="margin-top: 24px;">
-        <app-btn variant="ghost" size="lg" (clicked)="prevStep()">&larr; Back</app-btn>
+        <app-btn variant="ghost" size="lg" (clicked)="prevStep()"><span class="dir-arrow">&larr;</span> Back</app-btn>
         <app-btn variant="primary" size="lg" [disabled]="!canComplete" (clicked)="onComplete()">
-          Complete Verification &rarr;
+          Complete Verification <span class="dir-arrow">&rarr;</span>
         </app-btn>
       </div>
     </div>

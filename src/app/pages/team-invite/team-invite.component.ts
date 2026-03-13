@@ -153,7 +153,7 @@ import {
         <!-- Actions -->
         <div class="actions">
           <app-btn variant="primary" size="lg" [disabled]="!hasValidInvite" (clicked)="sendAndContinue()">
-            {{ 'team_invite.send_continue' | t }} &rarr;
+            {{ 'team_invite.send_continue' | t }} <span class="dir-arrow">&rarr;</span>
           </app-btn>
           <button class="skip-btn" (click)="skip()">{{ 'team_invite.skip' | t }}</button>
         </div>
@@ -168,7 +168,7 @@ import {
 
         <!-- Demo: view invite acceptance page -->
         <div class="demo-bar" style="margin-top: 28px">
-          <button class="demo-toggle" (click)="goToInviteAccept()">{{ 'team_invite.demo_invite' | t }} &rarr;</button>
+          <button class="demo-toggle" (click)="goToInviteAccept()">{{ 'team_invite.demo_invite' | t }} <span class="dir-arrow">&rarr;</span></button>
         </div>
 
       </div>

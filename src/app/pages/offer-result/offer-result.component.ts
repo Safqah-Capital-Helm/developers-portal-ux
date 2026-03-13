@@ -49,7 +49,7 @@ import { I18nService } from '../../shared/i18n/i18n.service';
             </app-card>
 
             <div class="btn-group-center">
-              <app-btn variant="secondary" size="lg" (clicked)="go('/dashboard')">&larr; {{ 'common.back' | t }}</app-btn>
+              <app-btn variant="secondary" size="lg" (clicked)="go('/dashboard')"><span class="dir-arrow">&larr;</span> {{ 'common.back' | t }}</app-btn>
             </div>
           </app-result-screen>
         </div>
@@ -119,7 +119,7 @@ import { I18nService } from '../../shared/i18n/i18n.service';
         </app-card>
 
         <div class="btn-group-spread">
-          <app-btn variant="secondary" size="lg" (clicked)="go('/application/1/term-sheet')">&larr; {{ 'common.back' | t }}</app-btn>
+          <app-btn variant="secondary" size="lg" (clicked)="go('/application/1/term-sheet')"><span class="dir-arrow">&larr;</span> {{ 'common.back' | t }}</app-btn>
           <app-btn variant="danger" size="lg" [disabled]="!reason" (clicked)="submitted = true">{{ 'common.confirm' | t }} {{ 'offer.decline' | t }}</app-btn>
         </div>
       </div>
@@ -160,7 +160,7 @@ import { I18nService } from '../../shared/i18n/i18n.service';
             </app-card>
 
             <div class="btn-group-center two-btns">
-              <app-btn variant="secondary" size="lg" (clicked)="go('/dashboard')">&larr; {{ 'common.back' | t }}</app-btn>
+              <app-btn variant="secondary" size="lg" (clicked)="go('/dashboard')"><span class="dir-arrow">&larr;</span> {{ 'common.back' | t }}</app-btn>
               <app-btn variant="primary" size="lg" (clicked)="go('/support')">{{ 'support.title' | t }}</app-btn>
             </div>
           </app-result-screen>

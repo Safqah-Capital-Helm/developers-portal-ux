@@ -64,7 +64,7 @@ import {
         <!-- Next button -->
         <div class="btn-row">
           <app-btn variant="primary" size="lg" (clicked)="go('/onboarding/financing')">
-            {{ 'add_project.next_financing' | t }} &rarr;
+            {{ 'add_project.next_financing' | t }} <span class="dir-arrow">&rarr;</span>
           </app-btn>
         </div>
       </div>

@@ -248,6 +248,10 @@ a { text-decoration: none; color: inherit; }
   transform: rotate(180deg);
 }
 
+/* Directional arrows / chevrons — auto-flip in RTL */
+.dir-arrow { display: inline-block; }
+[dir="rtl"] .dir-arrow { transform: scaleX(-1); }
+
 /* Proto nav RTL */
 [dir="rtl"] .proto-toggle-path {
   margin-left: 0;
