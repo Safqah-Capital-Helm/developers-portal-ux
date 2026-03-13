@@ -30,8 +30,8 @@ const TYPE_COLORS: Record<string, { bg: string; fg: string }> = {
   template: `
     <nav class="top-nav">
       <div class="nav-left">
-        <button class="hamburger" (click)="menuToggle.emit()">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <button class="hamburger" (click)="menuToggle.emit()" aria-label="Toggle navigation menu">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
           </svg>
         </button>
@@ -42,13 +42,13 @@ const TYPE_COLORS: Record<string, { bg: string; fg: string }> = {
       <div class="nav-right">
         <!-- Bell icon -->
         <div class="bell-wrap">
-          <div class="bell-btn" (click)="toggleNotif()" [style.background]="notifOpen ? C.g50 : 'transparent'">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g500" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <button class="bell-btn" (click)="toggleNotif()" [style.background]="notifOpen ? C.g50 : 'transparent'" [attr.aria-label]="'Notifications' + (unreadCount > 0 ? ' (' + unreadCount + ' unread)' : '')" [attr.aria-expanded]="notifOpen">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g500" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/>
               <path d="M13.73 21a2 2 0 01-3.46 0"/>
             </svg>
             <span *ngIf="unreadCount > 0" class="bell-dot"></span>
-          </div>
+          </button>
 
           <!-- Notification overlay -->
           <div *ngIf="notifOpen" class="overlay" (click)="notifOpen=false"></div>
@@ -102,18 +102,18 @@ const TYPE_COLORS: Record<string, { bg: string; fg: string }> = {
         </div>
 
         <!-- Language toggle -->
-        <button class="lang-toggle" (click)="i18n.setLang(i18n.lang === 'en' ? 'ar' : 'en')">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
-          <span>{{ i18n.lang === 'en' ? 'EN' : '\u0639' }}</span>
+        <button class="lang-toggle" (click)="i18n.setLang(i18n.lang === 'en' ? 'ar' : 'en')" [attr.aria-label]="i18n.lang === 'en' ? 'Switch to Arabic' : 'التبديل إلى الإنجليزية'">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+          <span aria-hidden="true">{{ i18n.lang === 'en' ? 'EN' : '\u0639' }}</span>
         </button>
 
         <!-- Avatar dropdown -->
         <div class="dd-wrap">
-          <div class="avatar-area" (click)="toggleAvatar()" [style.background]="open ? C.g50 : 'transparent'">
+          <button class="avatar-area" (click)="toggleAvatar()" [style.background]="open ? C.g50 : 'transparent'" aria-label="User menu" [attr.aria-expanded]="open">
             <span class="name">{{ 'nav.user_name' | t }}</span>
-            <div class="avatar">A</div>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g400" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-          </div>
+            <div class="avatar" aria-hidden="true">A</div>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g400" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
           <div *ngIf="open" class="overlay" (click)="open=false"></div>
           <div *ngIf="open" class="dropdown">
             <div class="dd-header">
@@ -193,6 +193,7 @@ const TYPE_COLORS: Record<string, { bg: string; fg: string }> = {
       display: flex; align-items: center; justify-content: center;
       width: 36px; height: 36px; border-radius: 10px; cursor: pointer;
       position: relative; transition: background 0.15s;
+      border: none; background: transparent; padding: 0;
     }
     .bell-btn:hover { background: ${C.g50}; }
     .bell-dot {
@@ -256,7 +257,7 @@ const TYPE_COLORS: Record<string, { bg: string; fg: string }> = {
 
     /* Avatar dropdown (unchanged) */
     .dd-wrap { position: relative; }
-    .avatar-area { display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 5px 8px; border-radius: 10px; }
+    .avatar-area { display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 5px 8px; border-radius: 10px; border: none; background: transparent; font-family: inherit; }
     .name { font-size: 13px; color: #667085; }
     .avatar {
       width: 32px; height: 32px; border-radius: 50%; background: #e6f7ee;

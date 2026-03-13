@@ -2,24 +2,24 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { C, BadgeColor, BADGE_STYLES } from '../../shared/theme';
-import { NavComponent, BackLinkComponent, BadgeComponent, TranslatePipe } from '../../shared';
+import { NavComponent, BackLinkComponent, BadgeComponent, TranslatePipe, SkeletonComponent, ApiService } from '../../shared';
 import { I18nService } from '../../shared/i18n/i18n.service';
 
 interface ActivityEvent {
   id: number;
-  type: 'submit' | 'review' | 'document' | 'termsheet' | 'team' | 'declaration' | 'credit' | 'system';
+  type: string;
   title: string;
   description: string;
   actor: string;
   time: string;
-  badge: BadgeColor;
+  badge: string;
   badgeLabel: string;
 }
 
 @Component({
   selector: 'app-activity-log',
   standalone: true,
-  imports: [CommonModule, NavComponent, BackLinkComponent, BadgeComponent, TranslatePipe],
+  imports: [CommonModule, NavComponent, BackLinkComponent, BadgeComponent, TranslatePipe, SkeletonComponent],
   template: `
     <div class="page">
       <app-nav></app-nav>
@@ -79,8 +79,11 @@ interface ActivityEvent {
           </div>
         </div>
 
+        <!-- Skeleton loading -->
+        <app-skeleton *ngIf="loading" type="timeline" [count]="6"></app-skeleton>
+
         <!-- Timeline -->
-        <div class="timeline">
+        <div class="timeline" *ngIf="!loading">
           <div *ngFor="let ev of events; let last = last" class="tl-item">
             <div class="tl-track">
               <div class="tl-dot" [style.background]="dotColor(ev.badge)"></div>
@@ -124,7 +127,7 @@ interface ActivityEvent {
                 </div>
                 <div class="tl-title-row">
                   <span class="tl-title">{{ ev.title }}</span>
-                  <app-badge [color]="ev.badge">{{ ev.badgeLabel }}</app-badge>
+                  <app-badge [color]="$any(ev.badge)">{{ ev.badgeLabel }}</app-badge>
                 </div>
               </div>
               <p class="tl-desc">{{ ev.description }}</p>
@@ -284,36 +287,27 @@ interface ActivityEvent {
 export class ActivityLogComponent implements OnInit {
   C = C;
   appId = '1';
+  loading = true;
   events: ActivityEvent[] = [];
 
-  constructor(private router: Router, private route: ActivatedRoute, private i18n: I18nService) {
+  constructor(private router: Router, private route: ActivatedRoute, private i18n: I18nService, private api: ApiService) {
     this.appId = this.route.snapshot.paramMap.get('id') || '1';
   }
 
   go(path: string) { this.router.navigateByUrl(path); }
 
   ngOnInit(): void {
-    this.events = [
-      { id: 1,  type: 'termsheet',   title: this.i18n.t('activity.ev_ts_accepted'),        description: this.i18n.t('activity.ev_ts_accepted_desc'),        actor: 'Ahmed Al-Salem',  time: 'Mar 8, 2026 at 2:15 PM',   badge: 'green', badgeLabel: this.i18n.t('activity.badge_accepted') },
-      { id: 2,  type: 'termsheet',   title: this.i18n.t('activity.ev_ts_viewed'),           description: this.i18n.t('activity.ev_ts_viewed_desc'),           actor: 'Ahmed Al-Salem',  time: 'Mar 7, 2026 at 11:30 AM',  badge: 'blue',  badgeLabel: this.i18n.t('activity.badge_info') },
-      { id: 3,  type: 'termsheet',   title: this.i18n.t('activity.ev_ts_issued'),           description: this.i18n.t('activity.ev_ts_issued_desc'),           actor: 'Safqah Team',     time: 'Mar 6, 2026 at 9:00 AM',   badge: 'blue',  badgeLabel: this.i18n.t('activity.badge_info') },
-      { id: 4,  type: 'review',      title: this.i18n.t('activity.ev_company_approved'),    description: this.i18n.t('activity.ev_company_approved_desc'),    actor: 'Safqah Team',     time: 'Mar 5, 2026 at 4:20 PM',   badge: 'green', badgeLabel: this.i18n.t('activity.badge_approved') },
-      { id: 5,  type: 'review',      title: this.i18n.t('activity.ev_project_approved'),    description: this.i18n.t('activity.ev_project_approved_desc'),    actor: 'Safqah Team',     time: 'Mar 4, 2026 at 3:45 PM',   badge: 'green', badgeLabel: this.i18n.t('activity.badge_approved') },
-      { id: 6,  type: 'declaration', title: this.i18n.t('activity.ev_declaration_signed'),  description: this.i18n.t('activity.ev_declaration_signed_desc'),  actor: 'Ahmed Al-Salem',  time: 'Mar 3, 2026 at 10:00 AM',  badge: 'green', badgeLabel: this.i18n.t('activity.badge_completed') },
-      { id: 7,  type: 'document',    title: this.i18n.t('activity.ev_docs_uploaded'),       description: this.i18n.t('activity.ev_docs_uploaded_desc'),       actor: 'Ahmed Al-Salem',  time: 'Mar 2, 2026 at 2:30 PM',   badge: 'blue',  badgeLabel: this.i18n.t('activity.badge_info') },
-      { id: 8,  type: 'team',        title: this.i18n.t('activity.ev_member_joined'),       description: this.i18n.t('activity.ev_member_joined_desc'),       actor: 'Sara Al-Noor',    time: 'Mar 2, 2026 at 11:15 AM',  badge: 'blue',  badgeLabel: this.i18n.t('activity.badge_info') },
-      { id: 9,  type: 'team',        title: this.i18n.t('activity.ev_invite_sent'),         description: this.i18n.t('activity.ev_invite_sent_desc'),         actor: 'Ahmed Al-Salem',  time: 'Mar 1, 2026 at 4:00 PM',   badge: 'gray',  badgeLabel: this.i18n.t('activity.badge_sent') },
-      { id: 10, type: 'credit',      title: this.i18n.t('activity.ev_credit_authorized'),   description: this.i18n.t('activity.ev_credit_authorized_desc'),   actor: 'Ahmed Al-Salem',  time: 'Feb 28, 2026 at 1:45 PM',  badge: 'amber', badgeLabel: this.i18n.t('activity.badge_authorized') },
-      { id: 11, type: 'submit',      title: this.i18n.t('activity.ev_app_submitted'),       description: this.i18n.t('activity.ev_app_submitted_desc'),       actor: 'Ahmed Al-Salem',  time: 'Feb 28, 2026 at 1:30 PM',  badge: 'green', badgeLabel: this.i18n.t('activity.badge_submitted') },
-      { id: 12, type: 'system',      title: this.i18n.t('activity.ev_app_created'),         description: this.i18n.t('activity.ev_app_created_desc'),         actor: 'System',          time: 'Feb 27, 2026 at 9:00 AM',  badge: 'gray',  badgeLabel: this.i18n.t('activity.badge_created') },
-    ];
+    this.api.getActivityEvents(parseInt(this.appId, 10)).subscribe(data => {
+      this.events = data;
+      this.loading = false;
+    });
   }
 
-  dotColor(badge: BadgeColor): string {
-    return BADGE_STYLES[badge].c;
+  dotColor(badge: string): string {
+    return BADGE_STYLES[badge as BadgeColor]?.c || BADGE_STYLES['gray'].c;
   }
 
-  iconBg(badge: BadgeColor): string {
-    return BADGE_STYLES[badge].bg;
+  iconBg(badge: string): string {
+    return BADGE_STYLES[badge as BadgeColor]?.bg || BADGE_STYLES['gray'].bg;
   }
 }

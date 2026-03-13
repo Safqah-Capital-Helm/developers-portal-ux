@@ -417,8 +417,8 @@ type Step =
                     {{ 'common.add' | t }}
                   </button>
                   <button *ngIf="doc.uploaded" class="doc-view-btn">{{ 'common.view_all' | t }}</button>
-                  <button *ngIf="doc.uploaded" class="doc-remove-btn" (click)="removeDoc(doc)">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <button *ngIf="doc.uploaded" class="doc-remove-btn" (click)="removeDoc(doc)" aria-label="Remove document">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                       <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
                     </svg>
                   </button>
@@ -786,7 +786,7 @@ type Step =
     .doc-view-btn:hover { border-color: ${C.g300}; }
     .doc-remove-btn {
       padding: 7px 8px; border: 1.5px solid ${C.g200}; border-radius: 8px;
-      background: #fff; color: ${C.g400}; cursor: pointer; font-family: inherit;
+      background: #fff; color: ${C.g500}; cursor: pointer; font-family: inherit;
       display: flex; align-items: center; justify-content: center; transition: all 0.15s;
     }
     .doc-remove-btn:hover { border-color: ${C.red500}; color: ${C.red500}; }
@@ -829,10 +829,12 @@ type Step =
     @media (max-width: 768px) {
       .container { padding: 24px 16px 48px; }
       .page-title { font-size: 18px; }
+      .details-grid { grid-template-columns: repeat(2, 1fr); }
     }
 
     @media (max-width: 480px) {
       .container { padding: 16px 12px 32px; }
+      .details-grid { grid-template-columns: 1fr; }
     }
   `]
 })

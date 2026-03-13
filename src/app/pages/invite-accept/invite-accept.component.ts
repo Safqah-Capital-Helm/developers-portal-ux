@@ -102,6 +102,17 @@ import {
           </app-card>
         </div>
 
+        <!-- Absher verification note -->
+        <div class="absher-note">
+          <div class="absher-badge">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.green" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+            <span class="absher-label">Absher</span>
+          </div>
+          <span class="absher-text">{{ 'invite_accept.absher_note' | t }}</span>
+        </div>
+
         <!-- Helper note -->
         <div class="helper-note">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g400" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -317,6 +328,34 @@ import {
       gap: 8px;
     }
 
+    /* Absher note */
+    .absher-note {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 20px;
+      padding: 12px 16px;
+      background: ${C.greenLt};
+      border: 1px solid ${C.green}20;
+      border-radius: 12px;
+    }
+    .absher-badge {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      flex-shrink: 0;
+    }
+    .absher-label {
+      font-size: 13px;
+      font-weight: 800;
+      color: ${C.green};
+    }
+    .absher-text {
+      font-size: 12px;
+      color: ${C.g600};
+      line-height: 1.5;
+    }
+
     /* Helper note */
     .helper-note {
       display: flex;
@@ -326,6 +365,17 @@ import {
       margin-top: 24px;
       font-size: 12px;
       color: ${C.g400};
+    }
+
+    @media (max-width: 768px) {
+      .header-bar { padding: 14px 16px; }
+      .page { padding: 24px 16px 48px; }
+    }
+    @media (max-width: 480px) {
+      .page { padding: 20px 12px 36px; }
+      .welcome-title { font-size: 20px; }
+      .welcome-subtitle { font-size: 13px; }
+      .absher-note { flex-direction: column; text-align: center; }
     }
   `]
 })

@@ -326,6 +326,13 @@ type IdentityStep = 'id' | 'otp' | 'verifying' | 'ownerCheck' | 'ownerFail' | 'd
       cursor: pointer; font-family: inherit;
     }
     .demo-advance:hover { background: ${C.g50}; color: ${C.g700}; }
+
+    @media (max-width: 480px) {
+      .absher-container { padding: 24px 16px; }
+      .form-area { padding: 20px 16px; }
+      .absher-title { font-size: 18px; }
+      .absher-subtitle { font-size: 13px; }
+    }
   `]
 })
 export class AbsherComponent implements OnInit, OnDestroy {

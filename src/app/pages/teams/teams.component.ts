@@ -1,14 +1,14 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { C } from '../../shared/theme';
-import { ButtonComponent, BadgeComponent, ModalComponent, InputComponent, AvatarComponent, PageHeaderComponent, TranslatePipe, I18nService } from '../../shared';
+import { ButtonComponent, BadgeComponent, ModalComponent, InputComponent, AvatarComponent, PageHeaderComponent, TranslatePipe, I18nService, ApiService, SkeletonComponent, ConfirmDialogComponent } from '../../shared';
 
 @Component({
   selector: 'app-teams-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, ButtonComponent, BadgeComponent, ModalComponent, InputComponent, AvatarComponent, PageHeaderComponent, TranslatePipe],
+  imports: [CommonModule, FormsModule, ButtonComponent, BadgeComponent, ModalComponent, InputComponent, AvatarComponent, PageHeaderComponent, TranslatePipe, SkeletonComponent, ConfirmDialogComponent],
   template: `
     <div class="container">
       <app-page-header [title]="('teams.title' | t)" [count]="team.length">
@@ -18,21 +18,26 @@ import { ButtonComponent, BadgeComponent, ModalComponent, InputComponent, Avatar
         </app-btn>
       </app-page-header>
 
+      <!-- Skeleton loading -->
+      <app-skeleton *ngIf="loading" type="list" [count]="4"></app-skeleton>
+
       <!-- Member cards -->
-      <div *ngFor="let m of team" class="member-card" (click)="openMemberModal(m)">
-        <app-avatar [initials]="m.name.charAt(0)" [color]="m.active ? 'green' : 'gray'"></app-avatar>
-        <div class="member-info">
-          <div class="member-name-row">
-            <span class="member-name">{{ m.name }}</span>
-            <span *ngIf="m.you" class="you-tag">{{ 'teams.you' | t }}</span>
+      <ng-container *ngIf="!loading">
+        <div *ngFor="let m of team" class="member-card" (click)="openMemberModal(m)">
+          <app-avatar [initials]="m.name.charAt(0)" [color]="m.active ? 'green' : 'gray'"></app-avatar>
+          <div class="member-info">
+            <div class="member-name-row">
+              <span class="member-name">{{ m.name }}</span>
+              <span *ngIf="m.you" class="you-tag">{{ 'teams.you' | t }}</span>
+            </div>
+            <div class="member-email">{{ m.email }}</div>
           </div>
-          <div class="member-email">{{ m.email }}</div>
+          <div class="member-right">
+            <app-badge [color]="roleBadgeColor(m.role)">{{ translateRole(m.role) }}</app-badge>
+            <span class="active-dot" [style.background]="m.active ? C.green : C.amber500"></span>
+          </div>
         </div>
-        <div class="member-right">
-          <app-badge [color]="roleBadgeColor(m.role)">{{ translateRole(m.role) }}</app-badge>
-          <span class="active-dot" [style.background]="m.active ? C.green : C.amber500"></span>
-        </div>
-      </div>
+      </ng-container>
 
       <!-- Member Detail Modal -->
       <app-modal *ngIf="showMemberModal && selectedMember" [title]="('teams.modal_title' | t)" [wide]="true" (closed)="showMemberModal = false">
@@ -109,7 +114,7 @@ import { ButtonComponent, BadgeComponent, ModalComponent, InputComponent, Avatar
         <!-- Actions -->
         <div class="mm-actions">
           <app-btn variant="primary" (clicked)="showMemberModal = false">{{ 'teams.modal_save' | t }}</app-btn>
-          <app-btn *ngIf="!selectedMember.you" variant="dangerOutline" (clicked)="showMemberModal = false">{{ 'teams.modal_remove' | t }}</app-btn>
+          <app-btn *ngIf="!selectedMember.you" variant="dangerOutline" (clicked)="showRemoveConfirm = true">{{ 'teams.modal_remove' | t }}</app-btn>
         </div>
       </app-modal>
 
@@ -178,6 +183,18 @@ import { ButtonComponent, BadgeComponent, ModalComponent, InputComponent, Avatar
           </div>
         </div>
       </app-modal>
+
+      <!-- Remove member confirmation dialog -->
+      <app-confirm-dialog
+        [visible]="showRemoveConfirm"
+        [title]="'teams.remove_confirm_title' | t"
+        [message]="'teams.remove_confirm_message' | t"
+        [confirmLabel]="'teams.modal_remove' | t"
+        [cancelLabel]="'common.cancel' | t"
+        confirmVariant="danger"
+        (confirmed)="showRemoveConfirm = false; showMemberModal = false"
+        (cancelled)="showRemoveConfirm = false">
+      </app-confirm-dialog>
     </div>
   `,
   styles: [`
@@ -331,20 +348,12 @@ import { ButtonComponent, BadgeComponent, ModalComponent, InputComponent, Avatar
     }
   `]
 })
-export class TeamsPageComponent {
+export class TeamsPageComponent implements OnInit {
   C = C;
 
-  team = [
-    { name: "Ahmed Al-Salem", email: "ahmed@alomran.com", role: "Admin", active: true, you: true },
-    { name: "Mohammad Al-Salem", email: "mohammad@alomran.com", role: "Admin", active: true, you: false },
-    { name: "Fahad Al-Harbi", email: "fahad@alomran.com", role: "Viewer", active: true, you: false },
-    { name: "Sarah Ahmad", email: "sarah@alomran.com", role: "Editor", active: false, you: false }
-  ];
-
-  companies = [
-    { name: "Al Omran Real Estate Dev Co." },
-    { name: "Al Jazeera Development Co." }
-  ];
+  loading = true;
+  team: any[] = [];
+  companies: any[] = [];
 
   get roles() {
     return [this.i18n.t('teams.role_admin'), this.i18n.t('teams.role_editor'), this.i18n.t('teams.role_contributor'), this.i18n.t('teams.role_viewer')];
@@ -371,6 +380,7 @@ export class TeamsPageComponent {
   }
 
   showMemberModal = false;
+  showRemoveConfirm = false;
   selectedMember: any = null;
   memberEditRole = '';
   memberCompanyAccess: boolean[] = [];
@@ -382,7 +392,17 @@ export class TeamsPageComponent {
   inviteCompanyAccess: boolean[] = [];
   inviteSent = false;
 
-  constructor(private router: Router, private i18n: I18nService) {}
+  constructor(private router: Router, private i18n: I18nService, private api: ApiService) {}
+
+  ngOnInit() {
+    this.api.getTeamMembers().subscribe(data => {
+      this.team = data;
+      this.loading = false;
+    });
+    this.api.getTeamCompanies().subscribe(data => {
+      this.companies = data;
+    });
+  }
 
   roleBadgeColor(role: string): 'green' | 'amber' | 'gray' | 'blue' | 'red' {
     const map: Record<string, 'green' | 'amber' | 'gray' | 'blue' | 'red'> = {

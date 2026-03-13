@@ -1,13 +1,13 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { C, borderColorForStatus } from '../../shared/theme';
-import { BadgeComponent, ListCardComponent, ButtonComponent, PageHeaderComponent, TranslatePipe, I18nService } from '../../shared';
+import { BadgeComponent, ListCardComponent, ButtonComponent, PageHeaderComponent, TranslatePipe, I18nService, SkeletonComponent, ApiService } from '../../shared';
 
 @Component({
   selector: 'app-applications',
   standalone: true,
-  imports: [CommonModule, BadgeComponent, ListCardComponent, ButtonComponent, PageHeaderComponent, TranslatePipe],
+  imports: [CommonModule, BadgeComponent, ListCardComponent, ButtonComponent, PageHeaderComponent, TranslatePipe, SkeletonComponent],
   template: `
     <div class="container">
       <app-page-header [title]="'applications.title' | t" [count]="applications.length">
@@ -17,42 +17,75 @@ import { BadgeComponent, ListCardComponent, ButtonComponent, PageHeaderComponent
         </app-btn>
       </app-page-header>
 
+      <!-- Status filter chips -->
+      <div *ngIf="!loading" class="filter-row">
+        <button *ngFor="let s of statusFilters"
+                class="filter-chip"
+                [class.filter-chip-active]="selectedStatus === s.key"
+                (click)="selectedStatus = s.key">{{ s.label }}</button>
+      </div>
+
+      <!-- Company filter chips -->
+      <div *ngIf="!loading && companyNames.length > 1" class="filter-row">
+        <button class="filter-chip"
+                [class.filter-chip-active]="selectedCompany === 'all'"
+                (click)="selectedCompany = 'all'">{{ 'applications.filter_company_all' | t }}</button>
+        <button *ngFor="let c of companyNames"
+                class="filter-chip"
+                [class.filter-chip-active]="selectedCompany === c"
+                (click)="selectedCompany = c">{{ c }}</button>
+      </div>
+
+      <!-- Skeleton loading -->
+      <app-skeleton *ngIf="loading" type="card" [count]="3"></app-skeleton>
+
       <!-- Application cards -->
-      <app-list-card *ngFor="let app of applications"
-           [statusColor]="app.sc"
-           [clickable]="app.sc !== 'red'"
-           (click)="onAppClick(app)">
-        <div class="app-inner" [class.dead]="app.sc === 'red'">
-          <div class="app-top">
-            <span class="app-name">{{ app.projectName }}</span>
-            <app-badge [color]="$any(app.sc)">{{ app.status }}</app-badge>
-          </div>
-          <div class="app-sub">
-            <span>{{ app.company }}</span>
-            <span class="app-dot">&#183;</span>
-            <span>{{ app.product }}</span>
-          </div>
-          <div class="app-grid">
-            <div class="app-cell">
-              <div class="cell-label">{{ 'applications.financing_amount' | t }}</div>
-              <div class="cell-value">{{ app.amount }}</div>
+      <ng-container *ngIf="!loading">
+        <app-list-card *ngFor="let app of filteredApplications"
+             [statusColor]="app.sc"
+             [clickable]="app.sc !== 'red'"
+             (click)="onAppClick(app)">
+          <div class="app-inner" [class.dead]="app.sc === 'red'">
+            <div class="app-top">
+              <span class="app-name">{{ app.projectName }}</span>
+              <app-badge [color]="$any(app.sc)">{{ app.status }}</app-badge>
             </div>
-            <div class="app-cell">
-              <div class="cell-label">{{ 'applications.product' | t }}</div>
-              <div class="cell-value">{{ app.product }}</div>
+            <div class="app-sub">
+              <span>{{ app.company }}</span>
+              <span class="app-dot">&#183;</span>
+              <span>{{ app.product }}</span>
             </div>
-            <div class="app-cell">
-              <div class="cell-label">{{ 'applications.submitted' | t }}</div>
-              <div class="cell-value">{{ app.submitted || '\u2014' }}</div>
+            <div class="app-grid">
+              <div class="app-cell">
+                <div class="cell-label">{{ 'applications.financing_amount' | t }}</div>
+                <div class="cell-value">{{ app.amount }}</div>
+              </div>
+              <div class="app-cell">
+                <div class="cell-label">{{ 'applications.product' | t }}</div>
+                <div class="cell-value">{{ app.product }}</div>
+              </div>
+              <div class="app-cell">
+                <div class="cell-label">{{ 'applications.submitted' | t }}</div>
+                <div class="cell-value">{{ app.submitted || '\u2014' }}</div>
+              </div>
             </div>
           </div>
-        </div>
-      </app-list-card>
+        </app-list-card>
+      </ng-container>
     </div>
   `,
   styles: [`
     :host { display: block; }
     .container { max-width: 900px; margin: 0 auto; padding: 32px 32px 60px; }
+    .filter-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+    .filter-chip {
+      background: ${C.g50}; border: 1px solid ${C.g200}; border-radius: 20px;
+      padding: 6px 14px; font-size: 12px; font-weight: 600; color: ${C.g600};
+      cursor: pointer; font-family: inherit; transition: all 0.15s; white-space: nowrap;
+    }
+    .filter-chip:hover { background: ${C.g100}; border-color: ${C.g300}; }
+    .filter-chip-active { background: ${C.green}; color: #fff; border-color: ${C.green}; }
+    .filter-chip-active:hover { background: ${C.green}; border-color: ${C.green}; }
     .app-inner { flex: 1; }
     .app-inner.dead { opacity: 0.6; }
     .app-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 4px; }
@@ -75,20 +108,45 @@ import { BadgeComponent, ListCardComponent, ButtonComponent, PageHeaderComponent
     }
   `]
 })
-export class ApplicationsComponent {
+export class ApplicationsComponent implements OnInit {
   C = C;
+  loading = true;
+  applications: any[] = [];
+  selectedStatus = 'all';
+  selectedCompany = 'all';
 
-  get applications() {
+  get statusFilters() {
     return [
-      { id: 1, projectName: "Al Noor Residential", company: "Al Omran Real Estate", amount: "~21M SAR", product: this.i18n.t('common.stage_development'), status: this.i18n.t('common.status_termsheet_ready'), sc: "green", submitted: "Feb 12, 2026", route: "/application/1/status" },
-      { id: 2, projectName: "Riyadh Commercial Plaza", company: "Al Omran Real Estate", amount: "~45M SAR", product: this.i18n.t('common.stage_construction'), status: this.i18n.t('common.status_in_review'), sc: "amber", submitted: "Feb 28, 2026", route: "/application/2/status" },
-      { id: 3, projectName: "Tabuk Residential Complex", company: "Al Omran Real Estate", amount: "~8M SAR", product: this.i18n.t('common.stage_development'), status: this.i18n.t('common.status_feedback_requested'), sc: "amber", submitted: "Mar 1, 2026", route: "/application/3/status" },
-      { id: 4, projectName: "Jeddah Waterfront Villas", company: "Al Omran Real Estate", amount: "~18M SAR", product: this.i18n.t('common.stage_development'), status: this.i18n.t('common.status_pending_signing'), sc: "blue", submitted: "Jan 15, 2026", route: "/application/4/accepted" },
-      { id: 5, projectName: "Abha Mountain Villas", company: "Al Omran Real Estate", amount: "~10M SAR", product: this.i18n.t('common.stage_land_acquisition'), status: this.i18n.t('common.status_signed'), sc: "green", submitted: "Dec 8, 2025", route: "/dashboard" },
+      { key: 'all', label: this.i18n.t('applications.filter_all') },
+      { key: 'termsheet_ready', label: this.i18n.t('common.status_termsheet_ready') },
+      { key: 'in_review', label: this.i18n.t('common.status_in_review') },
+      { key: 'feedback_requested', label: this.i18n.t('common.status_feedback_requested') },
+      { key: 'pending_signing', label: this.i18n.t('common.status_pending_signing') },
+      { key: 'signed', label: this.i18n.t('common.status_signed') },
     ];
   }
 
-  constructor(private router: Router, private i18n: I18nService) {}
+  get companyNames(): string[] {
+    const names = [...new Set(this.applications.map((a: any) => a.company))];
+    return names.sort();
+  }
+
+  get filteredApplications(): any[] {
+    return this.applications.filter((app: any) => {
+      const statusMatch = this.selectedStatus === 'all' || app.statusKey === this.selectedStatus;
+      const companyMatch = this.selectedCompany === 'all' || app.company === this.selectedCompany;
+      return statusMatch && companyMatch;
+    });
+  }
+
+  constructor(private router: Router, private i18n: I18nService, private api: ApiService) {}
+
+  ngOnInit() {
+    this.api.getApplications().subscribe(data => {
+      this.applications = data;
+      this.loading = false;
+    });
+  }
 
   go(path: string) { this.router.navigateByUrl(path); }
 

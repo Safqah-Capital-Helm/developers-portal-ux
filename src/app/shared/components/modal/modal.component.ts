@@ -1,18 +1,26 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, AfterViewInit, OnDestroy, ElementRef, ViewChild } from '@angular/core';
+
+let modalIdCounter = 0;
 
 @Component({
   selector: 'app-modal',
   standalone: true,
   template: `
-    <div class="modal-overlay" (click)="closed.emit()">
+    <div class="modal-overlay"
+         role="dialog"
+         aria-modal="true"
+         [attr.aria-labelledby]="titleId"
+         (click)="closed.emit()"
+         (keydown)="onKeydown($event)">
       <div
         class="modal-container"
         [class.wide]="wide"
         (click)="$event.stopPropagation()"
+        #modalContainer
       >
         <div class="modal-header">
-          <h3 class="modal-title">{{ title }}</h3>
-          <button class="modal-close" (click)="closed.emit()">&#x2715;</button>
+          <h3 class="modal-title" [id]="titleId">{{ title }}</h3>
+          <button class="modal-close" (click)="closed.emit()" aria-label="Close dialog">&#x2715;</button>
         </div>
         <div class="modal-body">
           <ng-content></ng-content>
@@ -35,6 +43,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 
       .modal-container {
         width: 540px;
+        max-width: calc(100vw - 32px);
         max-height: 90vh;
         overflow-y: auto;
         background: #fff;
@@ -101,8 +110,73 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
     `,
   ],
 })
-export class ModalComponent {
+export class ModalComponent implements AfterViewInit, OnDestroy {
   @Input() title = '';
   @Input() wide = false;
   @Output() closed = new EventEmitter<void>();
+
+  @ViewChild('modalContainer') modalContainer!: ElementRef<HTMLElement>;
+
+  titleId = `modal-title-${++modalIdCounter}`;
+
+  private previouslyFocusedElement: HTMLElement | null = null;
+
+  ngAfterViewInit() {
+    // Store the element that had focus before the modal opened
+    this.previouslyFocusedElement = document.activeElement as HTMLElement;
+
+    // Focus the first focusable element inside the modal
+    setTimeout(() => {
+      const firstFocusable = this.getFocusableElements()[0];
+      if (firstFocusable) {
+        (firstFocusable as HTMLElement).focus();
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    // Restore focus to the previously focused element
+    if (this.previouslyFocusedElement && this.previouslyFocusedElement.focus) {
+      this.previouslyFocusedElement.focus();
+    }
+  }
+
+  onKeydown(event: KeyboardEvent) {
+    if (event.key === 'Escape') {
+      this.closed.emit();
+      return;
+    }
+
+    if (event.key === 'Tab') {
+      this.trapFocus(event);
+    }
+  }
+
+  private trapFocus(event: KeyboardEvent) {
+    const focusableElements = this.getFocusableElements();
+    if (focusableElements.length === 0) return;
+
+    const firstElement = focusableElements[0] as HTMLElement;
+    const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
+
+    if (event.shiftKey) {
+      // Shift+Tab: if focus is on the first element, move to the last
+      if (document.activeElement === firstElement) {
+        event.preventDefault();
+        lastElement.focus();
+      }
+    } else {
+      // Tab: if focus is on the last element, move to the first
+      if (document.activeElement === lastElement) {
+        event.preventDefault();
+        firstElement.focus();
+      }
+    }
+  }
+
+  private getFocusableElements(): Element[] {
+    if (!this.modalContainer) return [];
+    const selector = 'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
+    return Array.from(this.modalContainer.nativeElement.querySelectorAll(selector));
+  }
 }

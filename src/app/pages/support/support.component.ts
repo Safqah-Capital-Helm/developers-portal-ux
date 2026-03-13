@@ -3,12 +3,12 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { C } from '../../shared/theme';
-import { NavComponent, BackLinkComponent, CardComponent, InputComponent, ButtonComponent, TranslatePipe } from '../../shared';
+import { NavComponent, BackLinkComponent, CardComponent, InputComponent, ButtonComponent, TranslatePipe, SkeletonComponent, ApiService } from '../../shared';
 
 @Component({
   selector: 'app-support',
   standalone: true,
-  imports: [CommonModule, FormsModule, NavComponent, BackLinkComponent, CardComponent, InputComponent, ButtonComponent, TranslatePipe],
+  imports: [CommonModule, FormsModule, NavComponent, BackLinkComponent, CardComponent, InputComponent, ButtonComponent, TranslatePipe, SkeletonComponent],
   template: `
     <div class="page">
       <app-nav></app-nav>
@@ -56,7 +56,9 @@ import { NavComponent, BackLinkComponent, CardComponent, InputComponent, ButtonC
         <!-- FAQ Section -->
         <h2 class="section-title">{{ 'support.faq_title' | t }}</h2>
 
-        <div class="faq-list">
+        <app-skeleton *ngIf="loading" type="list" [count]="6"></app-skeleton>
+
+        <div class="faq-list" *ngIf="!loading">
           <div class="faq-item" *ngFor="let faq of faqs; let i = index">
             <button class="faq-header" (click)="toggleFaq(i)">
               <span class="faq-question">{{ faq.q }}</span>
@@ -324,23 +326,33 @@ import { NavComponent, BackLinkComponent, CardComponent, InputComponent, ButtonC
       color: ${C.g500};
       margin: 0;
     }
+
+    @media (max-width: 768px) {
+      .container { padding: 24px 16px 48px; }
+      .channels-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 480px) {
+      .container { padding: 20px 12px 36px; }
+      .channels-grid { grid-template-columns: 1fr; }
+      .page-title { font-size: 20px; }
+    }
   `]
 })
 export class SupportComponent {
   subj = '';
   msg = '';
   sent = false;
+  loading = true;
+  faqs: { q: string; a: string; open: boolean }[] = [];
 
-  faqs = [
-    { q: 'How long does review take?', a: 'Company: ~1 day. Project: 1-2 days. Term-sheet within 48h of submission.', open: false },
-    { q: 'What documents do I need?', a: 'Most data is pulled automatically. You can optionally upload project profiles and supporting docs.', open: false },
-    { q: 'Can I add multiple projects?', a: 'Yes! Add unlimited projects under any registered company.', open: false },
-    { q: 'What financing products are available?', a: 'Land acquisition, development, construction, and bridge financing — all Sharia-compliant.', open: false },
-    { q: 'How is the credit check done?', a: 'Via a licensed credit bureau. It does not affect your credit score.', open: false },
-    { q: 'Can I invite team members?', a: 'Yes, with Admin, Editor, Contributor, or Viewer roles.', open: false },
-  ];
+  constructor(private router: Router, private api: ApiService) {}
 
-  constructor(private router: Router) {}
+  ngOnInit(): void {
+    this.api.getFaqs().subscribe(data => {
+      this.faqs = data;
+      this.loading = false;
+    });
+  }
 
   go(path: string) { this.router.navigateByUrl(path); }
 

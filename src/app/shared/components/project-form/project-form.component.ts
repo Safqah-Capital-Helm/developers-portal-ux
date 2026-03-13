@@ -242,6 +242,16 @@ import { I18nService } from '../../i18n/i18n.service';
       grid-template-columns: repeat(2, 1fr);
       gap: 0 20px;
     }
+
+    @media (max-width: 768px) {
+      .selector-grid { grid-template-columns: repeat(3, 1fr) !important; }
+      .specs-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 480px) {
+      .selector-grid { grid-template-columns: repeat(2, 1fr) !important; }
+      .stage-label { font-size: 10px; }
+      .stepper { overflow-x: auto; padding-bottom: 8px; }
+    }
   `]
 })
 export class ProjectFormComponent {

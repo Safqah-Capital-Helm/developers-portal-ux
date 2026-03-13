@@ -42,10 +42,21 @@ import { I18nService } from '../../shared/i18n/i18n.service';
                 <span class="pipe-pulse"></span>
               </div>
               <div *ngIf="pipelineIndex < i" class="pipe-dot pipe-pending"></div>
-              <span class="pipe-label" [class.pipe-label-active]="pipelineIndex >= i">{{ step }}</span>
+              <span class="pipe-label" [class.pipe-label-active]="pipelineIndex >= i">{{ step.name }}</span>
+              <span *ngIf="step.est" class="step-est">{{ step.est }}</span>
             </div>
             <div *ngIf="!last" class="pipe-line" [class.pipe-line-done]="pipelineIndex > i"></div>
           </ng-container>
+        </div>
+
+        <!-- ===================== ACTIVITY LOG LINK ===================== -->
+        <div class="activity-link-row">
+          <a class="activity-link" (click)="go('/application/' + appId + '/activity')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+            </svg>
+            {{ 'submitted.view_activity_log' | t }}
+          </a>
         </div>
 
         <!-- ===================== DEMO BAR ===================== -->
@@ -530,6 +541,7 @@ import { I18nService } from '../../shared/i18n/i18n.service';
     .pipe-pending { background: ${C.g200}; }
     .pipe-label { font-size: 11px; font-weight: 600; color: ${C.g400}; text-align: center; white-space: nowrap; }
     .pipe-label-active { color: ${C.g700}; }
+    .step-est { font-size: 11px; color: ${C.g400}; font-weight: 500; text-align: center; white-space: nowrap; }
     .pipe-line { width: 40px; height: 2px; background: ${C.g200}; margin-bottom: 20px; flex-shrink: 0; }
     .pipe-line-done { background: ${C.green}; }
 
@@ -537,6 +549,15 @@ import { I18nService } from '../../shared/i18n/i18n.service';
       0%, 100% { opacity: 1; transform: scale(1); }
       50% { opacity: 0.5; transform: scale(0.8); }
     }
+
+    /* ---- Activity link ---- */
+    .activity-link-row { text-align: center; margin-bottom: 24px; }
+    .activity-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 13px; font-weight: 600; color: ${C.blue500};
+      cursor: pointer; text-decoration: none;
+    }
+    .activity-link:hover { text-decoration: underline; }
 
     /* ---- Demo bar ---- */
     .demo-bar { display: flex; gap: 6px; justify-content: center; margin-bottom: 24px; flex-wrap: wrap; }
@@ -745,7 +766,7 @@ import { I18nService } from '../../shared/i18n/i18n.service';
       border-radius: 10px; font-size: 13px; color: ${C.g700};
     }
     .ir-file-name { font-weight: 600; flex: 1; }
-    .ir-remove { background: none; border: none; cursor: pointer; font-size: 18px; color: ${C.g400}; padding: 0 4px; font-family: inherit; line-height: 1; }
+    .ir-remove { background: none; border: none; cursor: pointer; font-size: 18px; color: ${C.g500}; padding: 0 4px; font-family: inherit; line-height: 1; }
     .ir-remove:hover { color: ${C.red500}; }
     .ir-attachments { margin-top: 8px; }
     .ir-attach-label { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: ${C.g500}; margin-bottom: 8px; }
@@ -791,6 +812,7 @@ import { I18nService } from '../../shared/i18n/i18n.service';
 })
 export class SubmittedComponent {
   C = C;
+  appId = '1';
 
   // --- State ---
   ps = 0;     // project stage progress (0..4)
@@ -812,7 +834,13 @@ export class SubmittedComponent {
 
   // --- Static data ---
   get pipelineSteps() {
-    return [this.i18n.t('submitted.pipe_review'), this.i18n.t('submitted.pipe_termsheet'), this.i18n.t('submitted.pipe_signing'), this.i18n.t('submitted.pipe_launch'), this.i18n.t('submitted.pipe_completed')];
+    return [
+      { name: this.i18n.t('submitted.pipe_review'), est: this.i18n.t('submitted.est_initial_review') },
+      { name: this.i18n.t('submitted.pipe_termsheet'), est: this.i18n.t('submitted.est_assessment') },
+      { name: this.i18n.t('submitted.pipe_signing'), est: this.i18n.t('submitted.est_termsheet') },
+      { name: this.i18n.t('submitted.pipe_launch'), est: this.i18n.t('submitted.est_signing') },
+      { name: this.i18n.t('submitted.pipe_completed'), est: '' },
+    ];
   }
 
   get projectStages() {
@@ -862,7 +890,9 @@ export class SubmittedComponent {
     ];
   }
 
-  constructor(private router: Router, private route: ActivatedRoute, private i18n: I18nService) {}
+  constructor(private router: Router, private route: ActivatedRoute, private i18n: I18nService) {
+    this.appId = this.route.snapshot.paramMap.get('id') || '1';
+  }
 
   // --- Derived state ---
   get allReviewsDone(): boolean {

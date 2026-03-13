@@ -1,0 +1,201 @@
+/**
+ * Central mock data store — single source of truth for the prototype.
+ * All domain services pull from here, ensuring consistency across pages.
+ */
+
+// ─── Models ──────────────────────────────────────────────────────────
+
+export interface Company {
+  id: string;
+  name: string;
+  cr: string;
+  status: string;           // key: 'approved' | 'pending_verification' | 'missing_credentials'
+  statusColor: string;
+  projectCount: number;
+  memberCount: number;
+  owners?: CompanyOwner[];
+}
+
+export interface CompanyOwner {
+  name: string;
+  nid: string;
+  role: string;
+  verified: boolean;
+}
+
+export interface Project {
+  id: string;
+  name: string;
+  type: string;             // key: 'mixed_use' | 'commercial' | etc.
+  location: string;
+  companyName: string;
+  cost: string;
+  financingAmount: string;
+  product: string;          // key: 'development' | 'construction' | etc.
+  financingStatus: string;  // key: 'active' | 'in_review' | 'pending' | ''
+  draft: boolean;
+  draftRoute?: string;
+  image: string;
+}
+
+export interface Application {
+  id: number;
+  projectName: string;
+  company: string;
+  amount: string;
+  product: string;          // translated label
+  status: string;           // translated status
+  statusKey: string;        // raw status key for filtering
+  statusColor: string;
+  submitted: string;
+  route: string;
+}
+
+export interface TeamMember {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  role: string;             // 'Admin' | 'Editor' | 'Contributor' | 'Viewer'
+  active: boolean;
+  you: boolean;
+  joinedDate: string;
+}
+
+export interface Notification {
+  id: string;
+  title: string;
+  desc: string;
+  time: string;
+  route: string;
+  borderColor: string;
+  iconBg: string;
+  icon: string;
+}
+
+export interface DashboardStats {
+  label: string;
+  value: number;
+  iconBg: string;
+  icon: string;
+}
+
+export interface OnboardingStep {
+  title: string;
+  desc: string;
+  action: string;
+  route: string;
+  done: boolean;
+}
+
+export interface ActivityEvent {
+  id: number;
+  type: string;
+  title: string;
+  description: string;
+  actor: string;
+  time: string;
+  badge: string;
+  badgeLabel: string;
+}
+
+export interface FaqItem {
+  q: string;
+  a: string;
+  open: boolean;
+}
+
+export interface UserProfile {
+  name: string;
+  email: string;
+  phone: string;
+  nid: string;
+  avatar?: string;
+}
+
+// ─── Raw mock data (language-independent where possible) ──────────
+
+export const MOCK_COMPANIES_RAW = [
+  { id: '0', name: 'Al Omran Real Estate Dev Co.', cr: '1551515151516515', statusKey: 'approved', sc: 'green', proj: 8, mem: 3 },
+  { id: '1', name: 'Al Jazeera Development Co.', cr: '1020304050607', statusKey: 'pending_verification', sc: 'amber', proj: 2, mem: 1 },
+  { id: '2', name: 'Riyad Construction Group', cr: '3080706050403', statusKey: 'missing_credentials', sc: 'red', proj: 1, mem: 2 },
+];
+
+export const MOCK_COMPANY_OWNERS: Record<string, CompanyOwner[]> = {
+  '0': [
+    { name: 'Ahmed Al-Salem', nid: '1020304050', role: 'ceo', verified: true },
+    { name: 'Mohammad Al-Salem', nid: '1020304051', role: 'partner', verified: true },
+    { name: 'Khalid Al-Dossary', nid: '1020304052', role: 'partner', verified: false },
+  ],
+  '1': [
+    { name: 'Fahad Al-Rashidi', nid: '2030405060', role: 'ceo', verified: false },
+  ],
+  '2': [
+    { name: 'Sultan Al-Otaibi', nid: '3040506070', role: 'ceo', verified: false },
+    { name: 'Omar Al-Ghamdi', nid: '3040506071', role: 'partner', verified: false },
+  ],
+};
+
+export const MOCK_PROJECTS_RAW = [
+  { id: '0', name: 'Khobar Mixed-Use Tower', typeKey: 'mixed_use', loc: 'Khobar', compShort: 'Al Omran Real Estate', cost: '20-50M', fin: '', prodKey: 'development', finStatusKey: '', draft: true, draftRoute: '/project/new', img: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=480&h=320&fit=crop' },
+  { id: '1', name: 'Al Noor Residential', typeKey: 'mixed_use', loc: 'Dammam', compShort: 'Al Omran Real Estate', cost: 'SAR 28M', fin: '~21M', prodKey: 'development', finStatusKey: 'active', draft: false, img: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=480&h=320&fit=crop' },
+  { id: '2', name: 'Riyadh Commercial Plaza', typeKey: 'commercial', loc: 'Riyadh', compShort: 'Al Omran Real Estate', cost: 'SAR 65M', fin: '~45M', prodKey: 'construction', finStatusKey: 'in_review', draft: false, img: 'https://images.unsplash.com/photo-1577495508048-b635879837f1?w=480&h=320&fit=crop' },
+  { id: '3', name: 'Tabuk Residential Complex', typeKey: 'residential', loc: 'Tabuk', compShort: 'Al Omran Real Estate', cost: 'SAR 12M', fin: '~8M', prodKey: 'development', finStatusKey: 'in_review', draft: false, img: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=480&h=320&fit=crop' },
+  { id: '4', name: 'Jeddah Waterfront Villas', typeKey: 'residential', loc: 'Jeddah', compShort: 'Al Omran Real Estate', cost: 'SAR 32M', fin: '~18M', prodKey: 'development', finStatusKey: 'pending', draft: false, img: 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=480&h=320&fit=crop' },
+  { id: '5', name: 'Abha Mountain Villas', typeKey: 'residential', loc: 'Abha', compShort: 'Al Omran Real Estate', cost: 'SAR 14M', fin: '', prodKey: 'land_acquisition', finStatusKey: '', draft: false, img: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=480&h=320&fit=crop' },
+  { id: '6', name: 'Al Rawdah Gardens', typeKey: 'residential', loc: 'Riyadh', compShort: 'Al Omran Real Estate', cost: 'SAR 30M', fin: '', prodKey: 'development', finStatusKey: '', draft: false, img: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=480&h=320&fit=crop' },
+  { id: '7', name: 'Eastern Industrial Park', typeKey: 'industrial', loc: 'Dammam', compShort: 'Al Jazeera Development', cost: 'SAR 75M', fin: '~60M', prodKey: 'bridge', finStatusKey: 'active', draft: false, img: 'https://images.unsplash.com/photo-1565008447742-97f6f38c985c?w=480&h=320&fit=crop' },
+  { id: '8', name: 'Madinah Commercial Hub', typeKey: 'commercial', loc: 'Madinah', compShort: 'Al Jazeera Development', cost: 'SAR 40M', fin: '', prodKey: 'construction', finStatusKey: '', draft: false, img: 'https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=480&h=320&fit=crop' },
+];
+
+export const MOCK_APPLICATIONS_RAW = [
+  { id: 1, projectName: 'Al Noor Residential', company: 'Al Omran Real Estate', amount: '~21M SAR', prodKey: 'development', statusKey: 'termsheet_ready', sc: 'green', submitted: 'Feb 12, 2026', route: '/application/1/status' },
+  { id: 2, projectName: 'Riyadh Commercial Plaza', company: 'Al Omran Real Estate', amount: '~45M SAR', prodKey: 'construction', statusKey: 'in_review', sc: 'amber', submitted: 'Feb 28, 2026', route: '/application/2/status' },
+  { id: 3, projectName: 'Tabuk Residential Complex', company: 'Al Omran Real Estate', amount: '~8M SAR', prodKey: 'development', statusKey: 'feedback_requested', sc: 'amber', submitted: 'Mar 1, 2026', route: '/application/3/status' },
+  { id: 4, projectName: 'Jeddah Waterfront Villas', company: 'Al Omran Real Estate', amount: '~18M SAR', prodKey: 'development', statusKey: 'pending_signing', sc: 'blue', submitted: 'Jan 15, 2026', route: '/application/4/accepted' },
+  { id: 5, projectName: 'Abha Mountain Villas', company: 'Al Omran Real Estate', amount: '~10M SAR', prodKey: 'land_acquisition', statusKey: 'signed', sc: 'green', submitted: 'Dec 8, 2025', route: '/dashboard' },
+];
+
+export const MOCK_TEAM_RAW = [
+  { id: 't1', name: 'Ahmed Al-Salem', email: 'ahmed@alomran.com', phone: '+966 50 123 4567', role: 'Admin', active: true, you: true, joinedDate: 'Jan 15, 2026' },
+  { id: 't2', name: 'Mohammad Al-Salem', email: 'mohammad@alomran.com', phone: '+966 50 234 5678', role: 'Admin', active: true, you: false, joinedDate: 'Jan 15, 2026' },
+  { id: 't3', name: 'Fahad Al-Harbi', email: 'fahad@alomran.com', phone: '+966 50 345 6789', role: 'Viewer', active: true, you: false, joinedDate: 'Feb 3, 2026' },
+  { id: 't4', name: 'Sarah Ahmad', email: 'sarah@alomran.com', phone: '+966 50 456 7890', role: 'Editor', active: false, you: false, joinedDate: 'Feb 20, 2026' },
+];
+
+export const MOCK_ACTIVITY_EVENTS_RAW = [
+  { id: 1,  type: 'termsheet',   titleKey: 'activity.ev_ts_accepted',        descKey: 'activity.ev_ts_accepted_desc',        actor: 'Ahmed Al-Salem',  time: 'Mar 8, 2026 at 2:15 PM',   badge: 'green', badgeLabelKey: 'activity.badge_accepted' },
+  { id: 2,  type: 'termsheet',   titleKey: 'activity.ev_ts_viewed',           descKey: 'activity.ev_ts_viewed_desc',           actor: 'Ahmed Al-Salem',  time: 'Mar 7, 2026 at 11:30 AM',  badge: 'blue',  badgeLabelKey: 'activity.badge_info' },
+  { id: 3,  type: 'termsheet',   titleKey: 'activity.ev_ts_issued',           descKey: 'activity.ev_ts_issued_desc',           actor: 'Safqah Team',     time: 'Mar 6, 2026 at 9:00 AM',   badge: 'blue',  badgeLabelKey: 'activity.badge_info' },
+  { id: 4,  type: 'review',      titleKey: 'activity.ev_company_approved',    descKey: 'activity.ev_company_approved_desc',    actor: 'Safqah Team',     time: 'Mar 5, 2026 at 4:20 PM',   badge: 'green', badgeLabelKey: 'activity.badge_approved' },
+  { id: 5,  type: 'review',      titleKey: 'activity.ev_project_approved',    descKey: 'activity.ev_project_approved_desc',    actor: 'Safqah Team',     time: 'Mar 4, 2026 at 3:45 PM',   badge: 'green', badgeLabelKey: 'activity.badge_approved' },
+  { id: 6,  type: 'declaration', titleKey: 'activity.ev_declaration_signed',  descKey: 'activity.ev_declaration_signed_desc',  actor: 'Ahmed Al-Salem',  time: 'Mar 3, 2026 at 10:00 AM',  badge: 'green', badgeLabelKey: 'activity.badge_completed' },
+  { id: 7,  type: 'document',    titleKey: 'activity.ev_docs_uploaded',       descKey: 'activity.ev_docs_uploaded_desc',       actor: 'Ahmed Al-Salem',  time: 'Mar 2, 2026 at 2:30 PM',   badge: 'blue',  badgeLabelKey: 'activity.badge_info' },
+  { id: 8,  type: 'team',        titleKey: 'activity.ev_member_joined',       descKey: 'activity.ev_member_joined_desc',       actor: 'Sara Al-Noor',    time: 'Mar 2, 2026 at 11:15 AM',  badge: 'blue',  badgeLabelKey: 'activity.badge_info' },
+  { id: 9,  type: 'team',        titleKey: 'activity.ev_invite_sent',         descKey: 'activity.ev_invite_sent_desc',         actor: 'Ahmed Al-Salem',  time: 'Mar 1, 2026 at 4:00 PM',   badge: 'gray',  badgeLabelKey: 'activity.badge_sent' },
+  { id: 10, type: 'credit',      titleKey: 'activity.ev_credit_authorized',   descKey: 'activity.ev_credit_authorized_desc',   actor: 'Ahmed Al-Salem',  time: 'Feb 28, 2026 at 1:45 PM',  badge: 'amber', badgeLabelKey: 'activity.badge_authorized' },
+  { id: 11, type: 'submit',      titleKey: 'activity.ev_app_submitted',       descKey: 'activity.ev_app_submitted_desc',       actor: 'Ahmed Al-Salem',  time: 'Feb 28, 2026 at 1:30 PM',  badge: 'green', badgeLabelKey: 'activity.badge_submitted' },
+  { id: 12, type: 'system',      titleKey: 'activity.ev_app_created',         descKey: 'activity.ev_app_created_desc',         actor: 'System',          time: 'Feb 27, 2026 at 9:00 AM',  badge: 'gray',  badgeLabelKey: 'activity.badge_created' },
+];
+
+export const MOCK_FAQS_RAW = [
+  { qKey: 'support.faq_review_q', aKey: 'support.faq_review_a' },
+  { qKey: 'support.faq_docs_q', aKey: 'support.faq_docs_a' },
+  { qKey: 'support.faq_projects_q', aKey: 'support.faq_projects_a' },
+  { qKey: 'support.faq_products_q', aKey: 'support.faq_products_a' },
+  { qKey: 'support.faq_credit_q', aKey: 'support.faq_credit_a' },
+  { qKey: 'support.faq_team_q', aKey: 'support.faq_team_a' },
+];
+
+export const MOCK_CREDENTIALS_RAW = [
+  { hasPrevProjects: true, prevCount: '12', prevValue: 'SAR 180M', finBank: 40, finFintech: 20, finFriends: 15 },
+  { hasPrevProjects: true, prevCount: '3', prevValue: 'SAR 45M', finBank: 60, finFintech: 0, finFriends: 30 },
+  { hasPrevProjects: false, prevCount: '', prevValue: '', finBank: 0, finFintech: 0, finFriends: 0 },
+];
+
+export const MOCK_USER_PROFILE: UserProfile = {
+  name: 'Ahmed Al-Salem',
+  email: 'ahmed@alomran.com',
+  phone: '+966 50 123 4567',
+  nid: '1023456789',
+};

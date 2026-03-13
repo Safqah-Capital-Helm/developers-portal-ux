@@ -16,6 +16,7 @@ import {
   getCompanyLogo,
   TranslatePipe,
   I18nService,
+  ApiService,
 } from '../../shared';
 import type { MapLocation } from '../../shared';
 
@@ -1098,7 +1099,7 @@ export class AddProjectComponent implements OnInit, OnDestroy {
   stages: Array<{ id: string; l: string; c: string }> = [];
   visibleStepLabels: string[] = [];
 
-  constructor(private router: Router, private route: ActivatedRoute, private i18n: I18nService) {}
+  constructor(private router: Router, private route: ActivatedRoute, private i18n: I18nService, private api: ApiService) {}
 
   ngOnInit(): void {
     this.rebuildStaticData();
@@ -1107,11 +1108,34 @@ export class AddProjectComponent implements OnInit, OnDestroy {
     const companyParam = this.route.snapshot.queryParamMap.get('company');
 
     if (fresh) {
-      this.clearDraft();
+      this.api.deleteDraft(this.DRAFT_KEY).subscribe();
+      this.initFromParams(companyParam);
     } else {
-      this.loadDraft();
+      this.api.loadDraft(this.DRAFT_KEY).subscribe(d => {
+        if (d) {
+          this.step = d.step || 0;
+          this.sel = d.sel || '';
+          this.name = d.name || '';
+          this.description = d.description || '';
+          this.type = d.type || '';
+          this.stage = d.stage || '';
+          this.projectPeriod = d.projectPeriod || '';
+          this.city = d.city || 'Dammam';
+          this.district = d.district || 'Al Shatea';
+          this.totalLandArea = d.totalLandArea || '';
+          this.expectedUnits = d.expectedUnits || '';
+          this.totalBuildingArea = d.totalBuildingArea || '';
+          this.totalSellingArea = d.totalSellingArea || '';
+          this.totalCost = d.totalCost || '';
+          this.landCostPct = d.landCostPct ?? 40;
+          this.expectedRevenue = d.expectedRevenue || '';
+        }
+        this.initFromParams(companyParam);
+      });
     }
+  }
 
+  private initFromParams(companyParam: string | null): void {
     if (companyParam) {
       const match = this.companies.find(c => c.cr === companyParam);
       if (match) {
@@ -1120,7 +1144,6 @@ export class AddProjectComponent implements OnInit, OnDestroy {
         if (this.step < 1) this.step = 1;
       }
     }
-
     this.rebuildStepLabels();
     if (this.step === 5) this.rebuildReviewItems();
   }
@@ -1299,16 +1322,14 @@ export class AddProjectComponent implements OnInit, OnDestroy {
       totalCost: this.totalCost, landCostPct: this.landCostPct,
       expectedRevenue: this.expectedRevenue,
     };
-    localStorage.setItem(this.DRAFT_KEY, JSON.stringify(draft));
+    this.api.saveDraft(this.DRAFT_KEY, draft).subscribe();
     this.draftSaved = true;
     this.draftTimeout = setTimeout(() => this.draftSaved = false, 2000);
   }
 
   loadDraft(): void {
-    const raw = localStorage.getItem(this.DRAFT_KEY);
-    if (!raw) return;
-    try {
-      const d = JSON.parse(raw);
+    this.api.loadDraft(this.DRAFT_KEY).subscribe(d => {
+      if (!d) return;
       this.step = d.step || 0;
       this.sel = d.sel || '';
       this.name = d.name || '';
@@ -1325,13 +1346,11 @@ export class AddProjectComponent implements OnInit, OnDestroy {
       this.totalCost = d.totalCost || '';
       this.landCostPct = d.landCostPct ?? 40;
       this.expectedRevenue = d.expectedRevenue || '';
-    } catch {
-      // Corrupt draft — ignore
-    }
+    });
   }
 
   clearDraft(): void {
-    localStorage.removeItem(this.DRAFT_KEY);
+    this.api.deleteDraft(this.DRAFT_KEY).subscribe();
   }
 
   onFieldChange(): void {

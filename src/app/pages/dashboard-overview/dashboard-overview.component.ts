@@ -3,12 +3,12 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { C } from '../../shared/theme';
-import { ButtonComponent, BadgeComponent, InputComponent, StatCardComponent, ListCardComponent, PageHeaderComponent, TranslatePipe, I18nService } from '../../shared';
+import { ButtonComponent, BadgeComponent, InputComponent, StatCardComponent, ListCardComponent, PageHeaderComponent, TranslatePipe, I18nService, ApiService, SkeletonComponent } from '../../shared';
 
 @Component({
   selector: 'app-dashboard-overview',
   standalone: true,
-  imports: [CommonModule, ButtonComponent, BadgeComponent, InputComponent, StatCardComponent, ListCardComponent, PageHeaderComponent, TranslatePipe],
+  imports: [CommonModule, ButtonComponent, BadgeComponent, InputComponent, StatCardComponent, ListCardComponent, PageHeaderComponent, TranslatePipe, SkeletonComponent],
   template: `
     <div class="container">
       <!-- Demo toggles -->
@@ -21,13 +21,20 @@ import { ButtonComponent, BadgeComponent, InputComponent, StatCardComponent, Lis
 
       <app-page-header [title]="greeting" [subtitle]="subtitle"></app-page-header>
 
+      <!-- ===== Loading skeletons ===== -->
+      <div *ngIf="loading">
+        <app-skeleton type="stat" [count]="4"></app-skeleton>
+        <app-skeleton type="list" [count]="3"></app-skeleton>
+        <app-skeleton type="notification" [count]="2"></app-skeleton>
+      </div>
+
       <!-- ===== Stats row (not new user) ===== -->
-      <div *ngIf="demoMode !== 'new'" class="stats-row">
+      <div *ngIf="!loading && demoMode !== 'new'" class="stats-row">
         <app-stat-card *ngFor="let s of activeStats" [label]="s.label" [value]="s.value" [iconBg]="s.iconBg" [icon]="s.icon"></app-stat-card>
       </div>
 
       <!-- ===== Recent Applications ===== -->
-      <div *ngIf="demoMode !== 'new' && activeApplications.length > 0" class="section">
+      <div *ngIf="!loading && demoMode !== 'new' && activeApplications.length > 0" class="section">
         <div class="section-header">
           <div class="section-icon" [style.background]="'#eff8ff'">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.blue500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -51,7 +58,7 @@ import { ButtonComponent, BadgeComponent, InputComponent, StatCardComponent, Lis
       </div>
 
       <!-- ===== NEW USER: Onboarding Steps ===== -->
-      <div *ngIf="demoMode === 'new'" class="section">
+      <div *ngIf="!loading && demoMode === 'new'" class="section">
         <div class="onboarding-card">
           <div class="onboarding-header">
             <div class="onboarding-header-top">
@@ -88,7 +95,7 @@ import { ButtonComponent, BadgeComponent, InputComponent, StatCardComponent, Lis
       </div>
 
       <!-- ===== SINGLE: Onboarding Steps ===== -->
-      <div *ngIf="demoMode === 'single'" class="section">
+      <div *ngIf="!loading && demoMode === 'single'" class="section">
         <div class="onboarding-card">
           <div class="onboarding-header">
             <div class="onboarding-header-top">
@@ -125,7 +132,7 @@ import { ButtonComponent, BadgeComponent, InputComponent, StatCardComponent, Lis
       </div>
 
       <!-- ===== Important Notifications (only when there are active ones) ===== -->
-      <div *ngIf="activeNotifications.length > 0" class="section">
+      <div *ngIf="!loading && activeNotifications.length > 0" class="section">
         <div class="section-header">
           <div class="section-icon" [style.background]="'#fff2ee'">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.orange" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -157,7 +164,7 @@ import { ButtonComponent, BadgeComponent, InputComponent, StatCardComponent, Lis
       </div>
 
       <!-- ===== Quick Actions (not new user) ===== -->
-      <div *ngIf="demoMode !== 'new'" class="section">
+      <div *ngIf="!loading && demoMode !== 'new'" class="section">
         <div class="section-header">
           <span class="section-title">{{ 'dashboard.quick_actions' | t }}</span>
         </div>
@@ -187,7 +194,7 @@ import { ButtonComponent, BadgeComponent, InputComponent, StatCardComponent, Lis
       </div>
 
       <!-- Referral card (new user only) -->
-      <div *ngIf="demoMode === 'new' && showReferral" class="referral-card">
+      <div *ngIf="!loading && demoMode === 'new' && showReferral" class="referral-card">
         <div class="referral-top">
           <div class="referral-icon" [style.background]="C.greenLt">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.green" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
@@ -284,7 +291,7 @@ import { ButtonComponent, BadgeComponent, InputComponent, StatCardComponent, Lis
     .referral-text { flex: 1; }
     .referral-title { font-size: 15px; font-weight: 800; color: ${C.g900}; margin-bottom: 2px; }
     .referral-desc { font-size: 13px; color: ${C.g500}; }
-    .referral-dismiss { background: none; border: none; font-size: 20px; color: ${C.g400}; cursor: pointer; padding: 0 4px; line-height: 1; }
+    .referral-dismiss { background: none; border: none; font-size: 20px; color: ${C.g500}; cursor: pointer; padding: 0 4px; line-height: 1; }
     .referral-dismiss:hover { color: ${C.g600}; }
     .referral-chips { display: flex; flex-wrap: wrap; gap: 8px; }
     .referral-chip { padding: 8px 16px; border-radius: 20px; border: 1.5px solid ${C.g200}; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.15s ease; }
@@ -369,123 +376,29 @@ import { ButtonComponent, BadgeComponent, InputComponent, StatCardComponent, Lis
 export class DashboardOverviewComponent implements OnInit {
   C = C;
   demoMode: 'full' | 'clear' | 'single' | 'new' = 'full';
+  loading = true;
 
   greeting = '';
   subtitle = '';
 
-  // --- Data sets ---
-  fullApplications = [
-    { projectName: "Al Noor Residential", company: "Al Omran Real Estate", amount: "~21M SAR", product: "Development", status: "Term-sheet Ready", sc: "green", route: "/application/1/status" },
-    { projectName: "Riyadh Commercial Plaza", company: "Al Omran Real Estate", amount: "~45M SAR", product: "Construction", status: "In Review", sc: "amber", route: "/application/2/status" },
-    { projectName: "Tabuk Residential Complex", company: "Al Omran Real Estate", amount: "~8M SAR", product: "Development", status: "Feedback Requested", sc: "amber", route: "/application/3/status" },
-  ];
-
-  clearApplications = [
-    { projectName: "Al Noor Residential", company: "Al Omran Real Estate", amount: "~21M SAR", product: "Development", status: "Approved", sc: "green", route: "/application/1/status" },
-    { projectName: "Riyadh Commercial Plaza", company: "Al Omran Real Estate", amount: "~45M SAR", product: "Construction", status: "In Review", sc: "blue", route: "/application/2/status" },
-    { projectName: "Tabuk Residential Complex", company: "Al Omran Real Estate", amount: "~8M SAR", product: "Development", status: "In Review", sc: "blue", route: "/application/3/status" },
-  ];
-
+  // --- Data sets (loaded from API) ---
+  fullApplications: any[] = [];
+  clearApplications: any[] = [];
   singleApplications: any[] = [];
   activeApplications: any[] = [];
 
-  // --- Stats ---
-  get fullStats() {
-    return [
-      { label: this.i18n.t('dashboard.total_apps'), value: 3, iconBg: C.blue50, icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${C.blue500}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>` },
-      { label: this.i18n.t('dashboard.under_review'), value: 1, iconBg: C.amber50, icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${C.amber500}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>` },
-      { label: this.i18n.t('dashboard.action_required'), value: 1, iconBg: '#fff2ee', icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${C.orange}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>` },
-      { label: this.i18n.t('dashboard.termsheet_ready'), value: 1, iconBg: C.greenLt, icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${C.green}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><polyline points="16 13 12 17 9 14"/></svg>` },
-    ];
-  }
-
-  get clearStats() {
-    return [
-      { label: this.i18n.t('dashboard.total_apps'), value: 3, iconBg: C.blue50, icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${C.blue500}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>` },
-      { label: this.i18n.t('dashboard.under_review'), value: 2, iconBg: C.amber50, icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${C.amber500}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>` },
-      { label: this.i18n.t('dashboard.action_required'), value: 0, iconBg: '#fff2ee', icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${C.orange}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>` },
-      { label: this.i18n.t('dashboard.approved'), value: 1, iconBg: C.greenLt, icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${C.green}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>` },
-    ];
-  }
-
-  get singleStats() {
-    return [
-      { label: this.i18n.t('dashboard.total_apps'), value: 0, iconBg: C.blue50, icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${C.blue500}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>` },
-      { label: this.i18n.t('dashboard.under_review'), value: 0, iconBg: C.amber50, icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${C.amber500}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>` },
-      { label: this.i18n.t('dashboard.action_required'), value: 0, iconBg: '#fff2ee', icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${C.orange}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>` },
-      { label: this.i18n.t('dashboard.termsheet_ready'), value: 0, iconBg: C.greenLt, icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${C.green}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><polyline points="16 13 12 17 9 14"/></svg>` },
-    ];
-  }
-
+  // --- Stats (loaded from API per mode) ---
   activeStats: any[] = [];
 
-  // --- Onboarding steps ---
+  // --- Onboarding steps (loaded from API) ---
   _newUserStepsDone = [false, false, false, false, false, false];
-  get newUserSteps() {
-    return [
-      { title: this.i18n.t('dashboard.step_profile'), desc: this.i18n.t('dashboard.step_profile_desc'), action: this.i18n.t('dashboard.step_profile_action'), route: '/profile?from=onboarding', done: this._newUserStepsDone[0] },
-      { title: this.i18n.t('dashboard.step_verify'), desc: this.i18n.t('dashboard.step_verify_desc'), action: this.i18n.t('dashboard.step_verify_action'), route: '/onboarding/company-verify?from=dashboard', done: this._newUserStepsDone[1] },
-      { title: this.i18n.t('dashboard.step_credentials'), desc: this.i18n.t('dashboard.step_credentials_desc'), action: this.i18n.t('dashboard.step_credentials_action'), route: '/company/0/credentials', done: this._newUserStepsDone[2] },
-      { title: this.i18n.t('dashboard.step_project'), desc: this.i18n.t('dashboard.step_project_desc'), action: this.i18n.t('dashboard.step_project_action'), route: '/project/new?fresh=true', done: this._newUserStepsDone[3] },
-      { title: this.i18n.t('dashboard.step_team'), desc: this.i18n.t('dashboard.step_team_desc'), action: this.i18n.t('dashboard.step_team_action'), route: '/dashboard/teams', done: this._newUserStepsDone[4] },
-      { title: this.i18n.t('dashboard.step_financing'), desc: this.i18n.t('dashboard.step_financing_desc'), action: this.i18n.t('dashboard.step_financing_action'), route: '/application/new', done: this._newUserStepsDone[5] },
-    ];
-  }
+  newUserSteps: any[] = [];
 
   _singleUserStepsDone = [true, false, false, true, false, false];
-  get singleUserSteps() {
-    return [
-      { title: this.i18n.t('dashboard.step_profile'), desc: this.i18n.t('dashboard.step_profile_desc'), action: this.i18n.t('dashboard.step_profile_action'), route: '/profile?from=onboarding', done: this._singleUserStepsDone[0] },
-      { title: this.i18n.t('dashboard.step_verify'), desc: this.i18n.t('dashboard.step_verify_desc'), action: this.i18n.t('dashboard.step_verify_action'), route: '/onboarding/company-verify?from=dashboard', done: this._singleUserStepsDone[1] },
-      { title: this.i18n.t('dashboard.step_credentials'), desc: this.i18n.t('dashboard.step_credentials_desc'), action: this.i18n.t('dashboard.step_credentials_action'), route: '/company/0/credentials', done: this._singleUserStepsDone[2] },
-      { title: this.i18n.t('dashboard.step_project'), desc: this.i18n.t('dashboard.step_project_desc'), action: this.i18n.t('dashboard.step_project_action'), route: '/project/new?fresh=true', done: this._singleUserStepsDone[3] },
-      { title: this.i18n.t('dashboard.step_team'), desc: this.i18n.t('dashboard.step_team_desc'), action: this.i18n.t('dashboard.step_team_action'), route: '/dashboard/teams', done: this._singleUserStepsDone[4] },
-      { title: this.i18n.t('dashboard.step_financing'), desc: this.i18n.t('dashboard.step_financing_desc'), action: this.i18n.t('dashboard.step_financing_action'), route: '/application/new', done: this._singleUserStepsDone[5] },
-    ];
-  }
+  singleUserSteps: any[] = [];
 
-  // --- Notifications ---
-  get fullNotifications() {
-    return [
-      {
-        title: this.i18n.t('dashboard.notif_pending_verify'),
-        desc: this.i18n.t('dashboard.notif_pending_verify_desc', { company: 'Al Jazeera Development Co.' }),
-        time: this.i18n.t('nav.time_2h'),
-        route: '/onboarding/company-verify?from=dashboard',
-        borderColor: C.amber500,
-        iconBg: C.amber50,
-        icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${C.amber500}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,
-      },
-      {
-        title: this.i18n.t('dashboard.notif_feedback'),
-        desc: this.i18n.t('dashboard.notif_feedback_desc', { project: 'Tabuk Residential Complex' }),
-        time: this.i18n.t('nav.time_5h'),
-        route: '/application/3/status',
-        borderColor: C.orange,
-        iconBg: '#fff2ee',
-        icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${C.orange}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>`,
-      },
-      {
-        title: this.i18n.t('dashboard.notif_termsheet'),
-        desc: this.i18n.t('dashboard.notif_termsheet_desc', { project: 'Al Noor Residential' }),
-        time: this.i18n.t('nav.time_1d'),
-        route: '/application/1/status',
-        borderColor: C.green,
-        iconBg: C.greenLt,
-        icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${C.green}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><polyline points="16 13 12 17 9 14"/></svg>`,
-      },
-      {
-        title: this.i18n.t('dashboard.notif_signing'),
-        desc: this.i18n.t('dashboard.notif_signing_desc', { project: 'Riyadh Commercial Plaza' }),
-        time: this.i18n.t('nav.time_2d'),
-        route: '/application/2/status',
-        borderColor: C.blue500,
-        iconBg: C.blue50,
-        icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${C.blue500}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>`,
-      },
-    ];
-  }
-
+  // --- Notifications (loaded from API) ---
+  fullNotifications: any[] = [];
   activeNotifications: any[] = [];
 
   showReferral = true;
@@ -503,50 +416,84 @@ export class DashboardOverviewComponent implements OnInit {
   referralSource = '';
   referralExtra = '';
 
-  constructor(private router: Router, private route: ActivatedRoute, private sanitizer: DomSanitizer, public i18n: I18nService) {}
+  constructor(private router: Router, private route: ActivatedRoute, private sanitizer: DomSanitizer, public i18n: I18nService, private api: ApiService) {}
 
   ngOnInit(): void {
     // Check if arriving from onboarding — land on "new" user state
     const state = this.route.snapshot.queryParamMap.get('state');
-    if (state === 'new') {
-      this.setDemo('new');
-    } else {
-      this.setDemo('full');
-    }
+    const mode = state === 'new' ? 'new' : 'full';
+
+    // Load data from API
+    this.loadDashboardData(mode);
   }
 
-  setDemo(mode: 'full' | 'clear' | 'single' | 'new') {
+  loadDashboardData(mode: 'full' | 'clear' | 'single' | 'new') {
+    this.loading = true;
     this.demoMode = mode;
     this.showReferral = mode === 'new';
     this.referralSource = '';
+
+    // Set greeting immediately (no API needed)
     switch (mode) {
       case 'full':
-        this.greeting = this.i18n.t('dashboard.welcome', { name: 'Ahmed' });
-        this.subtitle = this.i18n.t('dashboard.subtitle');
-        this.activeStats = this.fullStats;
-        this.activeApplications = this.fullApplications;
-        this.activeNotifications = this.fullNotifications;
-        break;
       case 'clear':
         this.greeting = this.i18n.t('dashboard.welcome', { name: 'Ahmed' });
         this.subtitle = this.i18n.t('dashboard.subtitle');
-        this.activeStats = this.clearStats;
-        this.activeApplications = this.clearApplications;
-        this.activeNotifications = [];
         break;
       case 'single':
         this.greeting = this.i18n.t('dashboard.welcome', { name: 'Ahmed' });
         this.subtitle = this.i18n.t('dashboard.subtitle_single');
-        this.activeStats = this.singleStats;
-        this.activeApplications = this.singleApplications;
-        this.activeNotifications = [];
         break;
       case 'new':
         this.greeting = this.i18n.t('dashboard.welcome_new', { name: 'Ahmed' });
         this.subtitle = this.i18n.t('dashboard.subtitle_new');
-        this.activeNotifications = [];
         break;
     }
+
+    // Load stats from API
+    if (mode !== 'new') {
+      const statsMode = mode === 'full' || mode === 'clear' || mode === 'single' ? mode : 'full';
+      this.api.getDashboardStats(statsMode).subscribe(stats => this.activeStats = stats);
+    }
+
+    // Load applications from API
+    if (mode === 'full' || mode === 'clear') {
+      this.api.getDashboardApplications(mode).subscribe(apps => {
+        if (mode === 'full') this.fullApplications = apps;
+        else this.clearApplications = apps;
+        this.activeApplications = apps;
+      });
+    } else {
+      this.activeApplications = [];
+    }
+
+    // Load notifications from API (only for full mode)
+    if (mode === 'full') {
+      this.api.getNotifications().subscribe(notifs => {
+        this.fullNotifications = notifs;
+        this.activeNotifications = notifs;
+        this.loading = false;
+      });
+    } else {
+      this.activeNotifications = [];
+      // Load onboarding steps for new/single modes
+      if (mode === 'new' || mode === 'single') {
+        this.api.getOnboardingSteps(mode === 'new' ? 'new' : 'single').subscribe(steps => {
+          if (mode === 'new') {
+            this.newUserSteps = steps.map((s, i) => ({ ...s, done: this._newUserStepsDone[i] }));
+          } else {
+            this.singleUserSteps = steps.map((s, i) => ({ ...s, done: this._singleUserStepsDone[i] }));
+          }
+          this.loading = false;
+        });
+      } else {
+        this.loading = false;
+      }
+    }
+  }
+
+  setDemo(mode: 'full' | 'clear' | 'single' | 'new') {
+    this.loadDashboardData(mode);
   }
 
   isStepUnlocked(steps: any[], index: number): boolean {

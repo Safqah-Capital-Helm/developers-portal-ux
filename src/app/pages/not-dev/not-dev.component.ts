@@ -123,7 +123,7 @@ import { I18nService } from '../../shared/i18n/i18n.service';
     }
 
     .help-link {
-      font-size: 13px; color: ${C.g400}; cursor: pointer;
+      font-size: 13px; color: ${C.g500}; cursor: pointer;
       font-weight: 600; text-decoration: none;
     }
     .help-link:hover { color: ${C.g600}; }
@@ -257,6 +257,16 @@ import { I18nService } from '../../shared/i18n/i18n.service';
     :host-context([dir="rtl"]) .notice-card { text-align: right; }
     :host-context([dir="rtl"]) .actions-section { text-align: right; }
     :host-context([dir="rtl"]) .resource-text { text-align: right; }
+
+    @media (max-width: 768px) {
+      .top-bar { padding: 16px 16px; }
+      .hero-area { padding: 40px 16px 60px; }
+    }
+    @media (max-width: 480px) {
+      .hero-area { padding: 28px 12px 40px; }
+      .title { font-size: 22px; }
+      .subtitle { font-size: 14px; }
+    }
   `]
 })
 export class NotDevComponent {

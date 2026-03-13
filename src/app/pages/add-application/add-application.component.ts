@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { C } from '../../shared/theme';
@@ -12,6 +12,7 @@ import {
   ResultScreenComponent,
   TranslatePipe,
   I18nService,
+  ApiService,
 } from '../../shared';
 
 @Component({
@@ -117,6 +118,13 @@ import {
           ></app-progress-steps>
         </div>
 
+        <div class="draft-indicator" *ngIf="draftSaved && !submitted">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.green" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          {{ 'common.done' | t }}
+        </div>
+
         <!-- Pre-selected project info banner -->
         <div *ngIf="projectPreSelected && step >= 1 && step <= 2" class="preselected-banner">
           <div class="preselected-icon">
@@ -131,6 +139,9 @@ import {
 
         <!-- ============ STEP 0: Select Project (only when no pre-selection) ============ -->
         <div *ngIf="!projectPreSelected && step === 0" class="animate-in">
+          <div class="step-intro">
+            <p class="step-intro-text">{{ 'add_application.step1_intro' | t }}</p>
+          </div>
           <app-card [padding]="32">
             <div class="section-title">{{ 'add_application.select_project' | t }}</div>
             <div class="section-desc">{{ 'add_application.select_project_desc' | t }}</div>
@@ -374,6 +385,15 @@ import {
           </app-btn>
           <div *ngIf="step === firstStep" class="nav-spacer"></div>
 
+          <button *ngIf="step > 0 && step < 3" class="save-later-btn" (click)="saveAndExit()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
+              <polyline points="17 21 17 13 7 13 7 21"/>
+              <polyline points="7 3 7 8 15 8"/>
+            </svg>
+            {{ 'common.save' | t }}
+          </button>
+
           <app-btn *ngIf="step === 2" variant="primary"
             [disabled]="!isStepValid(step)"
             (clicked)="nextStep()">
@@ -448,6 +468,13 @@ import {
       margin-bottom: 20px;
       line-height: 1.5;
     }
+
+    /* Step intro explanation */
+    .step-intro {
+      background: ${C.blue50}; border-radius: 12px; padding: 14px 18px; margin-bottom: 20px;
+      border-left: 3px solid ${C.blue500};
+    }
+    .step-intro-text { font-size: 13px; color: ${C.g700}; line-height: 1.6; margin: 0; }
 
     /* Pre-selected project banner */
     .preselected-banner {
@@ -874,6 +901,48 @@ import {
 
     .nav-spacer { flex: 1; }
 
+    /* ===== Draft Indicator ===== */
+    .draft-indicator {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 5px;
+      font-size: 12px;
+      font-weight: 600;
+      color: ${C.green};
+      margin-top: -4px;
+      margin-bottom: 8px;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* ===== Save & Continue Later Button ===== */
+    .save-later-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 16px;
+      background: none;
+      border: 1.5px solid ${C.g200};
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      color: ${C.g500};
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+    .save-later-btn:hover {
+      border-color: ${C.g300};
+      color: ${C.g700};
+      background: ${C.g50};
+    }
+
     /* ===== Success Page ===== */
     .success-page {
       max-width: 560px;
@@ -1003,13 +1072,18 @@ import {
     :host-context([dir="rtl"]) .next-steps { text-align: right; }
   `],
 })
-export class AddApplicationComponent implements OnInit {
+export class AddApplicationComponent implements OnInit, OnDestroy {
   C = C;
   Math = Math;
 
   step = 0;
   submitted = false;
   projectPreSelected = false;
+
+  // Draft save state
+  private readonly DRAFT_KEY = 'safqah_application_draft';
+  draftSaved = false;
+  private draftTimeout: any;
 
   // Project selection
   selectedProject = '';
@@ -1040,15 +1114,57 @@ export class AddApplicationComponent implements OnInit {
     ];
   }
 
-  constructor(private router: Router, private route: ActivatedRoute, private i18n: I18nService) {}
+  constructor(private router: Router, private route: ActivatedRoute, private i18n: I18nService, private api: ApiService) {}
 
   ngOnInit(): void {
     const projectParam = this.route.snapshot.queryParamMap.get('project');
+    const fresh = this.route.snapshot.queryParamMap.get('fresh');
+
     if (projectParam) {
       this.selectedProject = projectParam;
       this.projectPreSelected = true;
       this.step = 1; // Skip project selection, go straight to product
+    } else if (!fresh) {
+      this.api.loadDraft(this.DRAFT_KEY).subscribe(d => {
+        if (d) {
+          this.step = d.step || 0;
+          this.selectedProject = d.selectedProject || '';
+          this.financingProduct = d.financingProduct || '';
+          this.financingAmount = d.financingAmount || '';
+        }
+      });
+    } else {
+      this.clearDraft();
     }
+  }
+
+  ngOnDestroy(): void {
+    clearTimeout(this.draftTimeout);
+  }
+
+  private saveDraft(): void {
+    clearTimeout(this.draftTimeout);
+    const draft = {
+      step: this.step,
+      selectedProject: this.selectedProject,
+      financingProduct: this.financingProduct,
+      financingAmount: this.financingAmount,
+    };
+    this.api.saveDraft(this.DRAFT_KEY, draft).subscribe();
+    this.draftSaved = true;
+    this.draftTimeout = setTimeout(() => this.draftSaved = false, 2000);
+  }
+
+  private clearDraft(): void {
+    this.api.deleteDraft(this.DRAFT_KEY).subscribe();
+  }
+
+  saveAndExit(): void {
+    this.saveDraft();
+    this.draftSaved = true;
+    setTimeout(() => {
+      this.router.navigateByUrl('/dashboard/applications');
+    }, 600);
   }
 
   /** The step labels shown in the progress bar */
@@ -1086,6 +1202,7 @@ export class AddApplicationComponent implements OnInit {
 
   selectProject(name: string): void {
     this.selectedProject = name;
+    this.saveDraft();
     // Auto-advance since this is a single-select step
     setTimeout(() => {
       this.step = 1;
@@ -1095,6 +1212,7 @@ export class AddApplicationComponent implements OnInit {
 
   selectProduct(id: string): void {
     this.financingProduct = id;
+    this.saveDraft();
     // Auto-advance since this is a single-select step
     setTimeout(() => {
       this.step = 2;
@@ -1105,6 +1223,7 @@ export class AddApplicationComponent implements OnInit {
   nextStep(): void {
     if (this.step < 3 && this.isStepValid(this.step)) {
       this.step++;
+      this.saveDraft();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }
@@ -1125,6 +1244,7 @@ export class AddApplicationComponent implements OnInit {
   }
 
   submit(): void {
+    this.clearDraft();
     this.submitted = true;
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }

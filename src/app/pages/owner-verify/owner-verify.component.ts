@@ -623,6 +623,14 @@ type Step = 'intro' | 'id' | 'otp' | 'verifying' | 'grant' | 'done';
       align-items: center;
       justify-content: center;
     }
+
+    @media (max-width: 768px) {
+      .container { padding: 28px 16px 40px; }
+    }
+    @media (max-width: 480px) {
+      .container { padding: 20px 12px 32px; }
+      .page-title { font-size: 20px; }
+    }
   `]
 })
 export class OwnerVerifyComponent implements OnDestroy {

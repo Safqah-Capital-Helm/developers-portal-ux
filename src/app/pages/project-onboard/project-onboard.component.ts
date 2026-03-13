@@ -135,6 +135,15 @@ import {
       justify-content: flex-end;
       margin-top: 28px;
     }
+
+    @media (max-width: 768px) {
+      .header-bar { padding: 14px 16px; }
+      .page { padding: 24px 16px 48px; }
+    }
+    @media (max-width: 480px) {
+      .page { padding: 20px 12px 36px; }
+      .welcome-title { font-size: 20px; }
+    }
   `],
 })
 export class ProjectOnboardComponent {

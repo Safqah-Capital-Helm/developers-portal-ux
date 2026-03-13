@@ -16,6 +16,7 @@ import { Router } from '@angular/router';
       background: none; border: none; cursor: pointer;
       font-size: 13px; font-weight: 600; color: #667085;
       padding: 0; margin-bottom: 16px; font-family: inherit;
+      min-height: 44px;
     }
     .back-link:hover { color: #344054; }
 

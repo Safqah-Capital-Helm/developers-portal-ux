@@ -97,8 +97,8 @@ import {
                     </select>
                   </div>
                 </div>
-                <button class="remove-btn" (click)="removeCrOwner(i)">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <button class="remove-btn" (click)="removeCrOwner(i)" aria-label="Remove team member">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
                   </svg>
                 </button>
@@ -135,8 +135,8 @@ import {
                   </select>
                 </div>
               </div>
-              <button class="remove-btn" (click)="removeAdditional(i)">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <button class="remove-btn" (click)="removeAdditional(i)" aria-label="Remove invite">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                   <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
                 </svg>
               </button>
@@ -488,6 +488,17 @@ import {
       margin-top: 24px;
       font-size: 12px;
       color: ${C.g400};
+    }
+
+    @media (max-width: 768px) {
+      .header-bar { padding: 14px 16px; }
+      .page { padding: 24px 16px 48px; }
+      .invite-fields { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 480px) {
+      .page { padding: 20px 12px 36px; }
+      .welcome-title { font-size: 20px; }
+      .welcome-subtitle { font-size: 13px; }
     }
   `]
 })

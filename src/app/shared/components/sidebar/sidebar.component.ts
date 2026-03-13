@@ -13,11 +13,11 @@ import { C } from '../../theme';
     <!-- Mobile backdrop -->
     <div class="sidebar-backdrop" *ngIf="mobileOpen" (click)="closeMobile()"></div>
 
-    <aside class="sidebar" [class.mobile-open]="mobileOpen">
+    <aside class="sidebar" [class.mobile-open]="mobileOpen" role="navigation" aria-label="Main navigation">
       <div class="sidebar-top">
         <app-logo [size]="28"></app-logo>
-        <button class="close-btn" (click)="closeMobile()">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <button class="close-btn" (click)="closeMobile()" aria-label="Close navigation menu">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
           </svg>
         </button>
@@ -145,7 +145,7 @@ import { C } from '../../theme';
       border-radius: 10px;
       font-size: 13px;
       font-weight: 600;
-      color: ${C.g400};
+      color: ${C.g500};
       cursor: pointer;
       transition: all 0.15s;
     }

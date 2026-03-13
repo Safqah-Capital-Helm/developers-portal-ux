@@ -1,13 +1,14 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { C, borderColorForStatus } from '../../shared/theme';
-import { BadgeComponent, ListCardComponent, ButtonComponent, PageHeaderComponent, getCompanyLogo, TranslatePipe, I18nService } from '../../shared';
+import { BadgeComponent, ListCardComponent, ButtonComponent, PageHeaderComponent, getCompanyLogo, TranslatePipe, I18nService, ApiService, SkeletonComponent } from '../../shared';
+import type { Company } from '../../shared';
 
 @Component({
   selector: 'app-companies-page',
   standalone: true,
-  imports: [CommonModule, BadgeComponent, ListCardComponent, ButtonComponent, PageHeaderComponent, TranslatePipe],
+  imports: [CommonModule, BadgeComponent, ListCardComponent, ButtonComponent, PageHeaderComponent, TranslatePipe, SkeletonComponent],
   template: `
     <div class="container">
       <app-page-header [title]="'companies.title' | t" [count]="companies.length">
@@ -17,35 +18,43 @@ import { BadgeComponent, ListCardComponent, ButtonComponent, PageHeaderComponent
         </app-btn>
       </app-page-header>
 
+      <!-- Skeleton loading -->
+      <div *ngIf="loading" class="skeleton-container">
+        <app-skeleton type="list" [count]="3"></app-skeleton>
+      </div>
+
       <!-- Company cards -->
-      <app-list-card *ngFor="let co of companies; let i = index" [statusColor]="co.sc" (click)="go('/dashboard/company/' + i)">
+      <ng-container *ngIf="!loading">
+      <app-list-card *ngFor="let co of companies; let i = index" [statusColor]="co.statusColor" (click)="go('/dashboard/company/' + co.id)">
         <div class="company-inner">
           <div class="company-row">
-            <img *ngIf="co.logo" [src]="co.logo" class="company-logo" [alt]="co.name" />
+            <img *ngIf="getCompanyLogo(co.cr)" [src]="getCompanyLogo(co.cr)" class="company-logo" [alt]="co.name" />
             <div class="company-details">
               <div class="company-top">
                 <span class="company-name">{{ co.name }}</span>
-                <app-badge [color]="$any(co.sc)">{{ co.status }}</app-badge>
+                <app-badge [color]="$any(co.statusColor)">{{ co.status }}</app-badge>
               </div>
               <div class="company-cr">{{ 'companies.cr_label' | t }}: {{ co.cr }}</div>
               <div class="company-meta">
                 <span class="meta-item">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g400" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h7l2 2h9v16H3z"/></svg>
-                  {{ co.proj }} {{ 'companies.projects' | t }}
+                  {{ co.projectCount }} {{ 'companies.projects' | t }}
                 </span>
                 <span class="meta-item">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g400" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
-                  {{ co.mem }} {{ 'companies.members' | t }}
+                  {{ co.memberCount }} {{ 'companies.members' | t }}
                 </span>
               </div>
             </div>
           </div>
         </div>
       </app-list-card>
+      </ng-container>
     </div>
   `,
   styles: [`
     :host { display: block; }
+    .skeleton-container { margin-top: 16px; }
     .container { max-width: 800px; margin: 0 auto; padding: 32px 32px 60px; }
     .company-inner { flex: 1; }
     .company-row { display: flex; align-items: center; gap: 16px; }
@@ -72,18 +81,20 @@ import { BadgeComponent, ListCardComponent, ButtonComponent, PageHeaderComponent
     }
   `]
 })
-export class CompaniesPageComponent {
+export class CompaniesPageComponent implements OnInit {
   C = C;
+  loading = true;
+  companies: Company[] = [];
+  getCompanyLogo = getCompanyLogo;
 
-  get companies() {
-    return [
-      { name: "Al Omran Real Estate Dev Co.", cr: "1551515151516515", status: this.i18n.t('common.status_approved'), sc: "green", proj: 8, mem: 3, logo: getCompanyLogo('1551515151516515') },
-      { name: "Al Jazeera Development Co.", cr: "1020304050607", status: this.i18n.t('common.status_pending_verification'), sc: "amber", proj: 2, mem: 1, logo: getCompanyLogo('1020304050607') },
-      { name: "Riyad Construction Group", cr: "3080706050403", status: this.i18n.t('common.status_missing_credentials'), sc: "red", proj: 1, mem: 2, logo: getCompanyLogo('3080706050403') }
-    ];
+  constructor(private router: Router, private i18n: I18nService, private api: ApiService) {}
+
+  ngOnInit() {
+    this.api.getCompanies().subscribe({
+      next: (data) => { this.companies = data; },
+      complete: () => { this.loading = false; }
+    });
   }
-
-  constructor(private router: Router, private i18n: I18nService) {}
 
   go(path: string) { this.router.navigateByUrl(path); }
 }

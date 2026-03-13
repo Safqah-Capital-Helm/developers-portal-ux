@@ -30,7 +30,7 @@ import {
     <div class="page">
       <app-nav></app-nav>
       <div class="container">
-        <app-back-link to="/dashboard" [label]="('company_verify.back_to_dashboard' | t)"></app-back-link>
+        <app-back-link [to]="backLink" [label]="backLabel"></app-back-link>
 
         <!-- Demo toggles -->
         <div class="demo-bar">
@@ -180,6 +180,16 @@ import {
       gap: 8px; margin-top: 20px;
       font-size: 12px; color: ${C.g400};
     }
+
+    @media (max-width: 768px) {
+      .container { padding: 24px 16px 40px; }
+      .non-owner-block { padding: 28px 16px; }
+    }
+    @media (max-width: 480px) {
+      .container { padding: 20px 12px 32px; }
+      .page-title { font-size: 20px; }
+      .owner-row { flex-direction: column; gap: 12px; }
+    }
   `]
 })
 export class CompanyVerifyComponent implements OnInit {
@@ -187,6 +197,8 @@ export class CompanyVerifyComponent implements OnInit {
   @ViewChild(CompanyVerifyFormComponent) form!: CompanyVerifyFormComponent;
 
   from = 'onboarding';
+  backLink = '/dashboard';
+  backLabel = '';
   currentStep = 0;
   demoRole: 'owner' | 'non-owner' = 'owner';
 
@@ -218,6 +230,22 @@ export class CompanyVerifyComponent implements OnInit {
 
   ngOnInit(): void {
     this.from = this.route.snapshot.queryParamMap.get('from') || 'onboarding';
+
+    // Context-aware back link
+    if (this.from === 'dashboard') {
+      this.backLink = '/dashboard';
+      this.backLabel = this.i18n.t('company_verify.back_to_dashboard');
+    } else if (this.from === 'add-company') {
+      this.backLink = '/company/new';
+      this.backLabel = this.i18n.t('company_verify.back_to_company');
+    } else if (this.from === 'owner-verify') {
+      this.backLink = '/dashboard';
+      this.backLabel = this.i18n.t('company_verify.back_to_dashboard');
+    } else {
+      // Onboarding flow — no "back to dashboard" since user hasn't been there yet
+      this.backLink = '/verify';
+      this.backLabel = this.i18n.t('common.back');
+    }
   }
 
   setDemoRole(role: 'owner' | 'non-owner') {

@@ -48,6 +48,12 @@ import { I18nService } from '../../shared/i18n/i18n.service';
               {{ checking ? ('landing.verifying' | t) : ('landing.cta_button' | t) }} {{ checking ? '' : '→' }}
             </app-btn>
             <button class="demo-reject" (click)="doReject()">{{ 'landing.demo_not_eligible' | t }}</button>
+            <div class="absher-trust">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00a15a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+              <span>{{ 'landing.absher_trust' | t }}</span>
+            </div>
             <div class="signin-link">
               <p>{{ 'landing.already_account' | t }} <a (click)="router.navigate(['/sign-in'])">{{ 'landing.cta_sign_in' | t }}</a></p>
             </div>
@@ -113,8 +119,13 @@ import { I18nService } from '../../shared/i18n/i18n.service';
       cursor: pointer; font-family: inherit; transition: all 0.15s;
     }
     .demo-reject:hover { background: #f1f3f5; color: #475467; }
+    .absher-trust {
+      display: flex; align-items: center; justify-content: center;
+      gap: 6px; margin-top: 16px;
+      font-size: 12px; font-weight: 600; color: #667085;
+    }
     .signin-link {
-      margin-top: 24px; text-align: center; padding-top: 20px;
+      margin-top: 16px; text-align: center; padding-top: 20px;
       border-top: 1px solid #e2e5e9;
     }
     .signin-link p { font-size: 14px; color: #667085; }

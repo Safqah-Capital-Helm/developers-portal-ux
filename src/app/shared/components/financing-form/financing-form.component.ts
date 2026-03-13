@@ -394,6 +394,13 @@ import { I18nService } from '../../i18n/i18n.service';
       line-height: 1.4;
       margin-top: 2px;
     }
+
+    @media (max-width: 480px) {
+      .stat-row { grid-template-columns: 1fr; }
+      .product-grid { grid-template-columns: 1fr; }
+      .amount-num { font-size: 28px; }
+      .stat-box { padding: 14px 12px; }
+    }
   `]
 })
 export class FinancingFormComponent {

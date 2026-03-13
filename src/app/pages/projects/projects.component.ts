@@ -1,14 +1,14 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { C } from '../../shared/theme';
-import { PageHeaderComponent, ButtonComponent, getCompanyLogoByName, TranslatePipe, I18nService } from '../../shared';
+import { PageHeaderComponent, ButtonComponent, getCompanyLogoByName, TranslatePipe, I18nService, ApiService, SkeletonComponent } from '../../shared';
 
 @Component({
   selector: 'app-projects-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, PageHeaderComponent, ButtonComponent, TranslatePipe],
+  imports: [CommonModule, FormsModule, PageHeaderComponent, ButtonComponent, TranslatePipe, SkeletonComponent],
   template: `
     <div class="container">
       <app-page-header [title]="'projects.title' | t" [count]="filteredProjects.length">
@@ -18,8 +18,11 @@ import { PageHeaderComponent, ButtonComponent, getCompanyLogoByName, TranslatePi
         </app-btn>
       </app-page-header>
 
+      <!-- Skeleton loading -->
+      <app-skeleton *ngIf="loading" type="grid" [count]="4"></app-skeleton>
+
       <!-- Filters -->
-      <div class="filter-bar">
+      <div class="filter-bar" *ngIf="!loading">
         <div class="filter-group">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g400" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
           <select class="filter-select" [(ngModel)]="filterCompany">
@@ -34,7 +37,7 @@ import { PageHeaderComponent, ButtonComponent, getCompanyLogoByName, TranslatePi
       </div>
 
       <!-- Project grid -->
-      <div class="projects-grid">
+      <div class="projects-grid" *ngIf="!loading">
         <div *ngFor="let p of filteredProjects"
              class="project-card"
              [class.draft]="p.draft"
@@ -136,7 +139,7 @@ import { PageHeaderComponent, ButtonComponent, getCompanyLogoByName, TranslatePi
       display: inline-flex; align-items: center; gap: 4px;
       background: none; border: none;
       font-size: 11px; font-weight: 700;
-      color: ${C.g400}; cursor: pointer;
+      color: ${C.g500}; cursor: pointer;
       font-family: inherit; padding: 4px 6px;
       border-radius: 6px; transition: all 0.15s;
     }
@@ -281,77 +284,33 @@ import { PageHeaderComponent, ButtonComponent, getCompanyLogoByName, TranslatePi
     }
   `]
 })
-export class ProjectsPageComponent {
+export class ProjectsPageComponent implements OnInit {
   C = C;
-
-  get projects(): any[] {
-    return [
-      {
-        name: "Khobar Mixed-Use Tower", type: this.i18n.t('common.type_mixed_use'), loc: "Khobar",
-        compShort: "Al Omran Real Estate", compLogo: getCompanyLogoByName("Al Omran Real Estate"),
-        cost: "20-50M", fin: "", prod: this.i18n.t('common.stage_development'),
-        route: "/project/new", draft: true,
-        img: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=480&h=320&fit=crop"
-      },
-      {
-        name: "Al Noor Residential", type: this.i18n.t('common.type_mixed_use'), loc: "Dammam",
-        compShort: "Al Omran Real Estate", compLogo: getCompanyLogoByName("Al Omran Real Estate"),
-        cost: "SAR 28M", fin: "~21M", prod: this.i18n.t('common.stage_development'),
-        finStatus: this.i18n.t('common.status_active'),
-        img: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=480&h=320&fit=crop"
-      },
-      {
-        name: "Riyadh Commercial Plaza", type: this.i18n.t('common.type_commercial'), loc: "Riyadh",
-        compShort: "Al Omran Real Estate", compLogo: getCompanyLogoByName("Al Omran Real Estate"),
-        cost: "SAR 65M", fin: "~45M", prod: this.i18n.t('common.stage_construction'),
-        finStatus: this.i18n.t('common.status_in_review'),
-        img: "https://images.unsplash.com/photo-1577495508048-b635879837f1?w=480&h=320&fit=crop"
-      },
-      {
-        name: "Tabuk Residential Complex", type: this.i18n.t('common.type_residential'), loc: "Tabuk",
-        compShort: "Al Omran Real Estate", compLogo: getCompanyLogoByName("Al Omran Real Estate"),
-        cost: "SAR 12M", fin: "~8M", prod: this.i18n.t('common.stage_development'),
-        finStatus: this.i18n.t('common.status_in_review'),
-        img: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=480&h=320&fit=crop"
-      },
-      {
-        name: "Jeddah Waterfront Villas", type: this.i18n.t('common.type_residential'), loc: "Jeddah",
-        compShort: "Al Omran Real Estate", compLogo: getCompanyLogoByName("Al Omran Real Estate"),
-        cost: "SAR 32M", fin: "~18M", prod: this.i18n.t('common.stage_development'),
-        finStatus: this.i18n.t('common.status_pending'),
-        img: "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=480&h=320&fit=crop"
-      },
-      {
-        name: "Abha Mountain Villas", type: this.i18n.t('common.type_residential'), loc: "Abha",
-        compShort: "Al Omran Real Estate", compLogo: getCompanyLogoByName("Al Omran Real Estate"),
-        cost: "SAR 14M", fin: "", prod: this.i18n.t('common.stage_land_acquisition'),
-        img: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=480&h=320&fit=crop"
-      },
-      {
-        name: "Al Rawdah Gardens", type: this.i18n.t('common.type_residential'), loc: "Riyadh",
-        compShort: "Al Omran Real Estate", compLogo: getCompanyLogoByName("Al Omran Real Estate"),
-        cost: "SAR 30M", fin: "", prod: this.i18n.t('common.stage_development'),
-        img: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=480&h=320&fit=crop"
-      },
-      {
-        name: "Eastern Industrial Park", type: this.i18n.t('common.type_industrial'), loc: "Dammam",
-        compShort: "Al Jazeera Development", compLogo: getCompanyLogoByName("Al Jazeera Development"),
-        cost: "SAR 75M", fin: "~60M", prod: this.i18n.t('common.stage_bridge'),
-        finStatus: this.i18n.t('common.status_active'),
-        img: "https://images.unsplash.com/photo-1565008447742-97f6f38c985c?w=480&h=320&fit=crop"
-      },
-      {
-        name: "Madinah Commercial Hub", type: this.i18n.t('common.type_commercial'), loc: "Madinah",
-        compShort: "Al Jazeera Development", compLogo: getCompanyLogoByName("Al Jazeera Development"),
-        cost: "SAR 40M", fin: "", prod: this.i18n.t('common.stage_construction'),
-        img: "https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=480&h=320&fit=crop"
-      },
-    ];
-  }
-
+  loading = true;
+  projects: any[] = [];
   filterCompany = '';
 
-  constructor(private router: Router, public i18n: I18nService) {}
+  constructor(private router: Router, public i18n: I18nService, private api: ApiService) {}
+
+  ngOnInit() {
+    this.api.getProjects().subscribe(data => {
+      this.projects = data.map(p => ({
+        name: p.name,
+        type: p.type,
+        loc: p.location,
+        compShort: p.companyName,
+        compLogo: p.compLogo,
+        cost: p.cost,
+        fin: p.financingAmount,
+        prod: p.product,
+        finStatus: p.financingStatus,
+        draft: p.draft,
+        route: p.draftRoute,
+        img: p.image
+      }));
+      this.loading = false;
+    });
+  }
 
   get uniqueCompanies(): string[] {
     return [...new Set(this.projects.map(p => p.compShort))];

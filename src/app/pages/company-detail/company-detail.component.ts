@@ -3,12 +3,12 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { C } from '../../shared/theme';
-import { BadgeComponent, BackLinkComponent, ButtonComponent, AvatarComponent, EmptyStateComponent, AlertBannerComponent, getCompanyLogo, TranslatePipe, I18nService } from '../../shared';
+import { BadgeComponent, BackLinkComponent, ButtonComponent, AvatarComponent, EmptyStateComponent, AlertBannerComponent, SkeletonComponent, ApiService, getCompanyLogo, TranslatePipe, I18nService } from '../../shared';
 
 @Component({
   selector: 'app-company-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, BadgeComponent, BackLinkComponent, ButtonComponent, AvatarComponent, EmptyStateComponent, AlertBannerComponent, TranslatePipe],
+  imports: [CommonModule, FormsModule, RouterLink, BadgeComponent, BackLinkComponent, ButtonComponent, AvatarComponent, EmptyStateComponent, AlertBannerComponent, SkeletonComponent, TranslatePipe],
   template: `
     <div class="container" *ngIf="company">
       <app-back-link to="/dashboard/companies" [label]="('company.back_to_companies' | t)"></app-back-link>
@@ -75,11 +75,11 @@ import { BadgeComponent, BackLinkComponent, ButtonComponent, AvatarComponent, Em
               (keydown.escape)="cancelEditDomain()"
               #domainInput
             />
-            <button class="domain-save" (click)="saveDomain()">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <button class="domain-save" (click)="saveDomain()" aria-label="Save domain">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
             </button>
-            <button class="domain-cancel" (click)="cancelEditDomain()">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            <button class="domain-cancel" (click)="cancelEditDomain()" aria-label="Cancel editing domain">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
             </button>
           </div>
         </div>
@@ -104,6 +104,51 @@ import { BadgeComponent, BackLinkComponent, ButtonComponent, AvatarComponent, Em
           <div class="hero-stat">
             <div class="hero-stat-value">{{ company.size }}</div>
             <div class="hero-stat-label">{{ 'company.size' | t }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ Owners Section ═══ -->
+      <div class="section">
+        <div class="section-header">
+          <h2 class="section-title">
+            <span class="section-icon-sm" [style.background]="'#f0fdf4'">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.green" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>
+              </svg>
+            </span>
+            {{ 'company.owners_title' | t }}
+            <span class="section-count">{{ owners.length }}</span>
+          </h2>
+        </div>
+
+        <app-skeleton *ngIf="ownersLoading" type="list" [count]="3"></app-skeleton>
+
+        <div *ngIf="!ownersLoading">
+          <div *ngFor="let o of owners" class="owner-row">
+            <div class="owner-left">
+              <div class="owner-avatar" [style.background]="'linear-gradient(135deg, ' + C.green + ', ' + C.greenDk + ')'">
+                {{ getInitials(o.name) }}
+              </div>
+              <div class="owner-info">
+                <div class="owner-name">{{ o.name }}</div>
+                <div class="owner-meta">
+                  <span class="owner-role">{{ i18n.t('common.role_' + o.role) }}</span>
+                  <span class="owner-nid-sep">&middot;</span>
+                  <span class="owner-nid">{{ 'company.nid_label' | t }}: {{ maskNid(o.nid) }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="owner-badge-wrap">
+              <span *ngIf="o.verified" class="owner-badge owner-badge-verified">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                {{ 'company.verified' | t }}
+              </span>
+              <span *ngIf="!o.verified" class="owner-badge owner-badge-pending">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                {{ 'company.pending_verification' | t }}
+              </span>
+            </div>
           </div>
         </div>
       </div>
@@ -522,6 +567,47 @@ import { BadgeComponent, BackLinkComponent, ButtonComponent, AvatarComponent, Em
       max-width: 320px;
     }
 
+    /* ═══ Owners ═══ */
+    .owner-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 14px; border-radius: 12px; margin-bottom: 6px;
+      transition: background 0.15s;
+    }
+    .owner-row:hover { background: ${C.g50}; }
+    .owner-left { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; }
+    .owner-avatar {
+      width: 38px; height: 38px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 800; color: #fff;
+      flex-shrink: 0; letter-spacing: 0.3px;
+    }
+    .owner-info { flex: 1; min-width: 0; }
+    .owner-name {
+      font-size: 14px; font-weight: 700; color: ${C.g900};
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .owner-meta {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 12px; color: ${C.g400}; margin-top: 2px;
+      flex-wrap: wrap;
+    }
+    .owner-role { font-weight: 600; color: ${C.g500}; }
+    .owner-nid-sep { color: ${C.g300}; }
+    .owner-nid { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 11px; color: ${C.g400}; letter-spacing: 0.3px; }
+    .owner-badge-wrap { flex-shrink: 0; }
+    .owner-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 11px; font-weight: 700;
+      padding: 4px 10px; border-radius: 8px;
+      white-space: nowrap;
+    }
+    .owner-badge-verified {
+      background: ${C.greenLt}; color: ${C.green};
+    }
+    .owner-badge-pending {
+      background: ${C.amber50}; color: ${C.amber500};
+    }
+
     /* ═══ Team members ═══ */
     .member-row {
       display: flex; justify-content: space-between; align-items: center;
@@ -576,6 +662,8 @@ export class CompanyDetailComponent implements OnInit {
   companyId = 0;
   companyProjects: any[] = [];
   team: any[] = [];
+  owners: any[] = [];
+  ownersLoading = true;
   editingDomain = false;
   domainDraft = '';
 
@@ -693,7 +781,7 @@ export class CompanyDetailComponent implements OnInit {
     ];
   }
 
-  constructor(private route: ActivatedRoute, private router: Router, public i18n: I18nService) {}
+  constructor(private route: ActivatedRoute, private router: Router, public i18n: I18nService, private api: ApiService) {}
 
   ngOnInit() {
     this.route.paramMap.subscribe(params => {
@@ -703,7 +791,16 @@ export class CompanyDetailComponent implements OnInit {
         this.company = this.companies[id];
         this.companyProjects = this.projects.filter(p => p.comp === this.company.name);
         this.team = this.allTeams[id] || [];
+        this.loadOwners(String(id));
       }
+    });
+  }
+
+  private loadOwners(companyId: string) {
+    this.ownersLoading = true;
+    this.api.getCompanyOwners(companyId).subscribe(owners => {
+      this.owners = owners;
+      this.ownersLoading = false;
     });
   }
 
@@ -756,6 +853,15 @@ export class CompanyDetailComponent implements OnInit {
 
   editCredentials() {
     this.router.navigateByUrl('/company/' + this.companyId + '/credentials');
+  }
+
+  getInitials(name: string): string {
+    return name.split(' ').filter(Boolean).map(w => w[0]).slice(0, 2).join('').toUpperCase();
+  }
+
+  maskNid(nid: string): string {
+    if (!nid || nid.length < 6) return nid;
+    return nid.slice(0, 3) + '...' + nid.slice(-3);
   }
 
   go(path: string) { this.router.navigateByUrl(path); }
