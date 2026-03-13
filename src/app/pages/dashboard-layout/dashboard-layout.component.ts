@@ -10,8 +10,8 @@ import { NavComponent, SidebarComponent } from '../../shared';
   template: `
     <div class="layout">
       <app-sidebar></app-sidebar>
-      <div class="main-area" [attr.aria-hidden]="sidebar.mobileOpen ? true : null" [attr.inert]="sidebar.mobileOpen ? true : null">
-        <app-nav [showLogo]="false" (menuToggle)="sidebar.openMobile()"></app-nav>
+      <div class="main-area" [attr.aria-hidden]="sidebar?.mobileOpen ? true : null" [attr.inert]="sidebar?.mobileOpen ? true : null">
+        <app-nav [showLogo]="false" (menuToggle)="sidebar?.openMobile()"></app-nav>
         <div class="content">
           <router-outlet></router-outlet>
         </div>
