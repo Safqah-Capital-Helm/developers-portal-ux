@@ -26,12 +26,14 @@ import { C } from '../../shared/theme';
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
             {{ i18n.lang === 'en' ? 'العربية' : 'English' }}
           </span>
-          <span class="link" (click)="router.navigate(['/sign-in'])">{{ 'landing.cta_sign_in' | t }}</span>
         </div>
       </header>
 
       <div class="hero">
         <div class="hero-left">
+          <div class="hero-logo">
+            <app-logo [size]="72" [light]="true"></app-logo>
+          </div>
           <div class="tag"><span>{{ 'landing.tag_line' | t }}</span></div>
           <h1>{{ 'landing.hero_title' | t }}</h1>
           <p class="subtitle">{{ 'landing.hero_subtitle' | t }}</p>
@@ -162,7 +164,6 @@ import { C } from '../../shared/theme';
     .hero-section {
       background: linear-gradient(160deg, #0c1523 0%, #111827 40%, #0f1d2e 100%);
       position: relative; overflow: hidden;
-      min-height: 100vh;
     }
     .hero-orb {
       position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.15;
@@ -194,8 +195,10 @@ import { C } from '../../shared/theme';
     }
     .lang-switch:hover { background: rgba(255,255,255,0.08); }
 
+    .hero-logo { margin-bottom: 24px; }
+
     .hero {
-      max-width: 1200px; margin: 0 auto; padding: 48px 40px 80px;
+      max-width: 1200px; margin: 0 auto; padding: 32px 40px 56px;
       display: grid; grid-template-columns: 1fr 1fr; gap: 72px;
       align-items: center; position: relative; z-index: 2;
     }
