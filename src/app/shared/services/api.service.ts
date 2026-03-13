@@ -26,6 +26,24 @@ export class ApiService {
     return this.i18n.t(key, params);
   }
 
+  /** Pick the locale-appropriate string (simulates API ?locale= param) */
+  private l(en: string, ar?: string): string {
+    return (this.i18n.lang === 'ar' && ar) ? ar : en;
+  }
+
+  private roleKeyToLabel(key: string): string {
+    const map: Record<string, string> = {
+      admin: 'common.role_admin',
+      editor: 'common.role_editor',
+      viewer: 'common.role_viewer',
+      contributor: 'common.role_contributor',
+      ceo: 'common.role_ceo',
+      partner: 'common.role_partner',
+      authorized_signatory: 'common.role_authorized_signatory',
+    };
+    return map[key] ? this.t(map[key]) : key;
+  }
+
   private statusKeyToLabel(key: string): string {
     const map: Record<string, string> = {
       approved: 'common.status_approved',
@@ -67,7 +85,7 @@ export class ApiService {
   getCompanies(): Observable<Company[]> {
     const data: Company[] = MOCK_COMPANIES_RAW.map(c => ({
       id: c.id,
-      name: c.name,
+      name: this.l(c.name, c.nameAr),
       cr: c.cr,
       status: this.statusKeyToLabel(c.statusKey),
       statusColor: c.sc,
@@ -79,22 +97,31 @@ export class ApiService {
 
   getCompanyById(id: string): Observable<Company & { logo: string }> {
     const c = MOCK_COMPANIES_RAW.find(co => co.id === id) || MOCK_COMPANIES_RAW[0];
+    const owners = (MOCK_COMPANY_OWNERS[c.id] || []).map(o => ({
+      ...o,
+      name: this.l(o.name, o.nameAr),
+      role: this.roleKeyToLabel(o.role),
+    }));
     const data = {
       id: c.id,
-      name: c.name,
+      name: this.l(c.name, c.nameAr),
       cr: c.cr,
       status: this.statusKeyToLabel(c.statusKey),
       statusColor: c.sc,
       projectCount: c.proj,
       memberCount: c.mem,
       logo: getCompanyLogo(c.cr) || '',
-      owners: MOCK_COMPANY_OWNERS[c.id] || [],
+      owners,
     };
     return of(data).pipe(delay(API_DELAY));
   }
 
   getCompanyOwners(companyId: string): Observable<CompanyOwner[]> {
-    const owners = MOCK_COMPANY_OWNERS[companyId] || [];
+    const owners = (MOCK_COMPANY_OWNERS[companyId] || []).map(o => ({
+      ...o,
+      name: this.l(o.name, o.nameAr),
+      role: this.roleKeyToLabel(o.role),
+    }));
     return of(owners).pipe(delay(API_DELAY_SHORT));
   }
 
@@ -109,10 +136,10 @@ export class ApiService {
   getProjects(): Observable<(Project & { compLogo: string })[]> {
     const data = MOCK_PROJECTS_RAW.map(p => ({
       id: p.id,
-      name: p.name,
+      name: this.l(p.name, p.nameAr),
       type: this.typeKeyToLabel(p.typeKey),
-      location: p.loc,
-      companyName: p.compShort,
+      location: this.l(p.loc, p.locAr),
+      companyName: this.l(p.compShort, p.compShortAr),
       compLogo: getCompanyLogoByName(p.compShort) || '',
       cost: p.cost,
       financingAmount: p.fin,
@@ -129,10 +156,10 @@ export class ApiService {
     const p = MOCK_PROJECTS_RAW.find(pr => pr.id === id) || MOCK_PROJECTS_RAW[1];
     const data = {
       id: p.id,
-      name: p.name,
+      name: this.l(p.name, p.nameAr),
       type: this.typeKeyToLabel(p.typeKey),
-      location: p.loc,
-      companyName: p.compShort,
+      location: this.l(p.loc, p.locAr),
+      companyName: this.l(p.compShort, p.compShortAr),
       compLogo: getCompanyLogoByName(p.compShort) || '',
       cost: p.cost,
       financingAmount: p.fin,
@@ -150,14 +177,14 @@ export class ApiService {
   getApplications(): Observable<Application[]> {
     const data: Application[] = MOCK_APPLICATIONS_RAW.map(a => ({
       id: a.id,
-      projectName: a.projectName,
-      company: a.company,
-      amount: a.amount,
+      projectName: this.l(a.projectName, a.projectNameAr),
+      company: this.l(a.company, a.companyAr),
+      amount: this.l(a.amount, a.amountAr),
       product: this.prodKeyToLabel(a.prodKey),
       status: this.statusKeyToLabel(a.statusKey),
       statusKey: a.statusKey,
       statusColor: a.sc,
-      submitted: a.submitted,
+      submitted: this.l(a.submitted, a.submittedAr),
       route: a.route,
     }));
     return of(data).pipe(delay(API_DELAY));
@@ -167,29 +194,33 @@ export class ApiService {
   getDashboardApplications(mode: 'full' | 'clear'): Observable<Application[]> {
     if (mode === 'full') {
       return of([
-        { id: 1, projectName: 'Al Noor Residential', company: 'Al Omran Real Estate', amount: '~21M SAR', product: this.prodKeyToLabel('development'), status: this.statusKeyToLabel('termsheet_ready'), statusKey: 'termsheet_ready', statusColor: 'green', submitted: '', route: '/application/1/status' },
-        { id: 2, projectName: 'Riyadh Commercial Plaza', company: 'Al Omran Real Estate', amount: '~45M SAR', product: this.prodKeyToLabel('construction'), status: this.t('common.status_in_review'), statusKey: 'in_review', statusColor: 'amber', submitted: '', route: '/application/2/status' },
-        { id: 3, projectName: 'Tabuk Residential Complex', company: 'Al Omran Real Estate', amount: '~8M SAR', product: this.prodKeyToLabel('development'), status: this.statusKeyToLabel('feedback_requested'), statusKey: 'feedback_requested', statusColor: 'amber', submitted: '', route: '/application/3/status' },
+        { id: 1, projectName: this.l('Al Noor Residential', 'مجمع النور السكني'), company: this.l('Al Omran Real Estate', 'العمران العقارية'), amount: this.l('~21M SAR', '~٢١ مليون ر.س'), product: this.prodKeyToLabel('development'), status: this.statusKeyToLabel('termsheet_ready'), statusKey: 'termsheet_ready', statusColor: 'green', submitted: '', route: '/application/1/status' },
+        { id: 2, projectName: this.l('Riyadh Commercial Plaza', 'بلازا الرياض التجارية'), company: this.l('Al Omran Real Estate', 'العمران العقارية'), amount: this.l('~45M SAR', '~٤٥ مليون ر.س'), product: this.prodKeyToLabel('construction'), status: this.t('common.status_in_review'), statusKey: 'in_review', statusColor: 'amber', submitted: '', route: '/application/2/status' },
+        { id: 3, projectName: this.l('Tabuk Residential Complex', 'مجمع تبوك السكني'), company: this.l('Al Omran Real Estate', 'العمران العقارية'), amount: this.l('~8M SAR', '~٨ مليون ر.س'), product: this.prodKeyToLabel('development'), status: this.statusKeyToLabel('feedback_requested'), statusKey: 'feedback_requested', statusColor: 'amber', submitted: '', route: '/application/3/status' },
       ]).pipe(delay(API_DELAY));
     }
     return of([
-      { id: 1, projectName: 'Al Noor Residential', company: 'Al Omran Real Estate', amount: '~21M SAR', product: this.prodKeyToLabel('development'), status: this.t('common.status_approved'), statusKey: 'approved', statusColor: 'green', submitted: '', route: '/application/1/status' },
-      { id: 2, projectName: 'Riyadh Commercial Plaza', company: 'Al Omran Real Estate', amount: '~45M SAR', product: this.prodKeyToLabel('construction'), status: this.t('common.status_in_review'), statusKey: 'in_review', statusColor: 'blue', submitted: '', route: '/application/2/status' },
-      { id: 3, projectName: 'Tabuk Residential Complex', company: 'Al Omran Real Estate', amount: '~8M SAR', product: this.prodKeyToLabel('development'), status: this.t('common.status_in_review'), statusKey: 'in_review', statusColor: 'blue', submitted: '', route: '/application/3/status' },
+      { id: 1, projectName: this.l('Al Noor Residential', 'مجمع النور السكني'), company: this.l('Al Omran Real Estate', 'العمران العقارية'), amount: this.l('~21M SAR', '~٢١ مليون ر.س'), product: this.prodKeyToLabel('development'), status: this.t('common.status_approved'), statusKey: 'approved', statusColor: 'green', submitted: '', route: '/application/1/status' },
+      { id: 2, projectName: this.l('Riyadh Commercial Plaza', 'بلازا الرياض التجارية'), company: this.l('Al Omran Real Estate', 'العمران العقارية'), amount: this.l('~45M SAR', '~٤٥ مليون ر.س'), product: this.prodKeyToLabel('construction'), status: this.t('common.status_in_review'), statusKey: 'in_review', statusColor: 'blue', submitted: '', route: '/application/2/status' },
+      { id: 3, projectName: this.l('Tabuk Residential Complex', 'مجمع تبوك السكني'), company: this.l('Al Omran Real Estate', 'العمران العقارية'), amount: this.l('~8M SAR', '~٨ مليون ر.س'), product: this.prodKeyToLabel('development'), status: this.t('common.status_in_review'), statusKey: 'in_review', statusColor: 'blue', submitted: '', route: '/application/3/status' },
     ]).pipe(delay(API_DELAY));
   }
 
   // ─── TEAMS ────────────────────────────────────────────────────
 
   getTeamMembers(): Observable<TeamMember[]> {
-    return of(MOCK_TEAM_RAW.map(m => ({ ...m }))).pipe(delay(API_DELAY));
+    return of(MOCK_TEAM_RAW.map(m => ({
+      ...m,
+      name: this.l(m.name, m.nameAr),
+      role: this.roleKeyToLabel(m.roleKey),
+      joinedDate: this.l(m.joinedDate, m.joinedDateAr),
+    }))).pipe(delay(API_DELAY));
   }
 
   getTeamCompanies(): Observable<{ name: string }[]> {
-    return of([
-      { name: 'Al Omran Real Estate Dev Co.' },
-      { name: 'Al Jazeera Development Co.' },
-    ]).pipe(delay(API_DELAY_SHORT));
+    return of(MOCK_COMPANIES_RAW.slice(0, 2).map(c => ({
+      name: this.l(c.name, c.nameAr),
+    }))).pipe(delay(API_DELAY_SHORT));
   }
 
   // ─── DASHBOARD ────────────────────────────────────────────────
@@ -223,7 +254,7 @@ export class ApiService {
       {
         id: 'n1',
         title: this.t('dashboard.notif_pending_verify'),
-        desc: this.t('dashboard.notif_pending_verify_desc', { company: 'Al Jazeera Development Co.' }),
+        desc: this.t('dashboard.notif_pending_verify_desc', { company: this.l('Al Jazeera Development Co.', 'شركة الجزيرة للتطوير') }),
         time: this.t('nav.time_2h'),
         route: '/onboarding/company-verify?from=dashboard',
         borderColor: C.amber500,
@@ -233,7 +264,7 @@ export class ApiService {
       {
         id: 'n2',
         title: this.t('dashboard.notif_feedback'),
-        desc: this.t('dashboard.notif_feedback_desc', { project: 'Tabuk Residential Complex' }),
+        desc: this.t('dashboard.notif_feedback_desc', { project: this.l('Tabuk Residential Complex', 'مجمع تبوك السكني') }),
         time: this.t('nav.time_5h'),
         route: '/application/3/status',
         borderColor: C.orange,
@@ -243,7 +274,7 @@ export class ApiService {
       {
         id: 'n3',
         title: this.t('dashboard.notif_termsheet'),
-        desc: this.t('dashboard.notif_termsheet_desc', { project: 'Al Noor Residential' }),
+        desc: this.t('dashboard.notif_termsheet_desc', { project: this.l('Al Noor Residential', 'مجمع النور السكني') }),
         time: this.t('nav.time_1d'),
         route: '/application/1/status',
         borderColor: C.green,
@@ -253,7 +284,7 @@ export class ApiService {
       {
         id: 'n4',
         title: this.t('dashboard.notif_signing'),
-        desc: this.t('dashboard.notif_signing_desc', { project: 'Riyadh Commercial Plaza' }),
+        desc: this.t('dashboard.notif_signing_desc', { project: this.l('Riyadh Commercial Plaza', 'بلازا الرياض التجارية') }),
         time: this.t('nav.time_2d'),
         route: '/application/2/status',
         borderColor: C.blue500,
@@ -284,12 +315,12 @@ export class ApiService {
       type: e.type,
       title: this.t(e.titleKey),
       description: this.t(e.descKey),
-      actor: e.actor,
-      time: e.time,
+      actor: this.l(e.actor, e.actorAr),
+      time: this.l(e.time, e.timeAr),
       badge: e.badge,
       badgeLabel: this.t(e.badgeLabelKey),
       model: e.model as 'company' | 'project' | 'application',
-      modelName: e.modelName,
+      modelName: this.l(e.modelName, e.modelNameAr),
       modelRoute: e.modelRoute,
     }));
     return of(data).pipe(delay(API_DELAY));
@@ -309,7 +340,10 @@ export class ApiService {
   // ─── USER PROFILE ─────────────────────────────────────────────
 
   getUserProfile(): Observable<UserProfile> {
-    return of({ ...MOCK_USER_PROFILE }).pipe(delay(API_DELAY_SHORT));
+    return of({
+      ...MOCK_USER_PROFILE,
+      name: this.l(MOCK_USER_PROFILE.name, MOCK_USER_PROFILE.nameAr),
+    }).pipe(delay(API_DELAY_SHORT));
   }
 
   // ─── DRAFTS (save / load simulation) ──────────────────────────
