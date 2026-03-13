@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { C } from '../../shared/theme';
+import { I18nService } from '../../shared/i18n/i18n.service';
 import {
   LogoComponent,
   ButtonComponent,
@@ -27,13 +28,13 @@ import {
 
         <!-- Progress Steps -->
         <app-progress-steps
-          [steps]="['Verify identity','Project details','Financing need']"
+          [steps]="onboardSteps"
           [current]="2">
         </app-progress-steps>
 
         <!-- Title -->
-        <h1 class="title">Financing need</h1>
-        <p class="subtitle">Tell us about your financing requirements so we can match you with the right product.</p>
+        <h1 class="title">{{ 'financing.need_title' | t }}</h1>
+        <p class="subtitle">{{ 'financing.need_subtitle' | t }}</p>
 
         <!-- Single Card: Financing Form -->
         <app-card [padding]="28">
@@ -49,7 +50,7 @@ import {
         <!-- Navigation -->
         <div class="nav-row">
           <app-btn variant="ghost" (clicked)="go('/onboarding/project')">&#8592; {{ 'common.back' | t }}</app-btn>
-          <app-btn variant="primary" [disabled]="!totalCost || !product" (clicked)="go('/onboarding/complete')">{{ 'common.save' | t }} &amp; {{ 'common.next' | t }} &#8594;</app-btn>
+          <app-btn variant="primary" [disabled]="!totalCost || !product" (clicked)="go('/onboarding/complete')">{{ 'financing.save_continue' | t }}</app-btn>
         </div>
 
       </div>
@@ -113,7 +114,11 @@ export class FinancingOnboardComponent {
   product = '';
   expectedRevenue = '';
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private i18n: I18nService) {}
+
+  get onboardSteps() {
+    return [this.i18n.t('add_project.step_verify'), this.i18n.t('add_project.step_project'), this.i18n.t('add_project.step_financing')];
+  }
 
   go(path: string) {
     this.router.navigateByUrl(path);

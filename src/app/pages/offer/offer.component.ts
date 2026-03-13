@@ -55,19 +55,19 @@ import { TranslatePipe } from '../../shared';
                 <span class="detail-value">24 months</span>
               </div>
               <div class="detail-item">
-                <span class="detail-label">Structure</span>
+                <span class="detail-label">{{ 'offer.structure' | t }}</span>
                 <span class="detail-value">Murabaha</span>
               </div>
               <div class="detail-item">
-                <span class="detail-label">Disbursement</span>
+                <span class="detail-label">{{ 'offer.disbursement' | t }}</span>
                 <span class="detail-value">Milestone</span>
               </div>
               <div class="detail-item">
-                <span class="detail-label">Grace</span>
+                <span class="detail-label">{{ 'offer.grace' | t }}</span>
                 <span class="detail-value">6 months</span>
               </div>
               <div class="detail-item">
-                <span class="detail-label">Repayment</span>
+                <span class="detail-label">{{ 'offer.repayment' | t }}</span>
                 <span class="detail-value">Quarterly</span>
               </div>
             </div>

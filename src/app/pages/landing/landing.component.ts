@@ -15,19 +15,19 @@ import { TranslatePipe } from '../../shared';
         <app-logo [size]="36"></app-logo>
         <div class="top-links">
           <span class="link">{{ 'landing.arabic' | t }}</span>
-          <span class="link">Help</span>
+          <span class="link">{{ 'landing.help' | t }}</span>
         </div>
       </header>
 
       <div class="hero">
         <div class="hero-left animate-in">
-          <div class="tag"><span>CMA Licensed · Sharia Compliant</span></div>
+          <div class="tag"><span>{{ 'landing.tag_line' | t }}</span></div>
           <h1>{{ 'landing.hero_title' | t }}</h1>
           <p class="subtitle">{{ 'landing.hero_subtitle' | t }}</p>
           <div class="stats">
-            <div class="stat"><div class="stat-num">15 min</div><div class="stat-label">to submit</div></div>
-            <div class="stat"><div class="stat-num">SAR 2B+</div><div class="stat-label">financed</div></div>
-            <div class="stat"><div class="stat-num">48 hours</div><div class="stat-label">to term-sheet</div></div>
+            <div class="stat"><div class="stat-num">{{ 'landing.stat_time' | t }}</div><div class="stat-label">{{ 'landing.stat_time_label' | t }}</div></div>
+            <div class="stat"><div class="stat-num">{{ 'landing.stat_financed' | t }}</div><div class="stat-label">{{ 'landing.stat_financed_label' | t }}</div></div>
+            <div class="stat"><div class="stat-num">{{ 'landing.stat_termsheet' | t }}</div><div class="stat-label">{{ 'landing.stat_termsheet_label' | t }}</div></div>
           </div>
         </div>
 
@@ -35,17 +35,17 @@ import { TranslatePipe } from '../../shared';
           <div class="form-card">
             <h2>{{ 'landing.cta_register' | t }}</h2>
             <p class="form-sub">{{ 'landing.hero_subtitle' | t }}</p>
-            <label class="input-label">CR Number</label>
+            <label class="input-label">{{ 'landing.cr_number' | t }}</label>
             <div class="cr-input-wrap">
               <div class="cr-prefix"><span>CR</span></div>
               <input [(ngModel)]="cr" placeholder="1010XXXXXX" (keydown.enter)="doCheck()" class="cr-input"/>
             </div>
             <app-btn variant="primary" [full]="true" size="lg" [disabled]="!cr || checking" (clicked)="doCheck()">
-              {{ checking ? 'Verifying...' : 'Request your financing today →' }}
+              {{ checking ? ('landing.verifying' | t) : ('landing.cta_button' | t) }} {{ checking ? '' : '→' }}
             </app-btn>
-            <button class="demo-reject" (click)="doReject()">Demo: Not Eligible</button>
+            <button class="demo-reject" (click)="doReject()">{{ 'landing.demo_not_eligible' | t }}</button>
             <div class="signin-link">
-              <p>Already have an account? <a (click)="router.navigate(['/sign-in'])">{{ 'landing.cta_sign_in' | t }}</a></p>
+              <p>{{ 'landing.already_account' | t }} <a (click)="router.navigate(['/sign-in'])">{{ 'landing.cta_sign_in' | t }}</a></p>
             </div>
           </div>
         </div>

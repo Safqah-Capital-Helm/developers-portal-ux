@@ -23,13 +23,13 @@ import { PageHeaderComponent, ButtonComponent, getCompanyLogoByName, TranslatePi
         <div class="filter-group">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g400" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
           <select class="filter-select" [(ngModel)]="filterCompany">
-            <option value="">All Companies</option>
+            <option value="">{{ 'projects.all_companies' | t }}</option>
             <option *ngFor="let c of uniqueCompanies" [value]="c">{{ c }}</option>
           </select>
         </div>
         <button *ngIf="filterCompany" class="filter-clear" (click)="filterCompany = ''">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-          Clear
+          {{ 'projects.clear' | t }}
         </button>
       </div>
 
@@ -44,7 +44,7 @@ import { PageHeaderComponent, ButtonComponent, getCompanyLogoByName, TranslatePi
           <div class="card-img" [style.backgroundImage]="'url(' + p.img + ')'">
             <span *ngIf="p.draft" class="draft-ribbon">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-              Draft
+              {{ 'projects.draft' | t }}
             </span>
           </div>
 
@@ -68,19 +68,19 @@ import { PageHeaderComponent, ButtonComponent, getCompanyLogoByName, TranslatePi
             <div *ngIf="p.draft" class="draft-cta">
               <div class="draft-msg">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.amber500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                Setup incomplete
+                {{ 'projects.setup_incomplete' | t }}
               </div>
-              <button class="complete-btn" (click)="$event.stopPropagation(); go(p.route)">Complete Setup →</button>
+              <button class="complete-btn" (click)="$event.stopPropagation(); go(p.route)">{{ 'projects.complete_setup' | t }} →</button>
             </div>
 
             <!-- Non-draft: cost + financing info -->
             <div *ngIf="!p.draft" class="card-stats">
               <div class="card-stat">
-                <span class="stat-label">Total Cost</span>
+                <span class="stat-label">{{ 'projects.total_cost' | t }}</span>
                 <span class="stat-value">{{ p.cost }}</span>
               </div>
               <div class="card-stat">
-                <span class="stat-label">Product</span>
+                <span class="stat-label">{{ 'projects.product' | t }}</span>
                 <span class="stat-value">{{ p.prod }}</span>
               </div>
             </div>
@@ -93,7 +93,7 @@ import { PageHeaderComponent, ButtonComponent, getCompanyLogoByName, TranslatePi
               </div>
               <button *ngIf="!p.finStatus" class="req-fin-btn" (click)="$event.stopPropagation(); requestFinancing(p)">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.green" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
-                Request Financing
+                {{ 'projects.request_financing' | t }}
               </button>
             </div>
           </div>

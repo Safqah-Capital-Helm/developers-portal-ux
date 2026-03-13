@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { C } from '../../shared/theme';
 import { LogoComponent, TranslatePipe } from '../../shared';
+import { I18nService } from '../../shared/i18n/i18n.service';
 
 @Component({
   selector: 'app-not-dev',
@@ -13,7 +14,7 @@ import { LogoComponent, TranslatePipe } from '../../shared';
       <!-- Header -->
       <header class="top-bar">
         <app-logo [size]="32"></app-logo>
-        <a class="help-link" (click)="go('/support')">Help</a>
+        <a class="help-link" (click)="go('/support')">{{ 'not_eligible.help' | t }}</a>
       </header>
 
       <div class="center-wrap animate-in">
@@ -38,7 +39,7 @@ import { LogoComponent, TranslatePipe } from '../../shared';
               <line x1="12" y1="8" x2="12" y2="12"/>
               <line x1="12" y1="16" x2="12.01" y2="16"/>
             </svg>
-            <span>Common reasons for ineligibility</span>
+            <span>{{ 'not_eligible.reasons_title' | t }}</span>
           </div>
           <div class="reason-list">
             <div class="reason-item" *ngFor="let r of reasons">
@@ -50,7 +51,7 @@ import { LogoComponent, TranslatePipe } from '../../shared';
 
         <!-- What you can do -->
         <div class="actions-section">
-          <p class="actions-title">What you can do</p>
+          <p class="actions-title">{{ 'not_eligible.what_you_can_do' | t }}</p>
           <div class="action-cards">
             <div class="action-card" (click)="go('/')">
               <div class="action-icon" [style.background]="C.greenLt">
@@ -60,8 +61,8 @@ import { LogoComponent, TranslatePipe } from '../../shared';
                 </svg>
               </div>
               <div class="action-text">
-                <span class="action-label">Try a different CR</span>
-                <span class="action-desc">Check eligibility with another commercial registration number</span>
+                <span class="action-label">{{ 'not_eligible.try_different_cr' | t }}</span>
+                <span class="action-desc">{{ 'not_eligible.try_different_cr_desc' | t }}</span>
               </div>
               <svg class="action-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="${C.g400}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="9 18 15 12 9 6"/>
@@ -75,8 +76,8 @@ import { LogoComponent, TranslatePipe } from '../../shared';
                 </svg>
               </div>
               <div class="action-text">
-                <span class="action-label">Contact Support</span>
-                <span class="action-desc">Speak with our team if you believe this is an error</span>
+                <span class="action-label">{{ 'not_eligible.contact_support' | t }}</span>
+                <span class="action-desc">{{ 'not_eligible.contact_support_desc' | t }}</span>
               </div>
               <svg class="action-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="${C.g400}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="9 18 15 12 9 6"/>
@@ -92,8 +93,8 @@ import { LogoComponent, TranslatePipe } from '../../shared';
                 </svg>
               </div>
               <div class="action-text">
-                <span class="action-label">Learn about eligibility</span>
-                <span class="action-desc">Review the requirements for Safqah financing products</span>
+                <span class="action-label">{{ 'not_eligible.learn_eligibility' | t }}</span>
+                <span class="action-desc">{{ 'not_eligible.learn_eligibility_desc' | t }}</span>
               </div>
               <svg class="action-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="${C.g400}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="9 18 15 12 9 6"/>
@@ -108,7 +109,7 @@ import { LogoComponent, TranslatePipe } from '../../shared';
             <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
             <path d="M7 11V7a5 5 0 0110 0v4"/>
           </svg>
-          Your data is secure and has not been stored.
+          {{ 'not_eligible.data_secure' | t }}
         </p>
       </div>
     </div>
@@ -256,14 +257,16 @@ import { LogoComponent, TranslatePipe } from '../../shared';
 export class NotDevComponent {
   readonly C = C;
 
-  reasons = [
-    'The commercial registration is not classified as a real estate developer',
-    'The CR is expired or has been suspended by the Ministry of Commerce',
-    'The entity does not hold a valid RERA developer license',
-    'Insufficient operating history (less than 2 years)',
-  ];
+  get reasons() {
+    return [
+      this.i18n.t('not_eligible.reason_1'),
+      this.i18n.t('not_eligible.reason_2'),
+      this.i18n.t('not_eligible.reason_3'),
+      this.i18n.t('not_eligible.reason_4'),
+    ];
+  }
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private i18n: I18nService) {}
 
   go(path: string) {
     this.router.navigateByUrl(path);

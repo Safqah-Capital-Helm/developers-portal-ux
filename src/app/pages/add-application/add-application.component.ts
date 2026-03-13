@@ -80,18 +80,18 @@ import {
 
           <!-- What happens next -->
           <div class="next-steps">
-            <div class="next-steps-title">What happens next?</div>
+            <div class="next-steps-title">{{ 'add_application.what_next' | t }}</div>
             <div class="next-step-item">
               <div class="next-step-num" [style.background]="C.greenLt" [style.color]="C.green">1</div>
-              <span>Our team will review your project and company details</span>
+              <span>{{ 'add_application.next_step_1' | t }}</span>
             </div>
             <div class="next-step-item">
               <div class="next-step-num" [style.background]="C.greenLt" [style.color]="C.green">2</div>
-              <span>You'll receive a term-sheet within 48 hours</span>
+              <span>{{ 'add_application.next_step_2' | t }}</span>
             </div>
             <div class="next-step-item">
               <div class="next-step-num" [style.background]="C.greenLt" [style.color]="C.green">3</div>
-              <span>Accept the terms and sign the agreement to proceed</span>
+              <span>{{ 'add_application.next_step_3' | t }}</span>
             </div>
           </div>
 
@@ -231,7 +231,7 @@ import {
           <div *ngIf="parsedAmount > 0" class="ratio-section animate-in">
             <div class="ratio-header">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-              <span>Financing Ratios</span>
+              <span>{{ 'add_application.financing_ratios' | t }}</span>
             </div>
 
             <!-- Ratio: Financing / Total Project Cost -->
@@ -241,7 +241,7 @@ import {
                   <div class="ratio-label-icon" [style.background]="C.blue50">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.blue500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
                   </div>
-                  <span>Financing to Total Project Cost</span>
+                  <span>{{ 'add_application.ratio_project_cost' | t }}</span>
                 </div>
                 <div class="ratio-value" [style.color]="getRatioColor(financingToProjectCost)">{{ financingToProjectCost }}%</div>
               </div>
@@ -260,7 +260,7 @@ import {
                   <div class="ratio-label-icon" [style.background]="C.amber50">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.amber500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
                   </div>
-                  <span>Financing to Land Value</span>
+                  <span>{{ 'add_application.ratio_land_value' | t }}</span>
                 </div>
                 <div class="ratio-value" [style.color]="getRatioColor(financingToLandValue)">{{ financingToLandValue }}%</div>
               </div>
@@ -279,7 +279,7 @@ import {
                   <div class="ratio-label-icon" [style.background]="C.greenLt">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.green" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
                   </div>
-                  <span>Financing to Projected Revenue</span>
+                  <span>{{ 'add_application.ratio_revenue' | t }}</span>
                 </div>
                 <div class="ratio-value" [style.color]="getRatioColor(financingToRevenue)">{{ financingToRevenue }}%</div>
               </div>

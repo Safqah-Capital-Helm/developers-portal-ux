@@ -46,23 +46,23 @@ import {
             <span>Al-Salem Development Co.</span>
           </div>
           <p class="role-info">
-            as <span class="role-tag">Editor</span>
+            {{ 'invite_accept.as_role' | t }} <span class="role-tag">Editor</span>
           </p>
         </div>
 
         <!-- Form -->
         <app-card [padding]="28">
-          <div class="form-intro">Complete your profile to get started</div>
+          <div class="form-intro">{{ 'invite_accept.complete_profile' | t }}</div>
 
           <div class="form-fields">
             <div class="field-group">
-              <label class="field-label">Full Name</label>
-              <input class="field-input" placeholder="e.g. Mohammad Al-Omran" [(ngModel)]="fullName" />
+              <label class="field-label">{{ 'invite_accept.full_name' | t }}</label>
+              <input class="field-input" [placeholder]="('invite_accept.full_name_placeholder' | t)" [(ngModel)]="fullName" />
             </div>
 
             <div class="field-group">
-              <label class="field-label">Phone Number</label>
-              <input class="field-input" placeholder="+966 5x xxx xxxx" [(ngModel)]="phone" />
+              <label class="field-label">{{ 'invite_accept.phone' | t }}</label>
+              <input class="field-input" [placeholder]="('invite_accept.phone_placeholder' | t)" [(ngModel)]="phone" />
             </div>
           </div>
 
@@ -72,7 +72,7 @@ import {
               <polyline points="22,6 12,13 2,6"/>
             </svg>
             <span>mohammad&#64;company.com</span>
-            <span class="verified-tag">Verified via invite link</span>
+            <span class="verified-tag">{{ 'invite_accept.verified_via_link' | t }}</span>
           </div>
         </app-card>
 
@@ -81,7 +81,7 @@ import {
           <app-btn variant="primary" size="lg" [disabled]="!fullName.trim() || !phone.trim()" (clicked)="accept()">
             {{ 'invite_accept.accept' | t }} &rarr;
           </app-btn>
-          <button class="decline-btn" (click)="showDecline = true">Decline invitation</button>
+          <button class="decline-btn" (click)="showDecline = true">{{ 'invite_accept.decline_invitation' | t }}</button>
         </div>
 
         <!-- Decline confirmation -->
@@ -92,9 +92,9 @@ import {
                 <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
               </svg>
               <div>
-                <p class="decline-text">Are you sure you want to decline this invitation? You won't be able to access Al-Salem Development Co.'s workspace.</p>
+                <p class="decline-text">{{ 'invite_accept.decline_confirm' | t }}</p>
                 <div class="decline-actions">
-                  <app-btn variant="danger" size="sm" (clicked)="0">Yes, Decline</app-btn>
+                  <app-btn variant="danger" size="sm" (clicked)="0">{{ 'invite_accept.yes_decline' | t }}</app-btn>
                   <app-btn variant="secondary" size="sm" (clicked)="showDecline = false">Cancel</app-btn>
                 </div>
               </div>
@@ -107,7 +107,7 @@ import {
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g400" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
           </svg>
-          <span>By accepting, you agree to the Safqah platform terms.</span>
+          <span>{{ 'invite_accept.terms_note' | t }}</span>
         </div>
 
       </div>

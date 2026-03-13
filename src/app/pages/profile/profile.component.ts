@@ -13,10 +13,10 @@ import { NavComponent, BackLinkComponent, CardComponent, InputComponent, ButtonC
     <div class="page">
       <app-nav></app-nav>
       <div class="container">
-        <app-back-link to="/dashboard" label="Back to Dashboard"></app-back-link>
+        <app-back-link to="/dashboard" [label]="('profile.back_to_dashboard' | t)"></app-back-link>
 
         <h1 class="page-title">{{ 'profile.title' | t }}</h1>
-        <p class="page-subtitle">Manage your account details and preferences</p>
+        <p class="page-subtitle">{{ 'profile.subtitle' | t }}</p>
 
         <app-card [padding]="28">
           <!-- Avatar area -->
@@ -32,7 +32,7 @@ import { NavComponent, BackLinkComponent, CardComponent, InputComponent, ButtonC
             </div>
             <div class="avatar-info">
               <span class="avatar-name">Ahmed Al-Salem</span>
-              <span class="avatar-role">Developer Account</span>
+              <span class="avatar-role">{{ 'profile.developer_account' | t }}</span>
             </div>
           </div>
 
@@ -41,7 +41,7 @@ import { NavComponent, BackLinkComponent, CardComponent, InputComponent, ButtonC
             [label]="'profile.full_name' | t"
             [value]="name"
             (valueChange)="name = $event"
-            placeholder="Enter your full name"
+            [placeholder]="('profile.full_name_placeholder' | t)"
             [helper]="'profile.full_name_helper' | t"
           ></app-input>
 
@@ -49,7 +49,7 @@ import { NavComponent, BackLinkComponent, CardComponent, InputComponent, ButtonC
             [label]="'profile.email' | t"
             [value]="email"
             (valueChange)="email = $event"
-            placeholder="Enter your email"
+            [placeholder]="('profile.email_placeholder' | t)"
             [helper]="'profile.email_helper' | t"
           ></app-input>
 
@@ -57,52 +57,52 @@ import { NavComponent, BackLinkComponent, CardComponent, InputComponent, ButtonC
             [label]="'profile.phone' | t"
             [value]="phone"
             (valueChange)="phone = $event"
-            placeholder="Enter your phone number"
+            [placeholder]="('profile.phone_placeholder' | t)"
             [helper]="'profile.phone_helper' | t"
           ></app-input>
 
           <!-- Language Preference -->
           <div class="section">
-            <label class="section-label">Language Preference</label>
+            <label class="section-label">{{ 'profile.language' | t }}</label>
             <div class="lang-buttons">
               <button
                 class="lang-btn"
                 [class.selected]="lang === 'en'"
                 (click)="lang = 'en'"
-              >English</button>
+              >{{ 'profile.english' | t }}</button>
               <button
                 class="lang-btn"
                 [class.selected]="lang === 'ar'"
                 (click)="lang = 'ar'"
-              >العربية</button>
+              >{{ 'profile.arabic' | t }}</button>
             </div>
           </div>
 
           <!-- Notifications -->
           <div class="section">
-            <label class="section-label">Notifications</label>
+            <label class="section-label">{{ 'profile.notifications' | t }}</label>
             <div class="checkbox-group">
               <label class="checkbox-item">
                 <input type="checkbox" [(ngModel)]="notifEmail" />
                 <span class="checkmark"></span>
-                Email notifications
+                {{ 'profile.notif_email' | t }}
               </label>
               <label class="checkbox-item">
                 <input type="checkbox" [(ngModel)]="notifSms" />
                 <span class="checkmark"></span>
-                SMS alerts
+                {{ 'profile.notif_sms' | t }}
               </label>
               <label class="checkbox-item">
                 <input type="checkbox" [(ngModel)]="notifWhatsapp" />
                 <span class="checkmark"></span>
-                WhatsApp messages
+                {{ 'profile.notif_whatsapp' | t }}
               </label>
             </div>
           </div>
 
           <!-- Success message -->
           <div class="success-msg" *ngIf="saved">
-            <span>&#10003; Changes saved successfully</span>
+            <span>&#10003; {{ 'profile.saved' | t }}</span>
           </div>
 
           <!-- Save button -->
@@ -111,7 +111,7 @@ import { NavComponent, BackLinkComponent, CardComponent, InputComponent, ButtonC
 
         <!-- Delete account link -->
         <div class="delete-area">
-          <button class="delete-link">Delete Account</button>
+          <button class="delete-link">{{ 'profile.delete_account' | t }}</button>
         </div>
       </div>
     </div>

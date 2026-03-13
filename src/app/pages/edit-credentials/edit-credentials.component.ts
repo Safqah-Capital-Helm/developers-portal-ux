@@ -9,6 +9,7 @@ import {
   PrevCredentialsFormComponent,
   TranslatePipe,
 } from '../../shared';
+import { I18nService } from '../../shared/i18n/i18n.service';
 import type { PrevCredentialsData } from '../../shared';
 
 @Component({
@@ -76,7 +77,7 @@ export class EditCredentialsComponent implements OnInit {
 
   companyId = 0;
   backLink = '/dashboard/companies';
-  backLabel = 'Back to Companies';
+  backLabel = '';
   initialData: Partial<PrevCredentialsData> | null = null;
 
   // Mirror of company data (same as company-detail for demo purposes)
@@ -95,13 +96,13 @@ export class EditCredentialsComponent implements OnInit {
     },
   ];
 
-  constructor(private route: ActivatedRoute, private router: Router) {}
+  constructor(private route: ActivatedRoute, private router: Router, private i18n: I18nService) {}
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('companyId'));
     this.companyId = id;
     this.backLink = '/dashboard/company/' + id;
-    this.backLabel = 'Back to Company';
+    this.backLabel = this.i18n.t('credentials.back_to_company');
 
     if (id >= 0 && id < this.companies.length) {
       this.initialData = this.companies[id];

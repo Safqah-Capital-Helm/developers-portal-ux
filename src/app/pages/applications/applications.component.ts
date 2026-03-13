@@ -34,15 +34,15 @@ import { BadgeComponent, ListCardComponent, ButtonComponent, PageHeaderComponent
           </div>
           <div class="app-grid">
             <div class="app-cell">
-              <div class="cell-label">Financing Amount</div>
+              <div class="cell-label">{{ 'applications.financing_amount' | t }}</div>
               <div class="cell-value">{{ app.amount }}</div>
             </div>
             <div class="app-cell">
-              <div class="cell-label">Product</div>
+              <div class="cell-label">{{ 'applications.product' | t }}</div>
               <div class="cell-value">{{ app.product }}</div>
             </div>
             <div class="app-cell">
-              <div class="cell-label">Submitted</div>
+              <div class="cell-label">{{ 'applications.submitted' | t }}</div>
               <div class="cell-value">{{ app.submitted || '\u2014' }}</div>
             </div>
           </div>

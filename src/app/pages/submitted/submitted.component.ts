@@ -9,6 +9,7 @@ import { ButtonComponent } from '../../shared/components/button/button.component
 import { CardComponent } from '../../shared/components/card/card.component';
 import { BadgeComponent } from '../../shared/components/badge/badge.component';
 import { TranslatePipe } from '../../shared';
+import { I18nService } from '../../shared/i18n/i18n.service';
 
 @Component({
   selector: 'app-submitted',
@@ -58,8 +59,8 @@ import { TranslatePipe } from '../../shared';
             <div class="sh-left">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${C.amber600}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
               <div>
-                <h2 class="section-title">Action Required</h2>
-                <p class="section-sub">The review team has requested additional information</p>
+                <h2 class="section-title">{{ 'submitted.action_required' | t }}</h2>
+                <p class="section-sub">{{ 'submitted.action_desc' | t }}</p>
               </div>
             </div>
             <div class="sh-right">
@@ -83,12 +84,12 @@ import { TranslatePipe } from '../../shared';
                   </div>
                 </div>
                 <div *ngIf="req.type !== 'document'" class="ir-response">
-                  <textarea [(ngModel)]="req.response" [placeholder]="'Type your response...'" class="ir-textarea" rows="3"></textarea>
+                  <textarea [(ngModel)]="req.response" [placeholder]="('submitted.type_response' | t)" class="ir-textarea" rows="3"></textarea>
                 </div>
                 <div *ngIf="req.type === 'document'" class="ir-response">
                   <div *ngIf="!req.fileUploaded" class="ir-upload-box" (click)="req.fileUploaded = true; req.fileName = 'bank_statement_2026.pdf'">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${C.g400}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
-                    <span>Click to upload document</span>
+                    <span>{{ 'submitted.upload_doc' | t }}</span>
                   </div>
                   <div *ngIf="req.fileUploaded" class="ir-uploaded">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="${C.green}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -99,8 +100,8 @@ import { TranslatePipe } from '../../shared';
                 <div class="ir-response ir-attachments">
                   <div class="ir-attach-label">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="${C.g400}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>
-                    <span>Supporting files</span>
-                    <span class="ir-attach-opt">(optional)</span>
+                    <span>{{ 'submitted.supporting_files' | t }}</span>
+                    <span class="ir-attach-opt">{{ 'submitted.optional' | t }}</span>
                   </div>
                   <div *ngFor="let f of req.files; let fi = index" class="ir-uploaded ir-attach-file">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="${C.green}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -109,13 +110,13 @@ import { TranslatePipe } from '../../shared';
                   </div>
                   <button class="ir-add-file" (click)="addSupportingFile(req)">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="${C.g500}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                    Add file
+                    {{ 'submitted.add_file' | t }}
                   </button>
                 </div>
               </div>
             </div>
             <div class="ir-actions">
-              <app-btn variant="primary" size="md" [disabled]="!canSubmitInfoResponse()" (clicked)="submitInfoResponse()">Submit Response</app-btn>
+              <app-btn variant="primary" size="md" [disabled]="!canSubmitInfoResponse()" (clicked)="submitInfoResponse()">{{ 'submitted.submit_response' | t }}</app-btn>
             </div>
           </div>
         </div>
@@ -125,8 +126,8 @@ import { TranslatePipe } from '../../shared';
           <div class="ir-confirmed-inner">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${C.green}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
             <div>
-              <strong>Response submitted</strong>
-              <span>Your response has been sent to the review team. Processing will continue shortly.</span>
+              <strong>{{ 'submitted.response_submitted' | t }}</strong>
+              <span>{{ 'submitted.response_desc' | t }}</span>
             </div>
           </div>
         </div>
@@ -137,7 +138,7 @@ import { TranslatePipe } from '../../shared';
             <div class="sh-left">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" [attr.stroke]="pReview === 'approved' ? '${C.green}' : '${C.g400}'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
               <div>
-                <h2 class="section-title">Project Review</h2>
+                <h2 class="section-title">{{ 'submitted.project_review' | t }}</h2>
                 <p class="section-sub">Al Noor Residential</p>
               </div>
             </div>
@@ -177,9 +178,9 @@ import { TranslatePipe } from '../../shared';
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${C.amber600}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
               </div>
               <div class="alert-body">
-                <strong>Additional information needed</strong>
-                <p>Our review team has requested more details about the project.</p>
-                <app-btn variant="secondary" size="sm" (clicked)="pReview = 'in_review'">Respond to Feedback</app-btn>
+                <strong>{{ 'submitted.info_needed' | t }}</strong>
+                <p>{{ 'submitted.info_needed_project' | t }}</p>
+                <app-btn variant="secondary" size="sm" (clicked)="pReview = 'in_review'">{{ 'submitted.respond_feedback' | t }}</app-btn>
               </div>
             </div>
             <div *ngIf="pReview === 'rejected'" class="alert-box alert-red">
@@ -187,8 +188,8 @@ import { TranslatePipe } from '../../shared';
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${C.red500}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
               </div>
               <div class="alert-body">
-                <strong>Project review was not approved</strong>
-                <p>The project did not meet eligibility criteria at this time.</p>
+                <strong>{{ 'submitted.not_approved_project' | t }}</strong>
+                <p>{{ 'submitted.not_approved_project_desc' | t }}</p>
               </div>
             </div>
           </div>
@@ -200,7 +201,7 @@ import { TranslatePipe } from '../../shared';
             <div class="sh-left">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" [attr.stroke]="cReview === 'approved' ? '${C.green}' : '${C.g400}'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
               <div>
-                <h2 class="section-title">Company Review</h2>
+                <h2 class="section-title">{{ 'submitted.company_review' | t }}</h2>
                 <p class="section-sub">Al Omran Real Estate Dev Co.</p>
               </div>
             </div>
@@ -240,9 +241,9 @@ import { TranslatePipe } from '../../shared';
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${C.amber600}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
               </div>
               <div class="alert-body">
-                <strong>Additional information needed</strong>
-                <p>The review team needs more company documentation.</p>
-                <app-btn variant="secondary" size="sm" (clicked)="cReview = 'in_review'">Respond to Feedback</app-btn>
+                <strong>{{ 'submitted.info_needed' | t }}</strong>
+                <p>{{ 'submitted.info_needed_company' | t }}</p>
+                <app-btn variant="secondary" size="sm" (clicked)="cReview = 'in_review'">{{ 'submitted.respond_feedback' | t }}</app-btn>
               </div>
             </div>
             <div *ngIf="cReview === 'rejected'" class="alert-box alert-red">
@@ -250,8 +251,8 @@ import { TranslatePipe } from '../../shared';
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${C.red500}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
               </div>
               <div class="alert-body">
-                <strong>Company review was not approved</strong>
-                <p>The company did not meet the required criteria.</p>
+                <strong>{{ 'submitted.not_approved_company' | t }}</strong>
+                <p>{{ 'submitted.not_approved_company_desc' | t }}</p>
               </div>
             </div>
           </div>
@@ -263,7 +264,7 @@ import { TranslatePipe } from '../../shared';
             <div class="sh-left">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" [attr.stroke]="tsStatus === 'accepted' ? '${C.green}' : '${C.g400}'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
               <div>
-                <h2 class="section-title">Term-sheet</h2>
+                <h2 class="section-title">{{ 'submitted.termsheet' | t }}</h2>
               </div>
             </div>
             <div class="sh-right">
@@ -274,7 +275,7 @@ import { TranslatePipe } from '../../shared';
 
           <div *ngIf="!tsUnlocked" class="lock-overlay">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${C.g400}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-            <span>Unlocks after review</span>
+            <span>{{ 'submitted.unlocks_after_review' | t }}</span>
           </div>
 
           <div *ngIf="tsUnlocked && expandedSection === 'termsheet'" class="section-body">
@@ -283,39 +284,39 @@ import { TranslatePipe } from '../../shared';
                 <div class="ts-inner">
                   <div class="ts-highlight">
                     <div class="ts-hl-cell" [style.background]="'${C.greenLt}'">
-                      <span class="ts-hl-label">Amount</span>
+                      <span class="ts-hl-label">{{ 'submitted.amount' | t }}</span>
                       <span class="ts-hl-value" [style.color]="'${C.green}'">21M SAR</span>
                     </div>
                     <div class="ts-hl-cell" [style.background]="'${C.g50}'">
-                      <span class="ts-hl-label">Return</span>
+                      <span class="ts-hl-label">{{ 'submitted.return' | t }}</span>
                       <span class="ts-hl-value" [style.color]="'${C.g800}'">8.5%</span>
                     </div>
                   </div>
                   <div class="ts-details">
                     <div class="ts-detail">
-                      <span class="ts-d-label">Product</span>
+                      <span class="ts-d-label">{{ 'submitted.product' | t }}</span>
                       <span class="ts-d-value">Development</span>
                     </div>
                     <div class="ts-detail">
-                      <span class="ts-d-label">Tenor</span>
+                      <span class="ts-d-label">{{ 'submitted.tenor' | t }}</span>
                       <span class="ts-d-value">24 months</span>
                     </div>
                     <div class="ts-detail">
-                      <span class="ts-d-label">Structure</span>
+                      <span class="ts-d-label">{{ 'submitted.structure' | t }}</span>
                       <span class="ts-d-value">Murabaha</span>
                     </div>
                   </div>
                 </div>
               </app-card>
               <div class="ts-actions" *ngIf="tsStatus === 'ready'">
-                <app-btn variant="secondary" size="md" (clicked)="go('/application/1/term-sheet')">View Full Term-sheet &rarr;</app-btn>
-                <app-btn variant="primary" size="sm" (clicked)="tsStatus = 'accepted'; expandedSection = 'agreements'">Accept Term-sheet</app-btn>
+                <app-btn variant="secondary" size="md" (clicked)="go('/application/1/term-sheet')">{{ 'submitted.view_termsheet' | t }}</app-btn>
+                <app-btn variant="primary" size="sm" (clicked)="tsStatus = 'accepted'; expandedSection = 'agreements'">{{ 'submitted.accept_termsheet' | t }}</app-btn>
               </div>
               <div *ngIf="tsStatus === 'pending'" class="waiting-box">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${C.g400}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                 <div>
-                  <span class="waiting-title">Term-sheet is being prepared</span>
-                  <span class="waiting-sub">You will be notified when your term-sheet is ready for review.</span>
+                  <span class="waiting-title">{{ 'submitted.ts_preparing' | t }}</span>
+                  <span class="waiting-sub">{{ 'submitted.ts_preparing_desc' | t }}</span>
                 </div>
               </div>
             </div>
@@ -326,8 +327,8 @@ import { TranslatePipe } from '../../shared';
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${C.green}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                 </div>
                 <div>
-                  <strong>Term-sheet accepted</strong>
-                  <p>You accepted the financing term-sheet on March 9, 2026.</p>
+                  <strong>{{ 'submitted.ts_accepted' | t }}</strong>
+                  <p>{{ 'submitted.ts_accepted_desc' | t:{date: 'March 9, 2026'} }}</p>
                 </div>
               </div>
             </div>
@@ -340,18 +341,18 @@ import { TranslatePipe } from '../../shared';
             <div class="sh-left">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" [attr.stroke]="allSigned ? '${C.green}' : '${C.g400}'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
               <div>
-                <h2 class="section-title">Agreement Signing</h2>
+                <h2 class="section-title">{{ 'submitted.agreements' | t }}</h2>
               </div>
             </div>
             <div class="sh-right">
-              <app-badge *ngIf="agUnlocked" [color]="allSigned ? 'green' : 'amber'">{{ allSigned ? 'Completed' : 'Awaiting Signatures' }}</app-badge>
+              <app-badge *ngIf="agUnlocked" [color]="allSigned ? 'green' : 'amber'">{{ allSigned ? ('submitted.completed' | t) : ('submitted.awaiting_signatures' | t) }}</app-badge>
               <svg *ngIf="agUnlocked" class="chevron" [class.chevron-open]="expandedSection === 'agreements'" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="${C.g400}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
             </div>
           </div>
 
           <div *ngIf="!agUnlocked" class="lock-overlay">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${C.g400}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-            <span>Unlocks after term-sheet acceptance</span>
+            <span>{{ 'submitted.unlocks_after_acceptance' | t }}</span>
           </div>
 
           <div *ngIf="agUnlocked && expandedSection === 'agreements'" class="section-body">
@@ -363,18 +364,18 @@ import { TranslatePipe } from '../../shared';
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${C.g500}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                     </div>
                     <div class="ag-info">
-                      <strong>Debt Issuance Agreement</strong>
-                      <span class="ag-desc">Primary financing agreement between issuer and investor</span>
+                      <strong>{{ 'submitted.debt_agreement' | t }}</strong>
+                      <span class="ag-desc">{{ 'submitted.debt_agreement_desc' | t }}</span>
                     </div>
-                    <app-badge [color]="ag1 === 'signed' ? 'green' : 'amber'">{{ ag1 === 'signed' ? 'Signed' : 'Awaiting' }}</app-badge>
+                    <app-badge [color]="ag1 === 'signed' ? 'green' : 'amber'">{{ ag1 === 'signed' ? ('submitted.signed' | t) : ('submitted.awaiting' | t) }}</app-badge>
                   </div>
                   <div *ngIf="ag1 === 'pending'" class="ag-actions">
-                    <app-btn variant="primary" size="sm" (clicked)="signAgreement1()">Sign Agreement</app-btn>
-                    <app-btn variant="ghost" size="sm" (clicked)="go('/application/1/term-sheet')">Preview</app-btn>
+                    <app-btn variant="primary" size="sm" (clicked)="signAgreement1()">{{ 'submitted.sign_agreement' | t }}</app-btn>
+                    <app-btn variant="ghost" size="sm" (clicked)="go('/application/1/term-sheet')">{{ 'submitted.preview' | t }}</app-btn>
                   </div>
                   <div *ngIf="ag1 === 'signed'" class="ag-signed">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="${C.green}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                    <span>Signed on March 9, 2026</span>
+                    <span>{{ 'submitted.signed_on' | t:{date: 'March 9, 2026'} }}</span>
                   </div>
                 </div>
               </app-card>
@@ -386,18 +387,18 @@ import { TranslatePipe } from '../../shared';
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${C.g500}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                     </div>
                     <div class="ag-info">
-                      <strong>Uhda &amp; Wekala Agreement</strong>
-                      <span class="ag-desc">Custody and agency agreement for asset management</span>
+                      <strong>{{ 'submitted.uhda_agreement' | t }}</strong>
+                      <span class="ag-desc">{{ 'submitted.uhda_agreement_desc' | t }}</span>
                     </div>
-                    <app-badge [color]="ag2 === 'signed' ? 'green' : 'amber'">{{ ag2 === 'signed' ? 'Signed' : 'Awaiting' }}</app-badge>
+                    <app-badge [color]="ag2 === 'signed' ? 'green' : 'amber'">{{ ag2 === 'signed' ? ('submitted.signed' | t) : ('submitted.awaiting' | t) }}</app-badge>
                   </div>
                   <div *ngIf="ag2 === 'pending'" class="ag-actions">
-                    <app-btn variant="primary" size="sm" (clicked)="signAgreement2()">Sign Agreement</app-btn>
-                    <app-btn variant="ghost" size="sm" (clicked)="go('/application/1/term-sheet')">Preview</app-btn>
+                    <app-btn variant="primary" size="sm" (clicked)="signAgreement2()">{{ 'submitted.sign_agreement' | t }}</app-btn>
+                    <app-btn variant="ghost" size="sm" (clicked)="go('/application/1/term-sheet')">{{ 'submitted.preview' | t }}</app-btn>
                   </div>
                   <div *ngIf="ag2 === 'signed'" class="ag-signed">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="${C.green}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                    <span>Signed on March 9, 2026</span>
+                    <span>{{ 'submitted.signed_on' | t:{date: 'March 9, 2026'} }}</span>
                   </div>
                 </div>
               </app-card>
@@ -411,25 +412,25 @@ import { TranslatePipe } from '../../shared';
             <div class="sh-left">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" [attr.stroke]="allCompleted ? '${C.green}' : '${C.g400}'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
               <div>
-                <h2 class="section-title">Deal Launch</h2>
+                <h2 class="section-title">{{ 'submitted.deal_launch' | t }}</h2>
               </div>
             </div>
             <div class="sh-right">
-              <app-badge *ngIf="launchUnlocked" [color]="allCompleted ? 'green' : 'amber'">{{ allCompleted ? 'Completed' : 'In Progress' }}</app-badge>
+              <app-badge *ngIf="launchUnlocked" [color]="allCompleted ? 'green' : 'amber'">{{ allCompleted ? ('submitted.completed' | t) : ('submitted.in_progress' | t) }}</app-badge>
               <svg *ngIf="launchUnlocked" class="chevron" [class.chevron-open]="expandedSection === 'launch'" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="${C.g400}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
             </div>
           </div>
 
           <div *ngIf="!launchUnlocked" class="lock-overlay">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${C.g400}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-            <span>Unlocks after agreements are signed</span>
+            <span>{{ 'submitted.unlocks_after_signing' | t }}</span>
           </div>
 
           <div *ngIf="launchUnlocked && expandedSection === 'launch'" class="section-body">
             <!-- Admin-triggered timeline steps -->
             <div *ngIf="!allCompleted" class="launch-info-banner">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="${C.blue500}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-              <span>These steps are processed by the Safqah team. No action is required from you.</span>
+              <span>{{ 'submitted.no_action_required' | t }}</span>
             </div>
 
             <div class="timeline">
@@ -450,7 +451,7 @@ import { TranslatePipe } from '../../shared';
                     <span class="tl-desc" *ngIf="stage.desc">{{ stage.desc }}</span>
                     <span *ngIf="i === ls && ls < launchStages.length" class="tl-admin-tag">
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="${C.g400}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-                      Processed by Safqah
+                      {{ 'submitted.processed_by_safqah' | t }}
                     </span>
                     <button *ngIf="i === ls && ls < launchStages.length" class="demo-advance" (click)="$event.stopPropagation(); advanceLaunch()">Demo: Complete step &darr;</button>
                   </div>
@@ -464,9 +465,9 @@ import { TranslatePipe } from '../../shared';
                 <div class="celebration-icon">
                   <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                 </div>
-                <h3 class="celebration-title">Deal Launched!</h3>
-                <p class="celebration-desc">Al Noor Residential is now live on the Safqah platform. Investors can begin participating in this financing opportunity.</p>
-                <app-btn variant="secondary" size="md" (clicked)="go('/dashboard')">Back to Dashboard</app-btn>
+                <h3 class="celebration-title">{{ 'submitted.deal_launched' | t }}</h3>
+                <p class="celebration-desc">{{ 'submitted.deal_launched_desc' | t }}</p>
+                <app-btn variant="secondary" size="md" (clicked)="go('/dashboard')">{{ 'submitted.back_to_dashboard' | t }}</app-btn>
               </div>
             </div>
           </div>
@@ -479,15 +480,15 @@ import { TranslatePipe } from '../../shared';
               <polyline *ngIf="!showCancel" points="6 9 12 15 18 9"/>
               <polyline *ngIf="showCancel" points="18 15 12 9 6 15"/>
             </svg>
-            Cancel this request
+            {{ 'submitted.cancel_this_request' | t }}
           </button>
           <div *ngIf="showCancel" class="cancel-body">
-            <p class="cancel-prompt">Please let us know why you'd like to cancel:</p>
+            <p class="cancel-prompt">{{ 'submitted.cancel_reason' | t }}</p>
             <label *ngFor="let r of cancelReasons" class="radio-row">
               <input type="radio" name="cancelReason" [value]="r" [(ngModel)]="cancelReason" />
               <span>{{ r }}</span>
             </label>
-            <app-btn variant="danger" size="sm" [disabled]="!cancelReason" (clicked)="confirmCancel()">Confirm Cancellation</app-btn>
+            <app-btn variant="danger" size="sm" [disabled]="!cancelReason" (clicked)="confirmCancel()">{{ 'submitted.confirm_cancel' | t }}</app-btn>
           </div>
         </div>
 
@@ -802,7 +803,9 @@ export class SubmittedComponent {
   infoRequestSubmitted = false;
 
   // --- Static data ---
-  pipelineSteps = ['Review', 'Term-sheet', 'Signing', 'Launch', 'Completed'];
+  get pipelineSteps() {
+    return [this.i18n.t('submitted.pipe_review'), this.i18n.t('submitted.pipe_termsheet'), this.i18n.t('submitted.pipe_signing'), this.i18n.t('submitted.pipe_launch'), this.i18n.t('submitted.pipe_completed')];
+  }
 
   projectStages = [
     { name: 'Eligibility screening', desc: 'Initial check of project eligibility criteria', sla: '~2 business hours' },
@@ -823,14 +826,16 @@ export class SubmittedComponent {
     { name: 'Deal launch', desc: 'Project goes live on the Safqah platform' },
   ];
 
-  cancelReasons = [
-    'Found alternative financing',
-    'Project plans changed or cancelled',
-    'Terms or timeline don\'t meet my needs',
-    'Going with a different provider',
-    'Need to update my application details first',
-    'Other reason',
-  ];
+  get cancelReasons() {
+    return [
+      this.i18n.t('submitted.cancel_reason_1'),
+      this.i18n.t('submitted.cancel_reason_2'),
+      this.i18n.t('submitted.cancel_reason_3'),
+      this.i18n.t('submitted.cancel_reason_4'),
+      this.i18n.t('submitted.cancel_reason_5'),
+      this.i18n.t('submitted.cancel_reason_6'),
+    ];
+  }
 
   demoStates = [
     { key: 'initial', label: 'In Review' },
@@ -841,7 +846,7 @@ export class SubmittedComponent {
     { key: 'completed', label: 'Completed' },
   ];
 
-  constructor(private router: Router, private route: ActivatedRoute) {}
+  constructor(private router: Router, private route: ActivatedRoute, private i18n: I18nService) {}
 
   // --- Derived state ---
   get allReviewsDone(): boolean {
@@ -894,10 +899,10 @@ export class SubmittedComponent {
 
   reviewBadgeLabel(status: string): string {
     switch (status) {
-      case 'approved': return 'Approved';
-      case 'rejected': return 'Rejected';
-      case 'feedback': return 'Feedback Needed';
-      default: return 'In Review';
+      case 'approved': return this.i18n.t('submitted.badge_approved');
+      case 'rejected': return this.i18n.t('submitted.badge_rejected');
+      case 'feedback': return this.i18n.t('submitted.badge_feedback');
+      default: return this.i18n.t('submitted.badge_in_review');
     }
   }
 
@@ -912,10 +917,10 @@ export class SubmittedComponent {
 
   tsBadgeLabel(): string {
     switch (this.tsStatus) {
-      case 'accepted': return 'Accepted';
-      case 'ready': return 'Ready for Review';
-      case 'pending': return 'Preparing';
-      default: return 'Locked';
+      case 'accepted': return this.i18n.t('submitted.badge_accepted');
+      case 'ready': return this.i18n.t('submitted.badge_ready');
+      case 'pending': return this.i18n.t('submitted.badge_preparing');
+      default: return this.i18n.t('submitted.badge_locked');
     }
   }
 
