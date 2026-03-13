@@ -46,12 +46,26 @@ import { ButtonComponent, BadgeComponent, InputComponent, StatCardComponent, Lis
         </div>
 
         <app-list-card *ngFor="let app of activeApplications" [statusColor]="app.sc" (click)="onAppClick(app)">
+          <div class="app-icon-sm"
+               [class.icon-green]="app.sc === 'green'"
+               [class.icon-amber]="app.sc === 'amber'"
+               [class.icon-blue]="app.sc === 'blue'"
+               [class.icon-red]="app.sc === 'red'">
+            <svg *ngIf="app.sc === 'green'" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><polyline points="16 13 12 17 9 14"/></svg>
+            <svg *ngIf="app.sc === 'amber'" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <svg *ngIf="app.sc === 'blue'" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            <svg *ngIf="app.sc === 'red'" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9.5" y1="12.5" x2="14.5" y2="17.5"/><line x1="14.5" y1="12.5" x2="9.5" y2="17.5"/></svg>
+          </div>
           <div class="recent-info">
             <span class="recent-name">{{ app.projectName }}</span>
             <span class="recent-sub">{{ app.company }} &middot; {{ app.product }}</span>
           </div>
           <div class="recent-right">
-            <span class="recent-amount">{{ app.amount }}</span>
+            <div class="recent-chip"
+                 [class.chip-green]="app.sc === 'green'"
+                 [class.chip-amber]="app.sc === 'amber'"
+                 [class.chip-blue]="app.sc === 'blue'"
+                 [class.chip-red]="app.sc === 'red'">{{ app.amount }}</div>
             <app-badge [color]="$any(app.sc)">{{ app.status }}</app-badge>
           </div>
         </app-list-card>
@@ -246,11 +260,32 @@ import { ButtonComponent, BadgeComponent, InputComponent, StatCardComponent, Lis
     .view-all { margin-left: auto; font-size: 13px; font-weight: 700; color: ${C.green}; cursor: pointer; transition: opacity 0.15s; }
     .view-all:hover { opacity: 0.7; }
 
-    .recent-info { display: flex; flex-direction: column; gap: 2px; }
+    /* App status icon (compact) */
+    .app-icon-sm {
+      width: 34px; height: 34px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .icon-green { background: ${C.greenLt}; color: ${C.green}; }
+    .icon-amber { background: ${C.amber100}; color: ${C.amber600}; }
+    .icon-blue { background: ${C.blue50}; color: ${C.blue500}; }
+    .icon-red { background: ${C.red50}; color: ${C.red500}; }
+
+    .recent-info { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
     .recent-name { font-size: 14px; font-weight: 700; color: ${C.g900}; }
     .recent-sub { font-size: 12px; color: ${C.g500}; }
-    .recent-right { display: flex; align-items: center; gap: 12px; }
-    .recent-amount { font-size: 13px; font-weight: 700; color: ${C.g600}; }
+    .recent-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+
+    /* Amount chip (colored) */
+    .recent-chip {
+      display: inline-flex; align-items: center;
+      padding: 3px 10px; border-radius: 6px;
+      font-size: 12px; font-weight: 800;
+    }
+    .chip-green { background: ${C.greenLt}; color: ${C.green}; }
+    .chip-amber { background: ${C.amber100}; color: ${C.amber600}; }
+    .chip-blue { background: ${C.blue100}; color: ${C.blue500}; }
+    .chip-red { background: ${C.red50}; color: ${C.red500}; }
 
     .onboarding-card { background: #fff; border: 1px solid ${C.g200}; border-radius: 16px; padding: 24px; }
     .onboarding-header { margin-bottom: 20px; }
@@ -358,7 +393,9 @@ import { ButtonComponent, BadgeComponent, InputComponent, StatCardComponent, Lis
       .step-card { flex-wrap: wrap; }
       .step-actions { width: 100%; justify-content: flex-end; }
       .recent-right { flex-direction: column; align-items: flex-end; gap: 4px; }
-      .recent-amount { font-size: 12px; }
+      .recent-chip { font-size: 11px; padding: 2px 8px; }
+      .app-icon-sm { width: 30px; height: 30px; border-radius: 8px; }
+      .app-icon-sm svg { width: 13px; height: 13px; }
       .notif-card { flex-wrap: wrap; }
       .notif-arrow { display: none; }
       .referral-chips { gap: 6px; }
@@ -459,9 +496,10 @@ export class DashboardOverviewComponent implements OnInit {
     // Load applications from API
     if (mode === 'full' || mode === 'clear') {
       this.api.getDashboardApplications(mode).subscribe(apps => {
-        if (mode === 'full') this.fullApplications = apps;
-        else this.clearApplications = apps;
-        this.activeApplications = apps;
+        const mapped = apps.map((a: any) => ({ ...a, sc: a.statusColor }));
+        if (mode === 'full') this.fullApplications = mapped;
+        else this.clearApplications = mapped;
+        this.activeApplications = mapped;
       });
     } else {
       this.activeApplications = [];

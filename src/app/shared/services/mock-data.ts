@@ -97,6 +97,9 @@ export interface ActivityEvent {
   time: string;
   badge: string;
   badgeLabel: string;
+  model: 'company' | 'project' | 'application';
+  modelName: string;
+  modelRoute: string;
 }
 
 export interface FaqItem {
@@ -164,18 +167,18 @@ export const MOCK_TEAM_RAW = [
 ];
 
 export const MOCK_ACTIVITY_EVENTS_RAW = [
-  { id: 1,  type: 'termsheet',   titleKey: 'activity.ev_ts_accepted',        descKey: 'activity.ev_ts_accepted_desc',        actor: 'Ahmed Al-Salem',  time: 'Mar 8, 2026 at 2:15 PM',   badge: 'green', badgeLabelKey: 'activity.badge_accepted' },
-  { id: 2,  type: 'termsheet',   titleKey: 'activity.ev_ts_viewed',           descKey: 'activity.ev_ts_viewed_desc',           actor: 'Ahmed Al-Salem',  time: 'Mar 7, 2026 at 11:30 AM',  badge: 'blue',  badgeLabelKey: 'activity.badge_info' },
-  { id: 3,  type: 'termsheet',   titleKey: 'activity.ev_ts_issued',           descKey: 'activity.ev_ts_issued_desc',           actor: 'Safqah Team',     time: 'Mar 6, 2026 at 9:00 AM',   badge: 'blue',  badgeLabelKey: 'activity.badge_info' },
-  { id: 4,  type: 'review',      titleKey: 'activity.ev_company_approved',    descKey: 'activity.ev_company_approved_desc',    actor: 'Safqah Team',     time: 'Mar 5, 2026 at 4:20 PM',   badge: 'green', badgeLabelKey: 'activity.badge_approved' },
-  { id: 5,  type: 'review',      titleKey: 'activity.ev_project_approved',    descKey: 'activity.ev_project_approved_desc',    actor: 'Safqah Team',     time: 'Mar 4, 2026 at 3:45 PM',   badge: 'green', badgeLabelKey: 'activity.badge_approved' },
-  { id: 6,  type: 'declaration', titleKey: 'activity.ev_declaration_signed',  descKey: 'activity.ev_declaration_signed_desc',  actor: 'Ahmed Al-Salem',  time: 'Mar 3, 2026 at 10:00 AM',  badge: 'green', badgeLabelKey: 'activity.badge_completed' },
-  { id: 7,  type: 'document',    titleKey: 'activity.ev_docs_uploaded',       descKey: 'activity.ev_docs_uploaded_desc',       actor: 'Ahmed Al-Salem',  time: 'Mar 2, 2026 at 2:30 PM',   badge: 'blue',  badgeLabelKey: 'activity.badge_info' },
-  { id: 8,  type: 'team',        titleKey: 'activity.ev_member_joined',       descKey: 'activity.ev_member_joined_desc',       actor: 'Sara Al-Noor',    time: 'Mar 2, 2026 at 11:15 AM',  badge: 'blue',  badgeLabelKey: 'activity.badge_info' },
-  { id: 9,  type: 'team',        titleKey: 'activity.ev_invite_sent',         descKey: 'activity.ev_invite_sent_desc',         actor: 'Ahmed Al-Salem',  time: 'Mar 1, 2026 at 4:00 PM',   badge: 'gray',  badgeLabelKey: 'activity.badge_sent' },
-  { id: 10, type: 'credit',      titleKey: 'activity.ev_credit_authorized',   descKey: 'activity.ev_credit_authorized_desc',   actor: 'Ahmed Al-Salem',  time: 'Feb 28, 2026 at 1:45 PM',  badge: 'amber', badgeLabelKey: 'activity.badge_authorized' },
-  { id: 11, type: 'submit',      titleKey: 'activity.ev_app_submitted',       descKey: 'activity.ev_app_submitted_desc',       actor: 'Ahmed Al-Salem',  time: 'Feb 28, 2026 at 1:30 PM',  badge: 'green', badgeLabelKey: 'activity.badge_submitted' },
-  { id: 12, type: 'system',      titleKey: 'activity.ev_app_created',         descKey: 'activity.ev_app_created_desc',         actor: 'System',          time: 'Feb 27, 2026 at 9:00 AM',  badge: 'gray',  badgeLabelKey: 'activity.badge_created' },
+  { id: 1,  type: 'termsheet',   titleKey: 'activity.ev_ts_accepted',        descKey: 'activity.ev_ts_accepted_desc',        actor: 'Ahmed Al-Salem',  time: 'Mar 8, 2026 at 2:15 PM',   badge: 'green', badgeLabelKey: 'activity.badge_accepted',   model: 'application', modelName: 'Al Noor Residential — Development', modelRoute: '/application/1/term-sheet' },
+  { id: 2,  type: 'review',      titleKey: 'activity.ev_feedback_requested',  descKey: 'activity.ev_feedback_requested_desc',  actor: 'Safqah Team',     time: 'Mar 7, 2026 at 3:00 PM',   badge: 'amber', badgeLabelKey: 'activity.badge_action',     model: 'application', modelName: 'Riyadh Commercial Plaza — Construction', modelRoute: '/application/2/status' },
+  { id: 3,  type: 'termsheet',   titleKey: 'activity.ev_ts_issued',           descKey: 'activity.ev_ts_issued_desc',           actor: 'Safqah Team',     time: 'Mar 6, 2026 at 9:00 AM',   badge: 'blue',  badgeLabelKey: 'activity.badge_info',      model: 'application', modelName: 'Al Noor Residential — Development', modelRoute: '/application/1/term-sheet' },
+  { id: 4,  type: 'review',      titleKey: 'activity.ev_company_approved',    descKey: 'activity.ev_company_approved_desc',    actor: 'Safqah Team',     time: 'Mar 5, 2026 at 4:20 PM',   badge: 'green', badgeLabelKey: 'activity.badge_approved',   model: 'company',     modelName: 'Al Omran Real Estate Dev Co.', modelRoute: '/dashboard/company/0' },
+  { id: 5,  type: 'review',      titleKey: 'activity.ev_project_approved',    descKey: 'activity.ev_project_approved_desc',    actor: 'Safqah Team',     time: 'Mar 4, 2026 at 3:45 PM',   badge: 'green', badgeLabelKey: 'activity.badge_approved',   model: 'project',     modelName: 'Al Noor Residential', modelRoute: '/dashboard/project/1' },
+  { id: 6,  type: 'document',    titleKey: 'activity.ev_docs_uploaded',       descKey: 'activity.ev_docs_uploaded_desc',       actor: 'Ahmed Al-Salem',  time: 'Mar 3, 2026 at 2:30 PM',   badge: 'blue',  badgeLabelKey: 'activity.badge_info',      model: 'project',     modelName: 'Riyadh Commercial Plaza', modelRoute: '/dashboard/project/2' },
+  { id: 7,  type: 'declaration', titleKey: 'activity.ev_declaration_signed',  descKey: 'activity.ev_declaration_signed_desc',  actor: 'Ahmed Al-Salem',  time: 'Mar 3, 2026 at 10:00 AM',  badge: 'green', badgeLabelKey: 'activity.badge_completed',  model: 'application', modelName: 'Al Noor Residential — Development', modelRoute: '/application/1/status' },
+  { id: 8,  type: 'team',        titleKey: 'activity.ev_member_joined',       descKey: 'activity.ev_member_joined_desc',       actor: 'Sara Al-Noor',    time: 'Mar 2, 2026 at 11:15 AM',  badge: 'blue',  badgeLabelKey: 'activity.badge_info',      model: 'company',     modelName: 'Al Omran Real Estate Dev Co.', modelRoute: '/dashboard/company/0' },
+  { id: 9,  type: 'submit',      titleKey: 'activity.ev_app_submitted',       descKey: 'activity.ev_app_submitted_desc',       actor: 'Ahmed Al-Salem',  time: 'Mar 1, 2026 at 1:30 PM',   badge: 'green', badgeLabelKey: 'activity.badge_submitted', model: 'application', modelName: 'Al Noor Residential — Development', modelRoute: '/application/1/status' },
+  { id: 10, type: 'credit',      titleKey: 'activity.ev_credit_authorized',   descKey: 'activity.ev_credit_authorized_desc',   actor: 'Ahmed Al-Salem',  time: 'Feb 28, 2026 at 1:45 PM',  badge: 'amber', badgeLabelKey: 'activity.badge_authorized', model: 'company',     modelName: 'Al Omran Real Estate Dev Co.', modelRoute: '/dashboard/company/0' },
+  { id: 11, type: 'team',        titleKey: 'activity.ev_invite_sent',         descKey: 'activity.ev_invite_sent_desc',         actor: 'Ahmed Al-Salem',  time: 'Feb 28, 2026 at 4:00 PM',  badge: 'gray',  badgeLabelKey: 'activity.badge_sent',      model: 'company',     modelName: 'Al Jazeera Development Co.', modelRoute: '/dashboard/company/1' },
+  { id: 12, type: 'system',      titleKey: 'activity.ev_app_created',         descKey: 'activity.ev_app_created_desc',         actor: 'System',          time: 'Feb 27, 2026 at 9:00 AM',  badge: 'gray',  badgeLabelKey: 'activity.badge_created',   model: 'application', modelName: 'Al Noor Residential — Development', modelRoute: '/application/1/status' },
 ];
 
 export const MOCK_FAQS_RAW = [

@@ -54,44 +54,50 @@ export class AppComponent implements OnInit {
 
   navGroups = [
     {
-      label: 'Onboarding',
+      label: 'ONBOARDING',
       items: [
         { path: '/', label: 'Landing' },
         { path: '/not-eligible', label: 'Not Eligible' },
         { path: '/verify', label: 'Absher Verify' },
         { path: '/sign-in', label: 'Sign In' },
-        { path: '/onboarding/company-verify', label: 'Company Verify' },
-        { path: '/onboarding/team', label: 'Team Invite' },
-        { path: '/onboarding/project', label: 'Project Onboard' },
-        { path: '/onboarding/financing', label: 'Financing Onboard' },
-        { path: '/invite/accept', label: 'Invite Accept' },
       ]
     },
     {
-      label: 'Dashboard',
+      label: 'DASHBOARD',
       items: [
         { path: '/dashboard', label: 'Overview' },
+        { path: '/profile', label: 'Profile' },
+        { path: '/support', label: 'Support' },
+      ]
+    },
+    {
+      label: 'COMPANY',
+      items: [
         { path: '/dashboard/companies', label: 'Companies' },
         { path: '/dashboard/company/0', label: 'Company Detail' },
+        { path: '/company/new', label: 'New Company' },
+        { path: '/onboarding/company-verify', label: 'Company Verify' },
+        { path: '/verify/owner/demo', label: 'Owner Verify' },
+        { path: '/company/0/credentials', label: 'Edit Credentials' },
+      ]
+    },
+    {
+      label: 'PROJECT',
+      items: [
         { path: '/dashboard/projects', label: 'Projects' },
         { path: '/dashboard/project/1', label: 'Project Detail' },
-        { path: '/dashboard/applications', label: 'Applications' },
-        { path: '/dashboard/teams', label: 'Teams' },
-      ]
-    },
-    {
-      label: 'Create',
-      items: [
-        { path: '/company/new', label: 'New Company' },
         { path: '/project/new', label: 'New Project' },
-        { path: '/application/new', label: 'New Application' },
+        { path: '/onboarding/project', label: 'Project Onboard' },
       ]
     },
     {
-      label: 'Application Flow',
+      label: 'FINANCING APPLICATION',
       items: [
-        { path: '/application/1/status', label: 'Status' },
-        { path: '/application/1/term-sheet', label: 'Term-sheet' },
+        { path: '/dashboard/applications', label: 'Applications' },
+        { path: '/application/new', label: 'New Application' },
+        { path: '/onboarding/financing', label: 'Financing Onboard' },
+        { path: '/application/1/status', label: 'App Status' },
+        { path: '/application/1/term-sheet', label: 'Term Sheet' },
         { path: '/application/1/activity', label: 'Activity Log' },
         { path: '/application/1/accepted', label: 'Accepted' },
         { path: '/application/1/declined', label: 'Declined' },
@@ -99,12 +105,16 @@ export class AppComponent implements OnInit {
       ]
     },
     {
-      label: 'Other',
+      label: 'TEAM',
       items: [
-        { path: '/profile', label: 'Profile' },
-        { path: '/support', label: 'Support' },
-        { path: '/verify/owner/demo', label: 'Owner Verify' },
-        { path: '/company/0/credentials', label: 'Edit Credentials' },
+        { path: '/dashboard/teams', label: 'Teams' },
+        { path: '/onboarding/team', label: 'Team Invite' },
+        { path: '/invite/accept', label: 'Invite Accept' },
+      ]
+    },
+    {
+      label: 'OTHER',
+      items: [
         { path: '/design-system', label: 'Design System' },
       ]
     },

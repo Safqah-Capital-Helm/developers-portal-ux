@@ -288,6 +288,9 @@ export class ApiService {
       time: e.time,
       badge: e.badge,
       badgeLabel: this.t(e.badgeLabelKey),
+      model: e.model as 'company' | 'project' | 'application',
+      modelName: e.modelName,
+      modelRoute: e.modelRoute,
     }));
     return of(data).pipe(delay(API_DELAY));
   }

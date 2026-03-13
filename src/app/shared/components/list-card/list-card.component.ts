@@ -14,6 +14,7 @@ import { C, BadgeColor, borderColorForStatus } from '../../theme';
   styles: [`
     .list-card {
       display: flex; align-items: center; justify-content: space-between;
+      gap: 12px;
       background: #fff; border: 1px solid ${C.g200};
       border-left: 3.5px solid ${C.g300};
       border-radius: 14px; padding: 14px 16px;

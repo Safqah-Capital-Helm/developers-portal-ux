@@ -46,27 +46,52 @@ import { BadgeComponent, ListCardComponent, ButtonComponent, PageHeaderComponent
              [clickable]="app.sc !== 'red'"
              (click)="onAppClick(app)">
           <div class="app-inner" [class.dead]="app.sc === 'red'">
-            <div class="app-top">
-              <span class="app-name">{{ app.projectName }}</span>
-              <app-badge [color]="$any(app.sc)">{{ app.status }}</app-badge>
-            </div>
-            <div class="app-sub">
-              <span>{{ app.company }}</span>
-              <span class="app-dot">&#183;</span>
-              <span>{{ app.product }}</span>
-            </div>
-            <div class="app-grid">
-              <div class="app-cell">
-                <div class="cell-label">{{ 'applications.financing_amount' | t }}</div>
-                <div class="cell-value">{{ app.amount }}</div>
+            <div class="app-header">
+              <!-- Status icon circle -->
+              <div class="app-icon"
+                   [class.icon-green]="app.sc === 'green'"
+                   [class.icon-amber]="app.sc === 'amber'"
+                   [class.icon-blue]="app.sc === 'blue'"
+                   [class.icon-red]="app.sc === 'red'">
+                <svg *ngIf="app.sc === 'green'" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><polyline points="16 13 12 17 9 14"/></svg>
+                <svg *ngIf="app.sc === 'amber'" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <svg *ngIf="app.sc === 'blue'" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                <svg *ngIf="app.sc === 'red'" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9.5" y1="12.5" x2="14.5" y2="17.5"/><line x1="14.5" y1="12.5" x2="9.5" y2="17.5"/></svg>
               </div>
-              <div class="app-cell">
-                <div class="cell-label">{{ 'applications.product' | t }}</div>
-                <div class="cell-value">{{ app.product }}</div>
+
+              <!-- Info -->
+              <div class="app-info">
+                <div class="app-top">
+                  <span class="app-name">{{ app.projectName }}</span>
+                  <app-badge [color]="$any(app.sc)">{{ app.status }}</app-badge>
+                </div>
+                <div class="app-meta">
+                  <span class="meta-tag">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g400" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
+                    {{ app.company }}
+                  </span>
+                  <span class="meta-sep">&middot;</span>
+                  <span class="meta-tag">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g400" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+                    {{ app.product }}
+                  </span>
+                </div>
               </div>
-              <div class="app-cell">
-                <div class="cell-label">{{ 'applications.submitted' | t }}</div>
-                <div class="cell-value">{{ app.submitted || '\u2014' }}</div>
+            </div>
+
+            <!-- Footer: amount chip + date -->
+            <div class="app-footer">
+              <div class="amount-chip"
+                   [class.chip-green]="app.sc === 'green'"
+                   [class.chip-amber]="app.sc === 'amber'"
+                   [class.chip-blue]="app.sc === 'blue'"
+                   [class.chip-red]="app.sc === 'red'">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+                {{ app.amount }}
+              </div>
+              <div *ngIf="app.submitted" class="date-tag">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g400" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                {{ app.submitted }}
               </div>
             </div>
           </div>
@@ -77,6 +102,8 @@ import { BadgeComponent, ListCardComponent, ButtonComponent, PageHeaderComponent
   styles: [`
     :host { display: block; }
     .container { max-width: 900px; margin: 0 auto; padding: 32px 32px 60px; }
+
+    /* Filter chips */
     .filter-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
     .filter-chip {
       background: ${C.g50}; border: 1px solid ${C.g200}; border-radius: 20px;
@@ -86,25 +113,73 @@ import { BadgeComponent, ListCardComponent, ButtonComponent, PageHeaderComponent
     .filter-chip:hover { background: ${C.g100}; border-color: ${C.g300}; }
     .filter-chip-active { background: ${C.green}; color: #fff; border-color: ${C.green}; }
     .filter-chip-active:hover { background: ${C.green}; border-color: ${C.green}; }
+
+    /* Card inner */
     .app-inner { flex: 1; }
-    .app-inner.dead { opacity: 0.6; }
+    .app-inner.dead { opacity: 0.55; }
+
+    /* Header row: icon + info */
+    .app-header { display: flex; gap: 14px; align-items: flex-start; }
+
+    /* Status icon circle */
+    .app-icon {
+      width: 42px; height: 42px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .icon-green { background: ${C.greenLt}; color: ${C.green}; }
+    .icon-amber { background: ${C.amber100}; color: ${C.amber600}; }
+    .icon-blue { background: ${C.blue50}; color: ${C.blue500}; }
+    .icon-red { background: ${C.red50}; color: ${C.red500}; }
+
+    /* Info section */
+    .app-info { flex: 1; min-width: 0; }
     .app-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 4px; }
     .app-name { font-size: 15px; font-weight: 700; color: ${C.g900}; line-height: 1.3; }
-    .app-sub { font-size: 12px; color: ${C.g500}; margin-bottom: 14px; display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
-    .app-dot { font-size: 16px; font-weight: 900; color: ${C.g300}; }
-    .app-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
-    .app-cell { background: ${C.g50}; border-radius: 8px; padding: 8px 10px; }
-    .cell-label { font-size: 10px; font-weight: 700; color: ${C.g400}; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 2px; }
-    .cell-value { font-size: 13px; font-weight: 700; color: ${C.g700}; }
+
+    /* Metadata with icons */
+    .app-meta { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .meta-tag { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; color: ${C.g500}; font-weight: 500; }
+    .meta-sep { color: ${C.g300}; font-weight: 900; font-size: 14px; }
+
+    /* Footer: amount chip + date */
+    .app-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-top: 14px; padding-top: 12px;
+      border-top: 1px dashed ${C.g200};
+    }
+
+    /* Colored amount chip */
+    .amount-chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 5px 12px; border-radius: 8px;
+      font-size: 13px; font-weight: 800;
+    }
+    .chip-green { background: ${C.greenLt}; color: ${C.green}; }
+    .chip-amber { background: ${C.amber100}; color: ${C.amber600}; }
+    .chip-blue { background: ${C.blue100}; color: ${C.blue500}; }
+    .chip-red { background: ${C.red50}; color: ${C.red500}; }
+
+    /* Date tag */
+    .date-tag {
+      display: flex; align-items: center; gap: 5px;
+      font-size: 12px; color: ${C.g500}; font-weight: 600;
+    }
+
+    /* Responsive */
     @media (max-width: 900px) { .container { padding: 20px 16px 40px; } }
     @media (max-width: 768px) {
       .container { padding: 20px 16px 40px; }
-      .app-grid { grid-template-columns: 1fr 1fr; }
+      .app-icon { width: 36px; height: 36px; border-radius: 10px; }
+      .app-icon svg { width: 16px; height: 16px; }
     }
     @media (max-width: 480px) {
       .container { padding: 16px 12px 32px; }
-      .app-grid { grid-template-columns: 1fr; }
       .app-top { flex-direction: column; gap: 4px; }
+      .app-header { gap: 10px; }
+      .app-icon { width: 34px; height: 34px; border-radius: 9px; }
+      .app-icon svg { width: 15px; height: 15px; }
+      .app-footer { flex-direction: column; align-items: flex-start; gap: 8px; }
     }
   `]
 })
@@ -143,7 +218,7 @@ export class ApplicationsComponent implements OnInit {
 
   ngOnInit() {
     this.api.getApplications().subscribe(data => {
-      this.applications = data;
+      this.applications = data.map((a: any) => ({ ...a, sc: a.statusColor }));
       this.loading = false;
     });
   }

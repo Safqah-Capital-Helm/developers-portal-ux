@@ -14,6 +14,9 @@ interface ActivityEvent {
   time: string;
   badge: string;
   badgeLabel: string;
+  model: 'company' | 'project' | 'application';
+  modelName: string;
+  modelRoute: string;
 }
 
 @Component({
@@ -35,48 +38,6 @@ interface ActivityEvent {
             </svg>
           </div>
           <h1 class="title">{{ 'activity.title' | t }}</h1>
-        </div>
-
-        <!-- Context links -->
-        <div class="context-card">
-          <div class="ctx-row" (click)="go('/dashboard/company/1')">
-            <div class="ctx-icon" [style.background]="C.blue50">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.blue500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/>
-              </svg>
-            </div>
-            <div class="ctx-info">
-              <div class="ctx-label">{{ 'activity.company' | t }}</div>
-              <div class="ctx-value">Al Omran Real Estate Dev Co.</div>
-            </div>
-            <svg class="ctx-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g400" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-          </div>
-          <div class="ctx-divider"></div>
-          <div class="ctx-row" (click)="go('/dashboard/project/1')">
-            <div class="ctx-icon" [style.background]="C.greenLt">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.green" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M3 3h7l2 2h9v16H3z"/>
-              </svg>
-            </div>
-            <div class="ctx-info">
-              <div class="ctx-label">{{ 'activity.project' | t }}</div>
-              <div class="ctx-value">Al Noor Residential</div>
-            </div>
-            <svg class="ctx-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g400" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-          </div>
-          <div class="ctx-divider"></div>
-          <div class="ctx-row" (click)="go('/application/' + appId + '/status')">
-            <div class="ctx-icon" [style.background]="C.amber50">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.amber500" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/>
-              </svg>
-            </div>
-            <div class="ctx-info">
-              <div class="ctx-label">{{ 'activity.financing_app' | t }}</div>
-              <div class="ctx-value">Development &middot; ~21M SAR</div>
-            </div>
-            <svg class="ctx-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.g400" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-          </div>
         </div>
 
         <!-- Skeleton loading -->
@@ -131,6 +92,29 @@ interface ActivityEvent {
                 </div>
               </div>
               <p class="tl-desc">{{ ev.description }}</p>
+
+              <!-- Entity context link -->
+              <div class="tl-context" (click)="go(ev.modelRoute); $event.stopPropagation()">
+                <div class="ctx-chip" [ngClass]="'ctx-' + ev.model">
+                  <!-- company icon -->
+                  <svg *ngIf="ev.model==='company'" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/>
+                  </svg>
+                  <!-- project icon -->
+                  <svg *ngIf="ev.model==='project'" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 3h7l2 2h9v16H3z"/>
+                  </svg>
+                  <!-- application icon -->
+                  <svg *ngIf="ev.model==='application'" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/>
+                  </svg>
+                  <span class="ctx-chip-label">{{ i18n.t('activity.model_' + ev.model) }}</span>
+                  <span class="ctx-chip-sep">&middot;</span>
+                  <span class="ctx-chip-name">{{ ev.modelName }}</span>
+                  <svg class="ctx-chip-arrow" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                </div>
+              </div>
+
               <div class="tl-meta">
                 <span class="tl-actor">{{ ev.actor }}</span>
                 <span class="tl-sep">&middot;</span>
@@ -167,33 +151,6 @@ interface ActivityEvent {
       font-size: 22px; font-weight: 900; color: ${C.g900};
       margin: 0 0 6px;
     }
-    /* Context card */
-    .context-card {
-      background: #fff;
-      border: 1px solid ${C.g200};
-      border-radius: 14px;
-      margin-bottom: 32px;
-      overflow: hidden;
-    }
-    .ctx-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 14px 18px;
-      cursor: pointer;
-      transition: background 0.15s;
-    }
-    .ctx-row:hover { background: ${C.g50}; }
-    .ctx-icon {
-      width: 32px; height: 32px; border-radius: 8px;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-    }
-    .ctx-info { flex: 1; min-width: 0; }
-    .ctx-label { font-size: 11px; font-weight: 700; color: ${C.g400}; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 1px; }
-    .ctx-value { font-size: 13px; font-weight: 700; color: ${C.g800}; }
-    .ctx-arrow { flex-shrink: 0; }
-    .ctx-divider { height: 1px; background: ${C.g100}; margin: 0 18px; }
 
     /* Timeline */
     .timeline {
@@ -255,20 +212,44 @@ interface ActivityEvent {
       font-size: 13px; color: ${C.g500}; margin: 6px 0 0 44px;
       line-height: 1.5;
     }
+
+    /* Entity context link */
+    .tl-context {
+      margin: 8px 0 0 44px;
+    }
+    .ctx-chip {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 4px 10px 4px 8px; border-radius: 8px;
+      font-size: 11px; font-weight: 600;
+      cursor: pointer; transition: all 0.15s;
+      border: 1px solid transparent;
+    }
+    .ctx-chip:hover { filter: brightness(0.95); }
+    .ctx-chip-label { font-weight: 700; text-transform: uppercase; letter-spacing: 0.2px; font-size: 10px; }
+    .ctx-chip-sep { opacity: 0.5; font-size: 10px; }
+    .ctx-chip-name { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 240px; }
+    .ctx-chip-arrow { flex-shrink: 0; opacity: 0.5; }
+
+    .ctx-company { background: ${C.blue50}; color: ${C.blue500}; border-color: ${C.blue100}; }
+    .ctx-project { background: ${C.greenLt}; color: ${C.green}; border-color: ${C.greenLt}; }
+    .ctx-application { background: ${C.amber50}; color: ${C.amber600}; border-color: ${C.amber100}; }
+
     .tl-meta {
       display: flex; align-items: center; gap: 6px;
-      margin: 4px 0 0 44px;
+      margin: 6px 0 0 44px;
       font-size: 12px; color: ${C.g400};
     }
     .tl-actor { font-weight: 600; }
     .tl-sep { color: ${C.g300}; }
 
+    /* RTL */
+    :host-context([dir="rtl"]) .ctx-chip-arrow { transform: rotate(180deg); }
+
     @media (max-width: 768px) {
       .container { padding: 20px 16px 40px; }
       .tl-desc { margin-left: 0; }
       .tl-meta { margin-left: 0; }
-      .ctx-row { padding: 12px 14px; }
-      .ctx-divider { margin: 0 14px; }
+      .tl-context { margin-left: 0; }
     }
 
     @media (max-width: 480px) {
@@ -280,7 +261,7 @@ interface ActivityEvent {
       .tl-title { font-size: 13px; }
       .tl-title-row { flex-direction: column; align-items: flex-start; gap: 4px; min-height: auto; }
       .tl-content { padding-bottom: 20px; }
-      .ctx-row { padding: 10px 12px; }
+      .ctx-chip-name { max-width: 160px; }
     }
   `]
 })
@@ -290,7 +271,7 @@ export class ActivityLogComponent implements OnInit {
   loading = true;
   events: ActivityEvent[] = [];
 
-  constructor(private router: Router, private route: ActivatedRoute, private i18n: I18nService, private api: ApiService) {
+  constructor(private router: Router, private route: ActivatedRoute, public i18n: I18nService, private api: ApiService) {
     this.appId = this.route.snapshot.paramMap.get('id') || '1';
   }
 

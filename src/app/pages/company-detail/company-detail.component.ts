@@ -28,9 +28,15 @@ import { BadgeComponent, BackLinkComponent, ButtonComponent, AvatarComponent, Em
       <div class="hero-card">
         <div class="hero-top">
           <div class="hero-left">
-            <div class="company-logo" [style.background]="company.logoBg">
-              <img *ngIf="company.logoUrl" [src]="company.logoUrl" [alt]="company.name" class="logo-img" />
-              <span *ngIf="!company.logoUrl" class="logo-initials">{{ company.initials }}</span>
+            <div class="company-logo-wrap" (click)="triggerLogoUpload()">
+              <div class="company-logo" [style.background]="company.logoBg">
+                <img *ngIf="company.logoUrl" [src]="company.logoUrl" [alt]="company.name" class="logo-img" />
+                <span *ngIf="!company.logoUrl" class="logo-initials">{{ company.initials }}</span>
+              </div>
+              <div class="logo-overlay">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+              </div>
+              <input type="file" class="logo-file-input" accept="image/*" (change)="onLogoFileSelected($event)" #logoFileInput />
             </div>
             <div class="hero-info">
               <div class="hero-name-row">
@@ -138,16 +144,6 @@ import { BadgeComponent, BackLinkComponent, ButtonComponent, AvatarComponent, Em
                   <span class="owner-nid">{{ 'company.nid_label' | t }}: {{ maskNid(o.nid) }}</span>
                 </div>
               </div>
-            </div>
-            <div class="owner-badge-wrap">
-              <span *ngIf="o.verified" class="owner-badge owner-badge-verified">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                {{ 'company.verified' | t }}
-              </span>
-              <span *ngIf="!o.verified" class="owner-badge owner-badge-pending">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                {{ 'company.pending_verification' | t }}
-              </span>
             </div>
           </div>
         </div>
@@ -303,11 +299,27 @@ import { BadgeComponent, BackLinkComponent, ButtonComponent, AvatarComponent, Em
     }
     .hero-left { display: flex; align-items: center; gap: 18px; flex: 1; min-width: 0; }
 
-    /* Company Logo */
+    /* Company Logo (updatable) */
+    .company-logo-wrap {
+      position: relative; width: 60px; height: 60px;
+      flex-shrink: 0; cursor: pointer; border-radius: 16px;
+    }
     .company-logo {
       width: 60px; height: 60px; border-radius: 16px;
       display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0; overflow: hidden;
+      overflow: hidden; transition: filter 0.2s;
+    }
+    .company-logo-wrap:hover .company-logo { filter: brightness(0.7); }
+    .logo-overlay {
+      position: absolute; inset: 0; border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(0,0,0,0.35); color: #fff;
+      opacity: 0; transition: opacity 0.2s; pointer-events: none;
+    }
+    .company-logo-wrap:hover .logo-overlay { opacity: 1; }
+    .logo-file-input {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      opacity: 0; cursor: pointer; z-index: 2;
     }
     .logo-img {
       width: 100%; height: 100%; object-fit: cover;
@@ -594,19 +606,6 @@ import { BadgeComponent, BackLinkComponent, ButtonComponent, AvatarComponent, Em
     .owner-role { font-weight: 600; color: ${C.g500}; }
     .owner-nid-sep { color: ${C.g300}; }
     .owner-nid { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 11px; color: ${C.g400}; letter-spacing: 0.3px; }
-    .owner-badge-wrap { flex-shrink: 0; }
-    .owner-badge {
-      display: inline-flex; align-items: center; gap: 4px;
-      font-size: 11px; font-weight: 700;
-      padding: 4px 10px; border-radius: 8px;
-      white-space: nowrap;
-    }
-    .owner-badge-verified {
-      background: ${C.greenLt}; color: ${C.green};
-    }
-    .owner-badge-pending {
-      background: ${C.amber50}; color: ${C.amber500};
-    }
 
     /* ═══ Team members ═══ */
     .member-row {
@@ -645,7 +644,9 @@ import { BadgeComponent, BackLinkComponent, ButtonComponent, AvatarComponent, Em
       .hero-card { padding: 16px 16px 0; }
       .hero-name { font-size: 18px; }
       .hero-left { gap: 12px; }
+      .company-logo-wrap { width: 48px; height: 48px; border-radius: 12px; }
       .company-logo { width: 48px; height: 48px; border-radius: 12px; }
+      .logo-overlay { border-radius: 12px; }
       .meta-chip { font-size: 11px; padding: 3px 8px; }
       .section { padding: 14px 16px 12px; }
       .hero-stats { padding: 0; }
@@ -862,6 +863,25 @@ export class CompanyDetailComponent implements OnInit {
   maskNid(nid: string): string {
     if (!nid || nid.length < 6) return nid;
     return nid.slice(0, 3) + '...' + nid.slice(-3);
+  }
+
+  triggerLogoUpload() {
+    // The hidden file input handles the click natively
+  }
+
+  onLogoFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files || !input.files[0]) return;
+    const file = input.files[0];
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (this.company) {
+        this.company.logoUrl = reader.result as string;
+        this.company.logoBg = 'transparent';
+      }
+    };
+    reader.readAsDataURL(file);
+    input.value = '';
   }
 
   go(path: string) { this.router.navigateByUrl(path); }
