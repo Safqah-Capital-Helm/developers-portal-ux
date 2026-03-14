@@ -121,6 +121,16 @@ import { CommonModule } from '@angular/common';
       .connector.done {
         background: #00af3d;
       }
+
+      :host-context([dir="rtl"]) .progress-steps { flex-direction: row-reverse; }
+      :host-context([dir="rtl"]) .step-wrapper { flex-direction: row-reverse; }
+      :host-context([dir="rtl"]) .step-label { flex-direction: row-reverse; }
+
+      @media (max-width: 480px) {
+        .step-text { display: none; }
+        .step-circle { width: 26px; height: 26px; font-size: 10px; }
+        .connector { margin: 0 6px; }
+      }
     `,
   ],
 })

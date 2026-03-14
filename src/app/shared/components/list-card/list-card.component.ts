@@ -20,6 +20,7 @@ import { C, BadgeColor, borderColorForStatus } from '../../theme';
       border-radius: 14px; padding: 14px 16px;
       margin-bottom: 8px; transition: box-shadow 0.2s;
     }
+    .list-card:not(.clickable) { cursor: default; }
     .list-card.clickable { cursor: pointer; }
     .list-card.clickable:hover {
       box-shadow: 0 4px 16px rgba(0,0,0,0.07);

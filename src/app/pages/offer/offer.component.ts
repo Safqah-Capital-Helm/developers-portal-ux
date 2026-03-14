@@ -30,6 +30,10 @@ import {
           </div>
           <h1 class="title">{{ 'offer.title' | t }}</h1>
           <p class="subtitle">Al Noor Residential &middot; Al Omran Real Estate</p>
+          <div class="deadline-badge">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            {{ 'offer.respond_by' | t:{date: 'March 23, 2026'} }}
+          </div>
         </div>
 
         <!-- Term-sheet Card -->
@@ -133,6 +137,14 @@ import {
       font-size: 14px;
       color: ${C.g500};
       margin: 0;
+    }
+
+    .deadline-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      margin-top: 10px; padding: 6px 14px;
+      background: #fff7ed; border: 1px solid #fed7aa;
+      border-radius: 8px; font-size: 13px; font-weight: 700;
+      color: #ea580c;
     }
 
     .card-inner {

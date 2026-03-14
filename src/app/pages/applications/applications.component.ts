@@ -97,6 +97,15 @@ import { BadgeComponent, ListCardComponent, ButtonComponent, PageHeaderComponent
           </div>
         </app-list-card>
       </ng-container>
+
+      <!-- Empty state when filters produce no results -->
+      <div *ngIf="!loading && filteredApplications.length === 0 && selectedStatus !== 'all'" class="empty-state">
+        <div class="empty-icon">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#98a2b3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </div>
+        <div class="empty-title">{{ 'applications.no_results' | t }}</div>
+        <app-btn variant="ghost" size="sm" (clicked)="selectedStatus = 'all'">{{ 'applications.clear_filter' | t }}</app-btn>
+      </div>
     </div>
   `,
   styles: [`
@@ -113,6 +122,7 @@ import { BadgeComponent, ListCardComponent, ButtonComponent, PageHeaderComponent
     .filter-chip:hover { background: ${C.g100}; border-color: ${C.g300}; }
     .filter-chip-active { background: ${C.green}; color: #fff; border-color: ${C.green}; }
     .filter-chip-active:hover { background: ${C.green}; border-color: ${C.green}; }
+    .filter-chip:focus-visible { outline: 2px solid #00af3d; outline-offset: 2px; }
 
     /* Card inner */
     .app-inner { flex: 1; }
@@ -165,6 +175,11 @@ import { BadgeComponent, ListCardComponent, ButtonComponent, PageHeaderComponent
       display: flex; align-items: center; gap: 5px;
       font-size: 12px; color: ${C.g500}; font-weight: 600;
     }
+
+    /* Empty state */
+    .empty-state { text-align: center; padding: 48px 20px; }
+    .empty-icon { margin-bottom: 12px; }
+    .empty-title { font-size: 14px; font-weight: 600; color: #667085; margin-bottom: 16px; }
 
     /* Responsive */
     @media (max-width: 900px) { .container { padding: 20px 16px 40px; } }

@@ -7,13 +7,13 @@ let modalIdCounter = 0;
   standalone: true,
   template: `
     <div class="modal-overlay"
-         role="dialog"
-         aria-modal="true"
-         [attr.aria-labelledby]="titleId"
          (click)="closed.emit()"
          (keydown)="onKeydown($event)">
       <div
         class="modal-container"
+        role="dialog"
+        aria-modal="true"
+        [attr.aria-labelledby]="titleId"
         [class.wide]="wide"
         (click)="$event.stopPropagation()"
         #modalContainer

@@ -15,7 +15,7 @@ import { ResultScreenComponent, TranslatePipe } from '../../shared';
           [title]="('add_application.success_title' | t)"
           [subtitle]="('add_application.success_desc' | t)"
         >
-          <p class="redirect-text">{{ 'common.loading' | t }}</p>
+          <p class="redirect-text">{{ 'submit_success.redirecting' | t }}</p>
           <div class="progress-track">
             <div class="progress-fill"></div>
           </div>

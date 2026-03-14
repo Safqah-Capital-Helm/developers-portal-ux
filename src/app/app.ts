@@ -8,9 +8,10 @@ import { I18nService } from './shared/i18n/i18n.service';
   standalone: true,
   imports: [RouterOutlet],
   template: `
-    <div class="app-shell" [class.fading]="fading">
+    <div class="app-shell" [class.fading]="fading" [class.has-proto-nav]="isProto">
       <router-outlet></router-outlet>
     </div>
+    @if (isProto) {
     <div class="proto-nav" [class.collapsed]="collapsed">
       <button class="proto-toggle" (click)="collapsed = !collapsed">
         @if (collapsed) {
@@ -41,13 +42,16 @@ import { I18nService } from './shared/i18n/i18n.service';
         </div>
       }
     </div>
+    }
   `,
   styles: [`
-    .app-shell { transition: opacity 0.25s; padding-bottom: 44px; }
+    .app-shell { transition: opacity 0.25s; }
+    .app-shell.has-proto-nav { padding-bottom: 44px; }
     .app-shell.fading { opacity: 0; }
   `]
 })
 export class AppComponent implements OnInit {
+  isProto = true; // Set to false for production deployment
   fading = false;
   collapsed = true;
   currentPath = '/';

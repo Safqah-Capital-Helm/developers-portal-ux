@@ -95,7 +95,7 @@ import { ButtonComponent, BadgeComponent, InputComponent, StatCardComponent, Lis
               </div>
               <div class="step-info">
                 <div class="step-name">{{ s.title }}</div>
-                <div class="step-desc">{{ !s.done && !isStepUnlocked(newUserSteps, i) ? ('common.complete_steps_above' | t) : s.desc }}</div>
+                <div class="step-desc">{{ !s.done && !isStepUnlocked(newUserSteps, i) ? getBlockingMessage(newUserSteps, i) : s.desc }}</div>
               </div>
               <div class="step-actions">
                 <app-btn *ngIf="!s.done && isStepUnlocked(newUserSteps, i)" variant="primary" size="sm" (clicked)="go(s.route)">{{ s.action }}</app-btn>
@@ -132,7 +132,7 @@ import { ButtonComponent, BadgeComponent, InputComponent, StatCardComponent, Lis
               </div>
               <div class="step-info">
                 <div class="step-name">{{ s.title }}</div>
-                <div class="step-desc">{{ !s.done && !isStepUnlocked(singleUserSteps, i) ? ('common.complete_steps_above' | t) : s.desc }}</div>
+                <div class="step-desc">{{ !s.done && !isStepUnlocked(singleUserSteps, i) ? getBlockingMessage(singleUserSteps, i) : s.desc }}</div>
               </div>
               <div class="step-actions">
                 <app-btn *ngIf="!s.done && isStepUnlocked(singleUserSteps, i)" variant="primary" size="sm" (clicked)="go(s.route)">{{ s.action }}</app-btn>
@@ -552,6 +552,14 @@ export class DashboardOverviewComponent implements OnInit {
   getProgress(steps: any[]): number {
     const done = steps.filter((s: any) => s.done).length;
     return Math.round((done / steps.length) * 100);
+  }
+
+  getBlockingMessage(steps: any[], index: number): string {
+    const blocker = steps.findIndex((s: any, i: number) => i < index && !s.done);
+    if (blocker >= 0) {
+      return this.i18n.t('common.complete_step_first', { step: steps[blocker].title });
+    }
+    return this.i18n.t('common.complete_steps_above');
   }
 
   safe(html: string): SafeHtml { return this.sanitizer.bypassSecurityTrustHtml(html); }

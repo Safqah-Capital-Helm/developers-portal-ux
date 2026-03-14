@@ -25,6 +25,7 @@
   "common.sar": "ر.س",
   "common.step_of": "الخطوة {{current}} من {{total}}",
   "common.complete_steps_above": "أكمل الخطوات أعلاه أولاً.",
+  "common.complete_step_first": "أكمل \"{{step}}\" أولاً.",
 
   "nav.dashboard": "الرئيسية",
   "nav.companies": "الشركات",
@@ -299,6 +300,8 @@
   "applications.submitted": "تاريخ التقديم",
   "applications.filter_all": "الكل",
   "applications.filter_company_all": "جميع الشركات",
+  "applications.no_results": "لا توجد طلبات تطابق هذا الفلتر",
+  "applications.clear_filter": "مسح الفلتر",
 
   "teams.title": "الفريق",
   "teams.invite_member": "دعوة عضو",
@@ -403,6 +406,7 @@
   "add_application.submit_application": "تقديم الطلب",
   "add_application.success_title": "تم تقديم الطلب!",
   "add_application.success_desc": "تم تقديم طلب التمويل بنجاح. سنقوم بمراجعته والتواصل معك.",
+  "submit_success.redirecting": "جارٍ التوجيه إلى طلبك...",
   "add_application.what_next": "ماذا سيحدث بعد ذلك؟",
   "add_application.next_step_1": "سيقوم فريقنا بمراجعة تفاصيل مشروعك وشركتك خلال 24 ساعة",
   "add_application.next_step_2": "ستتلقى عرض الشروط خلال 48 ساعة",
@@ -1164,5 +1168,10 @@
   "validation.numeric_required": "أدخل رقماً (مثال: ٥٠,٠٠٠,٠٠٠)",
   "validation.units_range": "عدد الوحدات يجب أن يكون بين 1 و 10,000",
   "validation.area_positive": "المساحة يجب أن تكون رقماً موجباً",
-  "validation.period_range": "المدة يجب أن تكون بين 1 و 120 شهر"
+  "validation.period_range": "المدة يجب أن تكون بين 1 و 120 شهر",
+
+  "map.search_placeholder": "ابحث عن موقع...",
+  "map.search_btn": "بحث",
+  "map.hint": "انقر أو اسحب الدبوس لتحديد الموقع",
+  "map.default_address": "الدمام، المنطقة الشرقية"
 }

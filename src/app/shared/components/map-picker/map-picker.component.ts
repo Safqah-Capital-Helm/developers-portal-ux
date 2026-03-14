@@ -1,6 +1,8 @@
 import { Component, ElementRef, ViewChild, AfterViewInit, Output, EventEmitter } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { C } from '../../theme';
+import { TranslatePipe } from '../../i18n/translate.pipe';
+import { I18nService } from '../../i18n/i18n.service';
 
 export interface MapLocation {
   lat: number;
@@ -21,18 +23,21 @@ const LOCATIONS: Array<{ minX: number; maxX: number; minY: number; maxY: number;
 @Component({
   selector: 'app-map-picker',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, TranslatePipe],
   template: `
     <div class="map-wrap">
       <div class="search-bar">
-        <input [(ngModel)]="search" (keydown.enter)="doSearch()" placeholder="Search for a location..." class="search-input"/>
-        <button (click)="doSearch()" class="search-btn">Search</button>
+        <input [(ngModel)]="search" (keydown.enter)="doSearch()" [placeholder]="'map.search_placeholder' | t" class="search-input"/>
+        <button (click)="doSearch()" class="search-btn">{{ 'map.search_btn' | t }}</button>
       </div>
       <canvas #mapCanvas [width]="540" [height]="220"
         (mousedown)="onMouse($event,'down')"
         (mousemove)="onMouse($event,'move')"
         (mouseup)="onMouse($event,'up')"
         (mouseleave)="dragging=false"
+        (touchstart)="onTouch($event,'down')"
+        (touchmove)="onTouch($event,'move')"
+        (touchend)="onTouch($event,'up')"
         [style.cursor]="dragging?'grabbing':'crosshair'"
         class="canvas">
       </canvas>
@@ -41,7 +46,7 @@ const LOCATIONS: Array<{ minX: number; maxX: number; minY: number; maxY: number;
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" [attr.stroke]="g500" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
           {{addr}}
         </span>
-        <span class="hint">Click or drag pin to set location</span>
+        <span class="hint">{{ 'map.hint' | t }}</span>
       </div>
     </div>
   `,
@@ -61,12 +66,15 @@ export class MapPickerComponent implements AfterViewInit {
   @Output() locationChange = new EventEmitter<MapLocation>();
 
   search = '';
-  addr = 'Dammam, Eastern Province';
+  addr = '';
   pin = { x: 250, y: 140 };
   dragging = false;
   g500 = C.g500;
 
+  constructor(private i18n: I18nService) {}
+
   ngAfterViewInit() {
+    this.addr = this.i18n.t('map.default_address');
     this.draw();
     this.emitLocation();
   }
@@ -117,9 +125,29 @@ export class MapPickerComponent implements AfterViewInit {
     if (type === 'up') { this.dragging = false; }
   }
 
+  onTouch(e: TouchEvent, type: string) {
+    if (type !== 'up' && e.touches.length > 0) {
+      e.preventDefault();
+      const touch = e.touches[0];
+      const canvas = this.canvasRef.nativeElement;
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+      const x = (touch.clientX - rect.left) * scaleX;
+      const y = (touch.clientY - rect.top) * scaleY;
+      const mouseEvent = new MouseEvent(type === 'down' ? 'mousedown' : type === 'move' ? 'mousemove' : 'mouseup', {
+        clientX: touch.clientX,
+        clientY: touch.clientY,
+      });
+      this.onMouse(mouseEvent, type);
+    } else if (type === 'up') {
+      this.onMouse(new MouseEvent('mouseup'), type);
+    }
+  }
+
   doSearch() {
     this.pin = { x: 180 + Math.random() * 150, y: 100 + Math.random() * 80 };
-    this.addr = this.search || 'Dammam, Eastern Province';
+    this.addr = this.search || this.i18n.t('map.default_address');
     this.draw();
     this.emitLocation();
   }
