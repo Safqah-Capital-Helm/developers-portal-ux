@@ -6,6 +6,8 @@ import { ButtonComponent } from '../button/button.component';
 import { CardComponent } from '../card/card.component';
 import { InputComponent } from '../input/input.component';
 import { ReviewGridComponent } from '../review-grid/review-grid.component';
+import { TranslatePipe } from '../../i18n/translate.pipe';
+import { I18nService } from '../../i18n/i18n.service';
 
 @Component({
   selector: 'app-company-verify-form',
@@ -17,6 +19,7 @@ import { ReviewGridComponent } from '../review-grid/review-grid.component';
     CardComponent,
     InputComponent,
     ReviewGridComponent,
+    TranslatePipe,
   ],
   template: `
     <!-- Title / Subtitle -->
@@ -37,8 +40,8 @@ import { ReviewGridComponent } from '../review-grid/review-grid.component';
             <path d="M9 21V9"/>
           </svg>
         </div>
-        <div class="rv-hero-title">Review Company Information</div>
-        <div class="rv-hero-desc">All details below were fetched from your commercial registration. Please ensure the information is accurate before proceeding.</div>
+        <div class="rv-hero-title">{{ 'company_verify.review_hero_title' | t }}</div>
+        <div class="rv-hero-desc">{{ 'company_verify.review_hero_desc' | t }}</div>
       </div>
 
       <!-- Company Identity -->
@@ -51,10 +54,10 @@ import { ReviewGridComponent } from '../review-grid/review-grid.component';
               <path d="M9 21V9"/>
             </svg>
           </div>
-          <div class="rv-card-title">Company Identity</div>
+          <div class="rv-card-title">{{ 'company_verify.company_identity' | t }}</div>
           <div class="rv-card-badge">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.green" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-            Verified
+            {{ 'company_verify.verified' | t }}
           </div>
         </div>
         <app-review-grid [items]="identityItems"></app-review-grid>
@@ -69,10 +72,10 @@ import { ReviewGridComponent } from '../review-grid/review-grid.component';
               <path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/>
             </svg>
           </div>
-          <div class="rv-card-title">Business Details</div>
+          <div class="rv-card-title">{{ 'company_verify.business_details' | t }}</div>
           <div class="rv-card-badge">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.green" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-            Verified
+            {{ 'company_verify.verified' | t }}
           </div>
         </div>
         <app-review-grid [items]="businessItems"></app-review-grid>
@@ -87,10 +90,10 @@ import { ReviewGridComponent } from '../review-grid/review-grid.component';
               <path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
             </svg>
           </div>
-          <div class="rv-card-title">Financial</div>
+          <div class="rv-card-title">{{ 'company_verify.financial' | t }}</div>
           <div class="rv-card-badge">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.green" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-            Verified
+            {{ 'company_verify.verified' | t }}
           </div>
         </div>
         <app-review-grid [items]="financialItems"></app-review-grid>
@@ -106,12 +109,12 @@ import { ReviewGridComponent } from '../review-grid/review-grid.component';
               <path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/>
             </svg>
           </div>
-          <div class="rv-card-title">Online Presence</div>
+          <div class="rv-card-title">{{ 'company_verify.online_presence' | t }}</div>
         </div>
         <div style="padding: 4px 0 0;">
           <app-input
-            label="Company Website (optional)"
-            placeholder="https://www.example.com"
+            [label]="'company_verify.website_label' | t"
+            [placeholder]="'company_verify.website_placeholder' | t"
             [value]="companyWebsite"
             (valueChange)="companyWebsite = $event"
           ></app-input>
@@ -121,7 +124,7 @@ import { ReviewGridComponent } from '../review-grid/review-grid.component';
       <div class="nav-row" style="margin-top: 24px;">
         <div></div>
         <app-btn variant="primary" size="lg" (clicked)="nextStep()">
-          Next: Declaration <span class="dir-arrow">&rarr;</span>
+          {{ 'company_verify.next_declaration' | t }} <span class="dir-arrow">&rarr;</span>
         </app-btn>
       </div>
     </div>
@@ -136,20 +139,20 @@ import { ReviewGridComponent } from '../review-grid/review-grid.component';
               <polyline points="9 12 11 14 15 10"/>
             </svg>
           </div>
-          <h2 class="section-title">Declaration of No Legal Proceedings</h2>
+          <h2 class="section-title">{{ 'company_verify.decl_title' | t }}</h2>
         </div>
 
-        <p class="section-desc">Please confirm whether your company is currently involved in any major litigations or legal proceedings.</p>
+        <p class="section-desc">{{ 'company_verify.decl_desc' | t }}</p>
 
         <div class="decl-question">
-          <div class="decl-q-label">Does your company have any major litigations or legal proceedings?</div>
+          <div class="decl-q-label">{{ 'company_verify.decl_question' | t }}</div>
           <div class="toggle-row">
             <div class="toggle-opt"
               [style.background]="hasLitigations === true ? C.amber50 : '#fff'"
               [style.borderColor]="hasLitigations === true ? C.amber500 : C.g200"
               [style.color]="hasLitigations === true ? C.amber600 : C.g500"
               (click)="hasLitigations = true; declarationSigned = false">
-              Yes
+              {{ 'company_verify.decl_yes' | t }}
             </div>
             <div class="toggle-opt"
               [style.background]="hasLitigations === false ? C.greenLt : '#fff'"
@@ -157,7 +160,7 @@ import { ReviewGridComponent } from '../review-grid/review-grid.component';
               [style.color]="hasLitigations === false ? C.green : C.g500"
               (click)="hasLitigations = false; declarationSigned = false">
               <svg *ngIf="hasLitigations === false" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-              No
+              {{ 'company_verify.decl_no' | t }}
             </div>
           </div>
         </div>
@@ -169,10 +172,10 @@ import { ReviewGridComponent } from '../review-grid/review-grid.component';
               <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
               <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
             </svg>
-            <span>Disclosing litigations will not automatically disqualify your application. Our team will review the details.</span>
+            <span>{{ 'company_verify.decl_warn' | t }}</span>
           </div>
-          <label class="field-label">Please describe the legal proceedings</label>
-          <textarea class="textarea-field" [(ngModel)]="litigationDetails" placeholder="Describe the nature, status, and expected resolution of any major litigations..." rows="4"></textarea>
+          <label class="field-label">{{ 'company_verify.decl_textarea_label' | t }}</label>
+          <textarea class="textarea-field" [(ngModel)]="litigationDetails" [placeholder]="'company_verify.decl_textarea_placeholder' | t" rows="4"></textarea>
         </div>
 
         <!-- No: sign the declaration -->
@@ -185,25 +188,25 @@ import { ReviewGridComponent } from '../review-grid/review-grid.component';
               </svg>
             </div>
             <div class="decl-sign-text">
-              <div class="decl-sign-title">Sign declaration letter</div>
-              <div class="decl-sign-desc">You will be redirected to an external signing service to digitally sign the declaration confirming no major legal proceedings.</div>
+              <div class="decl-sign-title">{{ 'company_verify.sign_decl_title' | t }}</div>
+              <div class="decl-sign-desc">{{ 'company_verify.sign_decl_desc' | t }}</div>
             </div>
             <app-btn variant="primary" size="md" [full]="true" (clicked)="declarationSignPending = true">
-              Sign Declaration <span class="dir-arrow">&rarr;</span>
+              {{ 'company_verify.sign_decl_btn' | t }} <span class="dir-arrow">&rarr;</span>
             </app-btn>
           </div>
 
           <!-- Simulated signing -->
           <div *ngIf="declarationSignPending && !declarationSigned" class="decl-demo">
-            <div class="decl-demo-label">Demo: Simulate signing result</div>
+            <div class="decl-demo-label">{{ 'company_verify.demo_sign_label' | t }}</div>
             <div class="decl-demo-row">
               <button class="decl-demo-btn decl-demo-success" (click)="declarationSigned = true; declarationSignPending = false">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                Signed Successfully
+                {{ 'company_verify.demo_signed_ok' | t }}
               </button>
               <button class="decl-demo-btn decl-demo-fail" (click)="declarationSignPending = false">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                Signing Failed
+                {{ 'company_verify.demo_signed_fail' | t }}
               </button>
             </div>
           </div>
@@ -214,17 +217,17 @@ import { ReviewGridComponent } from '../review-grid/review-grid.component';
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
             </div>
             <div class="decl-success-text">
-              <div class="decl-success-title">Declaration signed successfully</div>
-              <div class="decl-success-desc">Your declaration of no major legal proceedings has been digitally signed and recorded.</div>
+              <div class="decl-success-title">{{ 'company_verify.signed_title' | t }}</div>
+              <div class="decl-success-desc">{{ 'company_verify.signed_desc' | t }}</div>
             </div>
           </div>
         </div>
       </app-card>
 
       <div class="nav-row" style="margin-top: 24px;">
-        <app-btn variant="ghost" size="lg" (clicked)="prevStep()"><span class="dir-arrow">&larr;</span> Back</app-btn>
+        <app-btn variant="ghost" size="lg" (clicked)="prevStep()"><span class="dir-arrow">&larr;</span> {{ 'common.back' | t }}</app-btn>
         <app-btn variant="primary" size="lg" [disabled]="!canComplete" (clicked)="onComplete()">
-          Complete Verification <span class="dir-arrow">&rarr;</span>
+          {{ 'company_verify.complete_btn' | t }} <span class="dir-arrow">&rarr;</span>
         </app-btn>
       </div>
     </div>
@@ -420,22 +423,30 @@ export class CompanyVerifyFormComponent {
 
   step = 0;
 
+  constructor(private i18n: I18nService) {}
+
   // Company details — split into review sections
-  identityItems = [
-    { label: 'Legal Name (EN)', value: 'Al Omran Real Estate Dev Co.' },
-    { label: 'Legal Name (AR)', value: '\u0634\u0631\u0643\u0629 \u0627\u0644\u0639\u0645\u0631\u0627\u0646 \u0644\u0644\u062a\u0637\u0648\u064a\u0631 \u0627\u0644\u0639\u0642\u0627\u0631\u064a' },
-    { label: 'CR Number', value: '1010234567' },
-    { label: 'Unified No.', value: '7001234567' },
-  ];
-  businessItems = [
-    { label: 'Legal Form', value: 'LLC' },
-    { label: 'Status', value: 'Active' },
-    { label: 'Type', value: 'Real Estate Developer' },
-    { label: 'Company Size', value: '50-100 employees' },
-  ];
-  financialItems = [
-    { label: 'Capital', value: 'SAR 10,000,000' },
-  ];
+  get identityItems() {
+    return [
+      { label: this.i18n.t('company_verify.label_legal_name_en'), value: 'Al Omran Real Estate Dev Co.' },
+      { label: this.i18n.t('company_verify.label_legal_name_ar'), value: '\u0634\u0631\u0643\u0629 \u0627\u0644\u0639\u0645\u0631\u0627\u0646 \u0644\u0644\u062a\u0637\u0648\u064a\u0631 \u0627\u0644\u0639\u0642\u0627\u0631\u064a' },
+      { label: this.i18n.t('company_verify.label_cr_number'), value: '1010234567' },
+      { label: this.i18n.t('company_verify.label_unified_no'), value: '7001234567' },
+    ];
+  }
+  get businessItems() {
+    return [
+      { label: this.i18n.t('company_verify.label_legal_form'), value: 'LLC' },
+      { label: this.i18n.t('company_verify.label_status'), value: this.i18n.t('company_verify.value_active') },
+      { label: this.i18n.t('company_verify.label_type'), value: this.i18n.t('company_verify.value_re_developer') },
+      { label: this.i18n.t('company_verify.label_company_size'), value: this.i18n.t('company_verify.value_employees') },
+    ];
+  }
+  get financialItems() {
+    return [
+      { label: this.i18n.t('company_verify.label_capital'), value: 'SAR 10,000,000' },
+    ];
+  }
   companyWebsite = '';
 
   // Declaration
@@ -446,16 +457,16 @@ export class CompanyVerifyFormComponent {
 
   get title(): string {
     switch (this.step) {
-      case 0: return 'Review Company Details';
-      case 1: return 'Sign Declaration';
-      default: return 'Company Verification';
+      case 0: return this.i18n.t('company_verify.review_title');
+      case 1: return this.i18n.t('company_verify.sign_title');
+      default: return this.i18n.t('company_verify.title');
     }
   }
 
   get subtitle(): string {
     switch (this.step) {
-      case 0: return 'Please review your company information before proceeding with verification.';
-      case 1: return 'Confirm whether your company has any major legal proceedings.';
+      case 0: return this.i18n.t('company_verify.review_subtitle');
+      case 1: return this.i18n.t('company_verify.decl_subtitle');
       default: return '';
     }
   }

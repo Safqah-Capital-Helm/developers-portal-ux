@@ -55,7 +55,7 @@ type Step = 'intro' | 'id' | 'otp' | 'verifying' | 'grant' | 'done';
           </div>
 
           <div class="text-center" style="margin-bottom: 24px;">
-            <h1 class="page-title">{{ 'owner_verify.auth_requested' | t }}</h1>
+            <h1 class="page-title">{{ 'owner_verify.auth_requested' | t:{name: requester.name} }}</h1>
             <p class="page-subtitle">{{ 'owner_verify.subtitle' | t }}</p>
           </div>
 

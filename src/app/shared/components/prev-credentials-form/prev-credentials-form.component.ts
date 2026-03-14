@@ -54,8 +54,8 @@ export interface PrevCredentialsData {
       </div>
 
       <div *ngIf="hasPrevProjects" class="prev-details">
-        <app-input [label]="'credentials_form.completed_label' | t" [placeholder]="'credentials_form.completed_placeholder' | t" [value]="prevCount" (valueChange)="prevCount = $event"></app-input>
-        <app-input [label]="'credentials_form.value_label' | t" [placeholder]="'credentials_form.value_placeholder' | t" [value]="prevValue" (valueChange)="prevValue = $event"></app-input>
+        <app-input [label]="'credentials_form.completed_label' | t" [placeholder]="'credentials_form.completed_placeholder' | t" [value]="prevCount" (valueChange)="prevCount = $event" inputmode="numeric" mask="digits"></app-input>
+        <app-input [label]="'credentials_form.value_label' | t" [placeholder]="'credentials_form.value_placeholder' | t" [value]="prevValue" (valueChange)="prevValue = $event" inputmode="numeric" mask="digits"></app-input>
 
         <div class="src-section">
           <div class="src-label">{{ 'credentials_form.sources_label' | t }}</div>
@@ -71,27 +71,27 @@ export interface PrevCredentialsData {
             <div class="src-dot" [style.background]="C.green"></div>
             <span class="src-name">{{ 'credentials_form.bank' | t }}</span>
             <div class="src-stepper">
-              <button class="src-btn" [disabled]="finBank <= 0" (click)="adjustSource('bank', -5)">-</button>
+              <button type="button" class="src-btn" [disabled]="finBank <= 0" (click)="adjustSource('bank', -5)">-</button>
               <span class="src-pct">{{ finBank }}%</span>
-              <button class="src-btn" [disabled]="finSelf <= 0" (click)="adjustSource('bank', 5)">+</button>
+              <button type="button" class="src-btn" [disabled]="finSelf <= 0" (click)="adjustSource('bank', 5)">+</button>
             </div>
           </div>
           <div class="src-row">
             <div class="src-dot" [style.background]="C.blue500"></div>
             <span class="src-name">{{ 'credentials_form.fintech' | t }}</span>
             <div class="src-stepper">
-              <button class="src-btn" [disabled]="finFintech <= 0" (click)="adjustSource('fintech', -5)">-</button>
+              <button type="button" class="src-btn" [disabled]="finFintech <= 0" (click)="adjustSource('fintech', -5)">-</button>
               <span class="src-pct">{{ finFintech }}%</span>
-              <button class="src-btn" [disabled]="finSelf <= 0" (click)="adjustSource('fintech', 5)">+</button>
+              <button type="button" class="src-btn" [disabled]="finSelf <= 0" (click)="adjustSource('fintech', 5)">+</button>
             </div>
           </div>
           <div class="src-row">
             <div class="src-dot" [style.background]="C.amber500"></div>
             <span class="src-name">{{ 'credentials_form.friends' | t }}</span>
             <div class="src-stepper">
-              <button class="src-btn" [disabled]="finFriends <= 0" (click)="adjustSource('friends', -5)">-</button>
+              <button type="button" class="src-btn" [disabled]="finFriends <= 0" (click)="adjustSource('friends', -5)">-</button>
               <span class="src-pct">{{ finFriends }}%</span>
-              <button class="src-btn" [disabled]="finSelf <= 0" (click)="adjustSource('friends', 5)">+</button>
+              <button type="button" class="src-btn" [disabled]="finSelf <= 0" (click)="adjustSource('friends', 5)">+</button>
             </div>
           </div>
           <div class="src-row src-row-auto">
@@ -168,13 +168,15 @@ export interface PrevCredentialsData {
 })
 export class PrevCredentialsFormComponent {
   readonly C = C;
+  private initialized = false;
 
   /** Whether to show the header (icon + title + description) */
   @Input() showHeader = true;
 
-  /** Initial values — set these to pre-populate the form */
+  /** Initial values — set these to pre-populate the form (applied once) */
   @Input() set initialData(data: Partial<PrevCredentialsData> | null) {
-    if (data) {
+    if (data && !this.initialized) {
+      this.initialized = true;
       this.hasPrevProjects = data.hasPrevProjects ?? true;
       this.prevCount = data.prevCount ?? '';
       this.prevValue = data.prevValue ?? '';
