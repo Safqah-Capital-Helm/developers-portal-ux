@@ -97,7 +97,7 @@ import type { MapLocation } from '../../shared';
                     <div class="company-name">{{ co.name }}</div>
                     <div class="company-cr">
                       CR: {{ co.cr }}
-                      <app-badge [color]="co.st === 'Approved' ? 'green' : 'amber'">{{ co.st }}</app-badge>
+                      <app-badge [color]="$any(co.stColor)">{{ co.st }}</app-badge>
                     </div>
                   </div>
                 </div>
@@ -124,12 +124,14 @@ import type { MapLocation } from '../../shared';
                 [placeholder]="('add_project.name_placeholder_en' | t)"
                 [value]="name"
                 (valueChange)="name = $event; onFieldChange()"
+                inputDir="ltr"
               ></app-input>
               <app-input
                 [label]="('add_project.name_label_ar' | t)"
                 [placeholder]="('add_project.name_placeholder_ar' | t)"
                 [value]="nameAr"
                 (valueChange)="nameAr = $event; onFieldChange()"
+                inputDir="rtl"
               ></app-input>
             </div>
 
@@ -140,6 +142,7 @@ import type { MapLocation } from '../../shared';
                 <textarea
                   class="textarea"
                   rows="3"
+                  dir="ltr"
                   [placeholder]="'add_project.description_placeholder_en' | t"
                   [ngModel]="description"
                   (ngModelChange)="description = $event; onFieldChange()"
@@ -670,11 +673,12 @@ import type { MapLocation } from '../../shared';
 
     /* Bilingual side-by-side row */
     .bilingual-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+      display: flex;
       gap: 16px;
       margin-bottom: 20px;
     }
+    .bilingual-row > * { flex: 1; min-width: 0; }
+    :host-context([dir="rtl"]) .bilingual-row { flex-direction: row-reverse; }
 
     /* Textarea */
     .textarea {
@@ -1110,7 +1114,7 @@ import type { MapLocation } from '../../shared';
       .stat-row { grid-template-columns: 1fr; }
       .type-grid { grid-template-columns: repeat(2, 1fr); }
       .two-col { grid-template-columns: 1fr; }
-      .bilingual-row { grid-template-columns: 1fr; }
+      .bilingual-row { flex-direction: column !important; }
     }
 
     @media (max-width: 768px) {
@@ -1132,7 +1136,12 @@ export class AddProjectComponent implements OnInit, OnDestroy {
   C = C;
 
   // Wizard state — 6 steps: 0=Company, 1=Details, 2=Land, 3=Specs, 4=Financials, 5=Review
-  step = 0;
+  private _step = 0;
+  get step(): number { return this._step; }
+  set step(v: number) {
+    this._step = v;
+    this.router.navigate([], { queryParams: { step: v }, queryParamsHandling: 'merge', replaceUrl: true });
+  }
   companyPreSelected = false;
   private readonly DRAFT_KEY = 'safqah_project_draft';
   draftSaved = false;
@@ -1169,10 +1178,7 @@ export class AddProjectComponent implements OnInit, OnDestroy {
   accuracy = false;
 
   // Data
-  companies = [
-    { name: 'Al Omran Real Estate Dev Co.', cr: '1551515151516515', st: 'Approved', logo: getCompanyLogo('1551515151516515') },
-    { name: 'Al Jazeera Development Co.', cr: '1020304050607', st: 'Under Review', logo: getCompanyLogo('1020304050607') },
-  ];
+  companies: Array<{ name: string; cr: string; st: string; stColor: string; logo: string }> = [];
 
   // Cached arrays (avoids ExpressionChangedAfterItHasBeenCheckedError from getters returning new refs)
   types: Array<{ id: string; t: string; emoji: string }> = [];
@@ -1185,6 +1191,22 @@ export class AddProjectComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.rebuildStaticData();
 
+    // Load companies from API with translated statuses
+    this.api.getCompanies().subscribe(list => {
+      this.companies = list.map(c => ({
+        name: c.name,
+        cr: c.cr,
+        st: c.status,
+        stColor: c.statusColor,
+        logo: getCompanyLogo(c.cr) || '',
+      }));
+    });
+
+    const stepParam = this.route.snapshot.queryParamMap.get('step');
+    if (stepParam != null && +stepParam >= 0 && +stepParam <= 5) {
+      this._step = +stepParam;
+    }
+
     const fresh = this.route.snapshot.queryParamMap.get('fresh');
     const companyParam = this.route.snapshot.queryParamMap.get('company');
     this.fromOnboarding = this.route.snapshot.queryParamMap.get('from') === 'onboarding';
@@ -1195,7 +1217,7 @@ export class AddProjectComponent implements OnInit, OnDestroy {
     } else {
       this.api.loadDraft(this.DRAFT_KEY).subscribe(d => {
         if (d) {
-          this.step = d.step || 0;
+          this._step = d.step || 0;
           this.sel = d.sel || '';
           this.name = d.name || '';
           this.nameAr = d.nameAr || '';
@@ -1225,7 +1247,7 @@ export class AddProjectComponent implements OnInit, OnDestroy {
       if (match) {
         this.sel = match.cr;
         this.companyPreSelected = true;
-        if (this.step < 1) this.step = 1;
+        if (this._step < 1) this._step = 1;
       }
     }
     this.rebuildStepLabels();

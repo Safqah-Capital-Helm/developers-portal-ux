@@ -671,11 +671,11 @@ export class CompanyDetailComponent implements OnInit {
   get companies() {
     return [
       {
-        name: "Al Omran Real Estate Dev Co.", cr: "1551515151516515",
+        name: "Al Omran Real Estate Dev Co.", cr: "7012345678",
         status: this.i18n.t('common.status_approved'), sc: "green" as const,
         verified: true, hasPrevProjects: true, initials: "AO",
         logoBg: `linear-gradient(135deg, ${C.green}, ${C.greenDk})`,
-        logoUrl: getCompanyLogo("1551515151516515"),
+        logoUrl: getCompanyLogo("7012345678"),
         legalForm: this.i18n.t('common.legal_form_llc'), activity: this.i18n.t('common.activity_re_dev'),
         capital: "50M", size: this.i18n.t('common.size_medium'),
         domain: "alomran.com",
@@ -683,11 +683,11 @@ export class CompanyDetailComponent implements OnInit {
         finBank: 40, finFintech: 20, finFriends: 15, finSelf: 25
       },
       {
-        name: "Al Jazeera Development Co.", cr: "1020304050607",
+        name: "Al Jazeera Development Co.", cr: "7023456789",
         status: this.i18n.t('common.status_pending_verification'), sc: "amber" as const,
         verified: false, hasPrevProjects: false, initials: "AJ",
         logoBg: `linear-gradient(135deg, ${C.purple}, ${C.purpleDk})`,
-        logoUrl: getCompanyLogo("1020304050607"),
+        logoUrl: getCompanyLogo("7023456789"),
         legalForm: this.i18n.t('common.legal_form_llc'), activity: this.i18n.t('common.activity_re_dev'),
         capital: "30M", size: this.i18n.t('common.size_small'),
         domain: "",
@@ -695,11 +695,11 @@ export class CompanyDetailComponent implements OnInit {
         finBank: 0, finFintech: 0, finFriends: 0, finSelf: 0
       },
       {
-        name: "Riyad Construction Group", cr: "3080706050403",
+        name: "Riyad Construction Group", cr: "7034567890",
         status: this.i18n.t('common.status_missing_credentials'), sc: "red" as const,
         verified: true, hasPrevProjects: false, initials: "RC",
         logoBg: `linear-gradient(135deg, ${C.orange}, ${C.orangeDk})`,
-        logoUrl: getCompanyLogo("3080706050403"),
+        logoUrl: getCompanyLogo("7034567890"),
         legalForm: this.i18n.t('common.legal_form_llc'), activity: this.i18n.t('common.activity_construction'),
         capital: "20M", size: this.i18n.t('common.size_small'),
         domain: "riyadconstruction.sa",

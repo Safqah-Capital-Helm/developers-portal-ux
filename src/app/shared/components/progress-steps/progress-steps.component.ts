@@ -122,8 +122,7 @@ import { CommonModule } from '@angular/common';
         background: #00af3d;
       }
 
-      :host-context([dir="rtl"]) .progress-steps { flex-direction: row-reverse; }
-      :host-context([dir="rtl"]) .step-wrapper { flex-direction: row-reverse; }
+      :host-context([dir="rtl"]) .progress-steps { direction: rtl; }
       :host-context([dir="rtl"]) .step-label { flex-direction: row-reverse; }
 
       @media (max-width: 480px) {

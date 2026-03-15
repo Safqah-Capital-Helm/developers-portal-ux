@@ -55,7 +55,7 @@ export interface PrevCredentialsData {
 
       <div *ngIf="hasPrevProjects" class="prev-details">
         <app-input [label]="'credentials_form.completed_label' | t" [placeholder]="'credentials_form.completed_placeholder' | t" [value]="prevCount" (valueChange)="prevCount = $event" inputmode="numeric" mask="digits"></app-input>
-        <app-input [label]="'credentials_form.value_label' | t" [placeholder]="'credentials_form.value_placeholder' | t" [value]="prevValue" (valueChange)="prevValue = $event" inputmode="numeric" mask="digits"></app-input>
+        <app-input [label]="'credentials_form.value_label' | t" [placeholder]="'credentials_form.value_placeholder' | t" suffix="SAR" [value]="prevValue" (valueChange)="prevValue = $event" inputmode="numeric" mask="currency"></app-input>
 
         <div class="src-section">
           <div class="src-label">{{ 'credentials_form.sources_label' | t }}</div>

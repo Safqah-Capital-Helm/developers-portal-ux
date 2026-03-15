@@ -60,9 +60,9 @@ import { C } from '../../shared/theme';
             <h2>{{ 'landing.cta_register' | t }}</h2>
             <p class="form-sub">{{ 'landing.hero_subtitle' | t }}</p>
             <label class="input-label">{{ 'landing.cr_number' | t }}</label>
-            <div class="cr-input-wrap">
+            <div class="cr-input-wrap" dir="ltr">
               <div class="cr-prefix"><span>{{ 'landing.cr_prefix' | t }}</span></div>
-              <input [(ngModel)]="cr" placeholder="1010XXXXXX" (keydown.enter)="doCheck()" (input)="onCrInput($event)" inputmode="numeric" maxlength="10" class="cr-input"/>
+              <input [(ngModel)]="cr" placeholder="1010XXXXXX" (keydown.enter)="doCheck()" (input)="onCrInput($event)" inputmode="numeric" maxlength="10" class="cr-input" dir="ltr"/>
             </div>
             <p *ngIf="cr && cr.length !== 10" class="cr-error-text">{{ 'validation.cr_format' | t }}</p>
             <app-btn variant="primary" [full]="true" size="lg" [disabled]="cr.length !== 10 || checking" (clicked)="doCheck()">

@@ -82,7 +82,7 @@ type Step =
               <p class="card-desc">{{ 'add_company.cr_helper' | t }}</p>
             </div>
 
-            <div class="cr-input-row">
+            <div class="cr-input-row" dir="ltr">
               <div class="cr-prefix">{{ 'add_company.cr_prefix' | t }}</div>
               <input
                 class="cr-field"
@@ -93,6 +93,7 @@ type Step =
                 inputmode="numeric"
                 maxlength="10"
                 (input)="onCrInput($event)"
+                dir="ltr"
               />
             </div>
             <p class="cr-helper" *ngIf="crRes !== 'bad'">{{ 'add_company.cr_helper' | t }}</p>
@@ -328,7 +329,7 @@ type Step =
           <!-- Company info badge bar -->
           <div class="details-badge-bar">
             <div>
-              <app-badge color="green">CR {{ cr || '1020304050607' }} &mdash; Al Jazeera Development Co.</app-badge>
+              <app-badge color="green">CR {{ cr || '7023456789' }} &mdash; Al Jazeera Development Co.</app-badge>
             </div>
             <div style="display: flex; gap: 8px; margin-top: 8px;">
               <app-badge color="green">{{ 'add_company.eligible_badge' | t }}</app-badge>
@@ -467,7 +468,7 @@ type Step =
               <div style="display: flex; align-items: center; justify-content: space-between;">
                 <div>
                   <p [style.font-size.px]="15" [style.font-weight]="700" [style.color]="C.g900">Al Jazeera Development Co.</p>
-                  <p [style.font-size.px]="13" [style.color]="C.g500" [style.margin-top.px]="2">CR {{ cr || '1020304050607' }}</p>
+                  <p [style.font-size.px]="13" [style.color]="C.g500" [style.margin-top.px]="2">CR {{ cr || '7023456789' }}</p>
                 </div>
                 <app-badge color="amber">{{ 'dashboard.under_review' | t }}</app-badge>
               </div>
@@ -858,7 +859,13 @@ type Step =
 export class AddCompanyComponent implements OnInit, OnDestroy {
   readonly C = C;
 
-  step: Step = 'cr';
+  private _step: Step = 'cr';
+  get step(): Step { return this._step; }
+  set step(v: Step) {
+    this._step = v;
+    this.router.navigate([], { queryParams: { step: v }, queryParamsHandling: 'merge', replaceUrl: true });
+  }
+
   cr = '';
   crRes = '';
   nid = '';
@@ -907,7 +914,7 @@ export class AddCompanyComponent implements OnInit, OnDestroy {
     '\u0634\u0631\u0643\u0629 \u0627\u0644\u062c\u0632\u064a\u0631\u0629 \u0644\u0644\u062a\u0637\u0648\u064a\u0631',
     '',
     'LLC',
-    'Active',
+    'active',
     '30M SAR',
     'Small',
     'RE Development',
@@ -920,7 +927,7 @@ export class AddCompanyComponent implements OnInit, OnDestroy {
       [this.i18n.t('add_company.field_legal_name_ar'), this._companyFieldValues[1]],
       [this.i18n.t('add_company.field_cr_number'), this._companyFieldValues[2]],
       [this.i18n.t('add_company.field_legal_form'), this._companyFieldValues[3]],
-      [this.i18n.t('add_company.field_status'), this._companyFieldValues[4]],
+      [this.i18n.t('add_company.field_status'), this.i18n.t('common.status_' + this._companyFieldValues[4])],
       [this.i18n.t('add_company.field_capital'), this._companyFieldValues[5]],
       [this.i18n.t('add_company.field_company_size'), this._companyFieldValues[6]],
       [this.i18n.t('add_company.field_activity_type'), this._companyFieldValues[7]],
@@ -932,10 +939,12 @@ export class AddCompanyComponent implements OnInit, OnDestroy {
 
   constructor(private router: Router, private route: ActivatedRoute, public i18n: I18nService) {}
 
+  private static readonly VALID_STEPS: Step[] = ['cr', 'crVerifying', 'verify', 'otp', 'checking', 'delegate', 'smsSent', 'pending', 'details', 'prevProjects', 'uploadDocs', 'success'];
+
   ngOnInit(): void {
-    const startStep = this.route.snapshot.queryParamMap.get('step');
-    if (startStep === 'prevProjects' || startStep === 'uploadDocs') {
-      this.step = startStep;
+    const startStep = this.route.snapshot.queryParamMap.get('step') as Step;
+    if (startStep && AddCompanyComponent.VALID_STEPS.includes(startStep)) {
+      this._step = startStep;
     }
   }
 
@@ -987,7 +996,7 @@ export class AddCompanyComponent implements OnInit, OnDestroy {
   }
 
   get crField(): string {
-    return this.cr || '1020304050607';
+    return this.cr || '7023456789';
   }
 
   isValidNid(nid: string): boolean {
@@ -1023,7 +1032,7 @@ export class AddCompanyComponent implements OnInit, OnDestroy {
     this.step = 'checking';
     const t = setTimeout(() => {
       // Update CR Number in companyFields
-      this._companyFieldValues[2] = this.cr || '1020304050607';
+      this._companyFieldValues[2] = this.cr || '7023456789';
       this.step = 'details';
     }, 1500);
     this.timers.push(t);

@@ -648,7 +648,7 @@ export class OwnerVerifyComponent implements OnDestroy {
   otp = '';
 
   requester = { name: 'Ahmed Al-Salem', id: '106*******', phone: '+966 50 *** 4567' };
-  company = { name: 'Al Omran Real Estate Dev Co.', cr: '1551515151516515' };
+  company = { name: 'Al Omran Real Estate Dev Co.', cr: '7012345678' };
 
   private timers: ReturnType<typeof setTimeout>[] = [];
 

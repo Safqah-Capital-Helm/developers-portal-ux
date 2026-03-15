@@ -10,7 +10,7 @@ import { C } from '../../theme';
   template: `
     <div class="input-wrapper" [style.margin-bottom.px]="16">
       <label *ngIf="label" class="input-label">{{ label }}</label>
-      <div class="input-container" [class.has-error]="error">
+      <div class="input-container" [class.has-error]="error" [attr.dir]="inputDirAttr">
         <span *ngIf="prefix" class="input-prefix">{{ prefix }}</span>
         <input
           *ngIf="type !== 'textarea'"
@@ -24,6 +24,7 @@ import { C } from '../../theme';
           [attr.inputmode]="inputmode || null"
           [attr.maxlength]="maxlength || null"
           [attr.type]="type === 'email' ? 'email' : type === 'tel' ? 'tel' : 'text'"
+          [attr.dir]="inputDirAttr"
           (input)="onInput($event)"
         />
         <textarea
@@ -141,27 +142,27 @@ import { C } from '../../theme';
     }
 
     /* RTL */
-    :host-context([dir="rtl"]) .input-field.has-suffix {
+    :host-context([dir="rtl"]) .input-container:not([dir="ltr"]) .input-field.has-suffix {
       padding-right: 14px;
       padding-left: 56px;
     }
 
-    :host-context([dir="rtl"]) .input-suffix {
+    :host-context([dir="rtl"]) .input-container:not([dir="ltr"]) .input-suffix {
       right: auto;
       left: 14px;
     }
 
-    :host-context([dir="rtl"]) .input-prefix {
+    :host-context([dir="rtl"]) .input-container:not([dir="ltr"]) .input-prefix {
       border-right: 1.5px solid #e2e5e9;
       border-left: none;
       border-radius: 0 10px 10px 0;
     }
 
-    :host-context([dir="rtl"]) .input-container.has-error .input-prefix {
+    :host-context([dir="rtl"]) .input-container.has-error:not([dir="ltr"]) .input-prefix {
       border-right-color: ${C.red500};
     }
 
-    :host-context([dir="rtl"]) .input-field.has-prefix {
+    :host-context([dir="rtl"]) .input-container:not([dir="ltr"]) .input-field.has-prefix {
       border-radius: 10px 0 0 10px;
     }
   `],
@@ -178,7 +179,14 @@ export class InputComponent {
   @Input() type: string = 'text';
   @Input() prefix: string = '';
   @Input() mask: 'digits' | 'phone' | 'currency' | '' = '';
+  @Input() inputDir: 'ltr' | 'rtl' | '' = '';
   @Output() valueChange = new EventEmitter<string>();
+
+  get inputDirAttr(): string | null {
+    if (this.inputDir) return this.inputDir;
+    if (this.mask || this.prefix || this.inputmode === 'numeric' || this.inputmode === 'decimal' || this.inputmode === 'tel' || this.type === 'email' || this.type === 'tel') return 'ltr';
+    return null;
+  }
 
   onValueChange(newValue: string): void {
     this.value = newValue;

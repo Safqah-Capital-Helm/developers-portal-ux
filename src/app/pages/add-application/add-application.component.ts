@@ -1078,7 +1078,13 @@ export class AddApplicationComponent implements OnInit, OnDestroy {
   C = C;
   Math = Math;
 
-  step = 0;
+  private _step = 0;
+  get step(): number { return this._step; }
+  set step(v: number) {
+    this._step = v;
+    this.router.navigate([], { queryParams: { step: v }, queryParamsHandling: 'merge', replaceUrl: true });
+  }
+
   submitted = false;
   submitting = false;
   projectPreSelected = false;
@@ -1124,16 +1130,21 @@ export class AddApplicationComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     const projectParam = this.route.snapshot.queryParamMap.get('project');
     const fresh = this.route.snapshot.queryParamMap.get('fresh');
+    const stepParam = this.route.snapshot.queryParamMap.get('step');
     this.fromOnboarding = this.route.snapshot.queryParamMap.get('from') === 'onboarding';
+
+    if (stepParam != null && +stepParam >= 0 && +stepParam <= 3) {
+      this._step = +stepParam;
+    }
 
     if (projectParam) {
       this.selectedProject = projectParam;
       this.projectPreSelected = true;
-      this.step = 1; // Skip project selection, go straight to product
+      this._step = 1; // Skip project selection, go straight to product
     } else if (!fresh) {
       this.api.loadDraft(this.DRAFT_KEY).subscribe(d => {
         if (d) {
-          this.step = d.step || 0;
+          this._step = d.step || 0;
           this.selectedProject = d.selectedProject || '';
           this.financingProduct = d.financingProduct || '';
           this.financingAmount = d.financingAmount || '';

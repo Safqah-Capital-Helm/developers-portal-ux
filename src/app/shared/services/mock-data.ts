@@ -119,9 +119,9 @@ export interface UserProfile {
 // ─── Raw mock data (language-independent where possible) ──────────
 
 export const MOCK_COMPANIES_RAW = [
-  { id: '0', name: 'Al Omran Real Estate Dev Co.', nameAr: 'شركة العمران للتطوير العقاري', cr: '1551515151516515', statusKey: 'approved', sc: 'green', proj: 8, mem: 3 },
-  { id: '1', name: 'Al Jazeera Development Co.', nameAr: 'شركة الجزيرة للتطوير', cr: '1020304050607', statusKey: 'pending_verification', sc: 'amber', proj: 2, mem: 1 },
-  { id: '2', name: 'Riyad Construction Group', nameAr: 'مجموعة رياض للمقاولات', cr: '3080706050403', statusKey: 'missing_credentials', sc: 'red', proj: 1, mem: 2 },
+  { id: '0', name: 'Al Omran Real Estate Dev Co.', nameAr: 'شركة العمران للتطوير العقاري', cr: '7012345678', statusKey: 'approved', sc: 'green', proj: 8, mem: 3 },
+  { id: '1', name: 'Al Jazeera Development Co.', nameAr: 'شركة الجزيرة للتطوير', cr: '7023456789', statusKey: 'pending_verification', sc: 'amber', proj: 2, mem: 1 },
+  { id: '2', name: 'Riyad Construction Group', nameAr: 'مجموعة رياض للمقاولات', cr: '7034567890', statusKey: 'missing_credentials', sc: 'red', proj: 1, mem: 2 },
 ];
 
 export const MOCK_COMPANY_OWNERS: Record<string, (CompanyOwner & { nameAr?: string })[]> = {

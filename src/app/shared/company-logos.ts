@@ -41,18 +41,37 @@ const AL_JAZEERA_LOGO = `data:image/svg+xml,${encodeURIComponent(`<svg xmlns="ht
   <path d="M50 48L74 76H26Z" fill="#fff" opacity=".9"/>
 </svg>`)}`;
 
+// ── Riyad Construction Group ── Orange crane / construction
+const RIYAD_CONSTRUCTION_LOGO = `data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f39c12"/>
+      <stop offset="1" stop-color="#d35400"/>
+    </linearGradient>
+  </defs>
+  <rect width="100" height="100" fill="url(#g)"/>
+  <rect x="44" y="18" width="12" height="64" rx="2" fill="#fff" opacity=".9"/>
+  <rect x="22" y="18" width="40" height="10" rx="2" fill="#fff" opacity=".7"/>
+  <rect x="22" y="18" width="4" height="20" rx="1" fill="#fff" opacity=".6"/>
+  <rect x="30" y="72" width="40" height="10" rx="3" fill="#fff" opacity=".85"/>
+  <rect x="36" y="62" width="28" height="12" rx="2" fill="#fff" opacity=".5"/>
+</svg>`)}`;
+
 /** Map CR number → logo data URI */
 const LOGOS_BY_CR: Record<string, string> = {
-  '1551515151516515': AL_OMRAN_LOGO,
-  '1020304050607': AL_JAZEERA_LOGO,
+  '7012345678': AL_OMRAN_LOGO,
+  '7023456789': AL_JAZEERA_LOGO,
+  '7034567890': RIYAD_CONSTRUCTION_LOGO,
 };
 
 /** Map short/full company names → CR number */
 const NAME_TO_CR: Record<string, string> = {
-  'Al Omran Real Estate Dev Co.': '1551515151516515',
-  'Al Omran Real Estate': '1551515151516515',
-  'Al Jazeera Development Co.': '1020304050607',
-  'Al Jazeera Development': '1020304050607',
+  'Al Omran Real Estate Dev Co.': '7012345678',
+  'Al Omran Real Estate': '7012345678',
+  'Al Jazeera Development Co.': '7023456789',
+  'Al Jazeera Development': '7023456789',
+  'Riyad Construction Group': '7034567890',
+  'Riyad Construction': '7034567890',
 };
 
 /** Get company logo by CR number */
