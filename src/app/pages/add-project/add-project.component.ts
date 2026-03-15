@@ -56,7 +56,7 @@ import type { MapLocation } from '../../shared';
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.green" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="20 6 9 17 4 12"/>
           </svg>
-          {{ 'common.done' | t }}
+          {{ 'common.auto_saved' | t }}
         </div>
 
         <!-- Pre-selected company banner -->
@@ -117,26 +117,45 @@ import type { MapLocation } from '../../shared';
             <div class="section-title">{{ 'add_project.step_details' | t }}</div>
             <div class="section-desc">{{ 'add_project.name_helper' | t }}</div>
 
-            <!-- Project Name -->
-            <app-input
-              [label]="('add_project.name_label' | t)"
-              [placeholder]="('add_project.name_placeholder' | t)"
-              [helper]="('add_project.name_helper' | t)"
-              [value]="name"
-              (valueChange)="name = $event; onFieldChange()"
-            ></app-input>
+            <!-- Project Name (Bilingual side-by-side) -->
+            <div class="bilingual-row">
+              <app-input
+                [label]="('add_project.name_label_en' | t)"
+                [placeholder]="('add_project.name_placeholder_en' | t)"
+                [value]="name"
+                (valueChange)="name = $event; onFieldChange()"
+              ></app-input>
+              <app-input
+                [label]="('add_project.name_label_ar' | t)"
+                [placeholder]="('add_project.name_placeholder_ar' | t)"
+                [value]="nameAr"
+                (valueChange)="nameAr = $event; onFieldChange()"
+              ></app-input>
+            </div>
 
-            <!-- Description -->
-            <div class="field-group">
-              <label class="field-label">{{ 'add_project.step_details' | t }}</label>
-              <textarea
-                class="textarea"
-                rows="3"
-                [placeholder]="'add_project.description_placeholder' | t"
-                [ngModel]="description"
-                (ngModelChange)="description = $event; onFieldChange()"
-              ></textarea>
-              <p class="field-helper">{{ 'add_project.description_helper' | t }}</p>
+            <!-- Description (Bilingual side-by-side) -->
+            <div class="bilingual-row">
+              <div class="field-group">
+                <label class="field-label">{{ 'add_project.description_label_en' | t }}</label>
+                <textarea
+                  class="textarea"
+                  rows="3"
+                  [placeholder]="'add_project.description_placeholder_en' | t"
+                  [ngModel]="description"
+                  (ngModelChange)="description = $event; onFieldChange()"
+                ></textarea>
+              </div>
+              <div class="field-group">
+                <label class="field-label">{{ 'add_project.description_label_ar' | t }}</label>
+                <textarea
+                  class="textarea"
+                  rows="3"
+                  dir="rtl"
+                  [placeholder]="'add_project.description_placeholder_ar' | t"
+                  [ngModel]="descriptionAr"
+                  (ngModelChange)="descriptionAr = $event; onFieldChange()"
+                ></textarea>
+              </div>
             </div>
 
             <!-- Project Type -->
@@ -195,6 +214,8 @@ import type { MapLocation } from '../../shared';
               [helper]="('add_project.period_helper' | t)"
               [value]="projectPeriod"
               (valueChange)="projectPeriod = $event; onFieldChange()"
+              inputmode="numeric"
+              mask="digits"
             ></app-input>
           </app-card>
         </div>
@@ -246,6 +267,8 @@ import type { MapLocation } from '../../shared';
               [helper]="('add_project.building_area_helper' | t)"
               [value]="totalLandArea"
               (valueChange)="totalLandArea = $event; onFieldChange()"
+              inputmode="numeric"
+              mask="currency"
             ></app-input>
           </app-card>
         </div>
@@ -262,6 +285,8 @@ import type { MapLocation } from '../../shared';
               [helper]="('add_project.units_helper' | t)"
               [value]="expectedUnits"
               (valueChange)="expectedUnits = $event; onFieldChange()"
+              inputmode="numeric"
+              mask="currency"
             ></app-input>
 
             <app-input
@@ -271,6 +296,8 @@ import type { MapLocation } from '../../shared';
               [helper]="('add_project.building_area_helper' | t)"
               [value]="totalBuildingArea"
               (valueChange)="totalBuildingArea = $event; onFieldChange()"
+              inputmode="numeric"
+              mask="currency"
             ></app-input>
 
             <app-input
@@ -280,6 +307,8 @@ import type { MapLocation } from '../../shared';
               [helper]="('add_project.selling_area_helper' | t)"
               [value]="totalSellingArea"
               (valueChange)="totalSellingArea = $event; onFieldChange()"
+              inputmode="numeric"
+              mask="currency"
             ></app-input>
 
             <!-- Efficiency ratio chip -->
@@ -306,6 +335,8 @@ import type { MapLocation } from '../../shared';
               [helper]="('financing.total_cost_helper' | t)"
               [value]="totalCost"
               (valueChange)="totalCost = $event; onFieldChange()"
+              inputmode="numeric"
+              mask="currency"
             ></app-input>
 
             <div *ngIf="parsedCost > 0" class="fin-section">
@@ -356,6 +387,8 @@ import type { MapLocation } from '../../shared';
                 [helper]="('financing.revenue_helper' | t)"
                 [value]="expectedRevenue"
                 (valueChange)="expectedRevenue = $event; onFieldChange()"
+                inputmode="numeric"
+                mask="currency"
               ></app-input>
 
               <div *ngIf="parsedRevenue > 0 && (parsedUnits > 0 || parsedSellingArea > 0)" class="stat-row" style="margin-top: 16px;">
@@ -478,16 +511,17 @@ import type { MapLocation } from '../../shared';
             <app-review-grid [items]="reviewFinancialItems"></app-review-grid>
           </div>
 
-          <!-- Accuracy checkbox -->
-          <div class="submit-section">
-            <label class="checkbox-row" (click)="accuracy = !accuracy">
-              <div class="checkbox" [class.checked]="accuracy">
-                <svg *ngIf="accuracy" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                  <polyline points="20 6 9 17 4 12"/>
-                </svg>
-              </div>
-              <span class="checkbox-label">{{ 'common.confirm' | t }}</span>
-            </label>
+          <!-- Confirmation card -->
+          <div class="confirm-card" [class.confirmed]="accuracy" (click)="accuracy = !accuracy">
+            <div class="confirm-check" [class.checked]="accuracy">
+              <svg *ngIf="accuracy" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+            </div>
+            <div class="confirm-text">
+              <div class="confirm-title">{{ 'common.confirm' | t }}</div>
+              <div class="confirm-desc">{{ 'add_project.confirm_accuracy' | t }}</div>
+            </div>
           </div>
         </div>
 
@@ -632,6 +666,14 @@ import type { MapLocation } from '../../shared';
       border-radius: 4px;
       text-transform: uppercase;
       letter-spacing: 0.3px;
+    }
+
+    /* Bilingual side-by-side row */
+    .bilingual-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 20px;
     }
 
     /* Textarea */
@@ -894,29 +936,64 @@ import type { MapLocation } from '../../shared';
     .rv-company-name { font-size: 14px; font-weight: 700; color: ${C.g900}; }
     .rv-company-cr { font-size: 12px; color: ${C.g400}; margin-top: 1px; }
 
-    /* Submit section */
-    .submit-section { margin-top: 20px; }
-
-    .checkbox-row {
+    /* Confirmation card */
+    .confirm-card {
       display: flex;
       align-items: flex-start;
-      gap: 10px;
-      cursor: pointer;
-      user-select: none;
-    }
-
-    .checkbox {
-      width: 20px; height: 20px; border-radius: 6px;
-      border: 1.5px solid ${C.g300};
+      gap: 14px;
+      padding: 20px;
       background: #fff;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0; transition: all 0.15s ease; margin-top: 1px;
+      border: 2px solid ${C.g200};
+      border-radius: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      user-select: none;
+      margin-top: 20px;
     }
-    .checkbox.checked { background: ${C.green}; border-color: ${C.green}; }
 
-    .checkbox-label {
+    .confirm-card:hover {
+      border-color: ${C.g300};
+    }
+
+    .confirm-card.confirmed {
+      border-color: ${C.green};
+      background: ${C.greenLt};
+    }
+
+    .confirm-check {
+      width: 22px;
+      height: 22px;
+      border-radius: 7px;
+      border: 2px solid ${C.g300};
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+      transition: all 0.15s ease;
+    }
+
+    .confirm-check.checked {
+      background: ${C.green};
+      border-color: ${C.green};
+    }
+
+    .confirm-text {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .confirm-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: ${C.g900};
+    }
+
+    .confirm-desc {
       font-size: 13px;
-      color: ${C.g600};
+      color: ${C.g500};
       line-height: 1.5;
     }
 
@@ -1033,6 +1110,7 @@ import type { MapLocation } from '../../shared';
       .stat-row { grid-template-columns: 1fr; }
       .type-grid { grid-template-columns: repeat(2, 1fr); }
       .two-col { grid-template-columns: 1fr; }
+      .bilingual-row { grid-template-columns: 1fr; }
     }
 
     @media (max-width: 768px) {
@@ -1065,7 +1143,9 @@ export class AddProjectComponent implements OnInit, OnDestroy {
 
   // Step 1: Details
   name = '';
+  nameAr = '';
   description = '';
+  descriptionAr = '';
   type = '';
   stage = '';
   projectPeriod = '';
@@ -1098,6 +1178,7 @@ export class AddProjectComponent implements OnInit, OnDestroy {
   types: Array<{ id: string; t: string; emoji: string }> = [];
   stages: Array<{ id: string; l: string; c: string }> = [];
   visibleStepLabels: string[] = [];
+  private fromOnboarding = false;
 
   constructor(private router: Router, private route: ActivatedRoute, private i18n: I18nService, private api: ApiService) {}
 
@@ -1106,8 +1187,9 @@ export class AddProjectComponent implements OnInit, OnDestroy {
 
     const fresh = this.route.snapshot.queryParamMap.get('fresh');
     const companyParam = this.route.snapshot.queryParamMap.get('company');
+    this.fromOnboarding = this.route.snapshot.queryParamMap.get('from') === 'onboarding';
 
-    if (fresh) {
+    if (fresh || this.fromOnboarding) {
       this.api.deleteDraft(this.DRAFT_KEY).subscribe();
       this.initFromParams(companyParam);
     } else {
@@ -1116,7 +1198,9 @@ export class AddProjectComponent implements OnInit, OnDestroy {
           this.step = d.step || 0;
           this.sel = d.sel || '';
           this.name = d.name || '';
+          this.nameAr = d.nameAr || '';
           this.description = d.description || '';
+          this.descriptionAr = d.descriptionAr || '';
           this.type = d.type || '';
           this.stage = d.stage || '';
           this.projectPeriod = d.projectPeriod || '';
@@ -1314,7 +1398,8 @@ export class AddProjectComponent implements OnInit, OnDestroy {
     clearTimeout(this.draftTimeout);
     const draft = {
       step: this.step, sel: this.sel,
-      name: this.name, description: this.description,
+      name: this.name, nameAr: this.nameAr,
+      description: this.description, descriptionAr: this.descriptionAr,
       type: this.type, stage: this.stage, projectPeriod: this.projectPeriod,
       city: this.city, district: this.district, totalLandArea: this.totalLandArea,
       expectedUnits: this.expectedUnits, totalBuildingArea: this.totalBuildingArea,
@@ -1333,7 +1418,9 @@ export class AddProjectComponent implements OnInit, OnDestroy {
       this.step = d.step || 0;
       this.sel = d.sel || '';
       this.name = d.name || '';
+      this.nameAr = d.nameAr || '';
       this.description = d.description || '';
+      this.descriptionAr = d.descriptionAr || '';
       this.type = d.type || '';
       this.stage = d.stage || '';
       this.projectPeriod = d.projectPeriod || '';
@@ -1359,7 +1446,11 @@ export class AddProjectComponent implements OnInit, OnDestroy {
 
   submit(): void {
     this.clearDraft();
-    this.router.navigateByUrl('/dashboard/projects');
+    if (this.fromOnboarding) {
+      this.router.navigateByUrl('/dashboard?state=new');
+    } else {
+      this.router.navigateByUrl('/dashboard/projects');
+    }
   }
 
   // ── Financial helpers ──
@@ -1395,9 +1486,11 @@ export class AddProjectComponent implements OnInit, OnDestroy {
   private rebuildReviewItems(): void {
     // Details
     const details: Array<{ label: string; value: string }> = [
-      { label: this.i18n.t('add_project.review_name'), value: this.name },
+      { label: this.i18n.t('add_project.review_name') + ' (EN)', value: this.name },
     ];
-    if (this.description) details.push({ label: this.i18n.t('add_project.review_description'), value: this.description.length > 80 ? this.description.substring(0, 80) + '...' : this.description });
+    if (this.nameAr) details.push({ label: this.i18n.t('add_project.review_name') + ' (AR)', value: this.nameAr });
+    if (this.description) details.push({ label: this.i18n.t('add_project.review_description') + ' (EN)', value: this.description.length > 80 ? this.description.substring(0, 80) + '...' : this.description });
+    if (this.descriptionAr) details.push({ label: this.i18n.t('add_project.review_description') + ' (AR)', value: this.descriptionAr.length > 80 ? this.descriptionAr.substring(0, 80) + '...' : this.descriptionAr });
     details.push({ label: this.i18n.t('add_project.review_type'), value: this.getTypeName() });
     if (this.stage) details.push({ label: this.i18n.t('add_project.review_stage'), value: this.getStageName() });
     if (this.projectPeriod) details.push({ label: this.i18n.t('add_project.review_period'), value: this.projectPeriod + this.i18n.t('add_project.suffix_months') });

@@ -547,6 +547,16 @@ export class DashboardOverviewComponent implements OnInit {
         backing[i] = false;
       }
     }
+    // Re-sync the steps array so the UI updates
+    const steps = backing === this._newUserStepsDone ? this.newUserSteps : this.singleUserSteps;
+    for (let i = 0; i < steps.length; i++) {
+      steps[i] = { ...steps[i], done: backing[i] };
+    }
+    if (backing === this._newUserStepsDone) {
+      this.newUserSteps = [...steps];
+    } else {
+      this.singleUserSteps = [...steps];
+    }
   }
 
   getProgress(steps: any[]): number {

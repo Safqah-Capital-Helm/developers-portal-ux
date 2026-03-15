@@ -92,6 +92,7 @@ type Step =
                 [disabled]="step === 'crVerifying'"
                 inputmode="numeric"
                 maxlength="10"
+                (input)="onCrInput($event)"
               />
             </div>
             <p class="cr-helper" *ngIf="crRes !== 'bad'">{{ 'add_company.cr_helper' | t }}</p>
@@ -251,13 +252,16 @@ type Step =
             <div style="margin-top: 12px;">
               <app-input
                 [label]="('absher.owner_phone_label' | t)"
-                [placeholder]="('absher.owner_phone_placeholder' | t)"
+                placeholder="5x xxx xxxx"
                 [value]="ownerPhone"
                 (valueChange)="ownerPhone = $event"
-                inputmode="tel"
-                mask="phone"
+                inputmode="numeric"
+                mask="digits"
+                [maxlength]="9"
+                prefix="+966"
+                [error]="ownerPhone && ownerPhone.length > 1 && !isValidPhone(ownerPhone) ? i18n.t('validation.phone_format') : ''"
               ></app-input>
-              <app-btn variant="primary" [full]="true" size="lg" [disabled]="ownerPhone.length < 10" (clicked)="sendSms()">
+              <app-btn variant="primary" [full]="true" size="lg" [disabled]="!isValidPhone(ownerPhone)" (clicked)="sendSms()">
                 {{ 'absher.send_sms' | t }}
               </app-btn>
             </div>
@@ -357,8 +361,10 @@ type Step =
               <app-input
                 [label]="('company.online' | t)"
                 [placeholder]="'add_company.website_placeholder' | t"
+                prefix="https://"
                 [value]="website"
                 (valueChange)="website = $event"
+                [error]="website && !isValidWebsite(website) ? ('validation.website_format' | t) : ''"
               ></app-input>
             </div>
           </app-card>
@@ -988,6 +994,17 @@ export class AddCompanyComponent implements OnInit, OnDestroy {
     return /^[12]\d{9}$/.test(nid);
   }
 
+  isValidWebsite(url: string): boolean {
+    const pattern = /^(https?:\/\/)?([\w-]+\.)+[a-zA-Z]{2,}(\/.*)?$/;
+    return pattern.test(url.trim());
+  }
+
+  onCrInput(e: Event): void {
+    const input = e.target as HTMLInputElement;
+    input.value = input.value.replace(/[^\d]/g, '');
+    this.cr = input.value;
+  }
+
   onCrSubmit(): void {
     this.crRes = '';
     this.step = 'crVerifying';
@@ -1021,6 +1038,10 @@ export class AddCompanyComponent implements OnInit, OnDestroy {
       this.step = 'pending';
     }, 1500);
     this.timers.push(t);
+  }
+
+  isValidPhone(phone: string): boolean {
+    return /^5\d{8}$/.test(phone);
   }
 
   sendSms(): void {

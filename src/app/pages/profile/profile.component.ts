@@ -59,10 +59,13 @@ import { NavComponent, BackLinkComponent, CardComponent, InputComponent, ButtonC
             [label]="'profile.phone' | t"
             [value]="phone"
             (valueChange)="phone = $event"
-            [placeholder]="('profile.phone_placeholder' | t)"
+            placeholder="5x xxx xxxx"
             [helper]="'profile.phone_helper' | t"
-            [error]="phone && phone.length > 0 && !isValidPhone(phone) ? i18n.t('validation.phone_format') : ''"
-            inputmode="tel"
+            [error]="phone && phone.length > 1 && !isValidPhone(phone) ? i18n.t('validation.phone_format') : ''"
+            inputmode="numeric"
+            mask="digits"
+            [maxlength]="9"
+            prefix="+966"
           ></app-input>
 
           <!-- Language Preference -->
@@ -335,7 +338,7 @@ import { NavComponent, BackLinkComponent, CardComponent, InputComponent, ButtonC
 export class ProfileComponent implements OnInit {
   name = 'Ahmed Al-Salem';
   email = 'ahmed@alomran.com';
-  phone = '+966 50 123 4567';
+  phone = '501234567';
   lang = 'en';
   notifEmail = true;
   notifSms = true;
@@ -354,8 +357,7 @@ export class ProfileComponent implements OnInit {
   }
 
   isValidPhone(phone: string): boolean {
-    const digits = phone.replace(/[\s\-\+]/g, '');
-    return /^(05|9665)\d{8}$/.test(digits);
+    return /^5\d{8}$/.test(phone);
   }
 
   go(path: string) { this.router.navigateByUrl(path); }

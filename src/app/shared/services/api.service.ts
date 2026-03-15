@@ -298,11 +298,11 @@ export class ApiService {
   getOnboardingSteps(variant: 'new' | 'single'): Observable<OnboardingStep[]> {
     const steps: OnboardingStep[] = [
       { title: this.t('dashboard.step_profile'), desc: this.t('dashboard.step_profile_desc'), action: this.t('dashboard.step_profile_action'), route: '/profile?from=onboarding', done: variant === 'single' },
-      { title: this.t('dashboard.step_verify'), desc: this.t('dashboard.step_verify_desc'), action: this.t('dashboard.step_verify_action'), route: '/onboarding/company-verify?from=dashboard', done: false },
-      { title: this.t('dashboard.step_credentials'), desc: this.t('dashboard.step_credentials_desc'), action: this.t('dashboard.step_credentials_action'), route: '/company/0/credentials', done: false },
-      { title: this.t('dashboard.step_project'), desc: this.t('dashboard.step_project_desc'), action: this.t('dashboard.step_project_action'), route: '/project/new?fresh=true', done: variant === 'single' },
-      { title: this.t('dashboard.step_team'), desc: this.t('dashboard.step_team_desc'), action: this.t('dashboard.step_team_action'), route: '/dashboard/teams', done: false },
-      { title: this.t('dashboard.step_financing'), desc: this.t('dashboard.step_financing_desc'), action: this.t('dashboard.step_financing_action'), route: '/application/new', done: false },
+      { title: this.t('dashboard.step_verify'), desc: this.t('dashboard.step_verify_desc'), action: this.t('dashboard.step_verify_action'), route: '/onboarding/company-verify?from=onboarding', done: false },
+      { title: this.t('dashboard.step_credentials'), desc: this.t('dashboard.step_credentials_desc'), action: this.t('dashboard.step_credentials_action'), route: '/company/0/credentials?from=onboarding', done: false },
+      { title: this.t('dashboard.step_project'), desc: this.t('dashboard.step_project_desc'), action: this.t('dashboard.step_project_action'), route: '/project/new?from=onboarding', done: variant === 'single' },
+      { title: this.t('dashboard.step_team'), desc: this.t('dashboard.step_team_desc'), action: this.t('dashboard.step_team_action'), route: '/onboarding/team?from=onboarding', done: false },
+      { title: this.t('dashboard.step_financing'), desc: this.t('dashboard.step_financing_desc'), action: this.t('dashboard.step_financing_action'), route: '/application/new?from=onboarding', done: false },
     ];
     return of(steps).pipe(delay(API_DELAY));
   }

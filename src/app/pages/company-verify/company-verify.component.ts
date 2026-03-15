@@ -10,6 +10,8 @@ import {
   ProgressStepsComponent,
   CompanyVerifyFormComponent,
   AvatarComponent,
+  ModalComponent,
+  InputComponent,
   TranslatePipe,
 } from '../../shared';
 
@@ -24,6 +26,8 @@ import {
     ProgressStepsComponent,
     CompanyVerifyFormComponent,
     AvatarComponent,
+    ModalComponent,
+    InputComponent,
     TranslatePipe,
   ],
   template: `
@@ -64,7 +68,7 @@ import {
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
                   {{ 'company_verify.invited' | t }}
                 </span>
-                <app-btn *ngIf="!owner.invited" variant="secondary" size="sm" (clicked)="inviteOwner(owner)">
+                <app-btn *ngIf="!owner.invited" variant="secondary" size="sm" (clicked)="openInviteModal(owner)">
                   {{ 'company_verify.invite_to_verify' | t }}
                 </app-btn>
               </div>
@@ -94,6 +98,52 @@ import {
         </ng-container>
       </div>
     </div>
+
+    <!-- Invite Owner Modal -->
+    <app-modal *ngIf="inviteModalOwner" [title]="'company_verify.invite_modal_title' | t" (closed)="closeInviteModal()">
+      <div class="invite-modal-body">
+        <div class="invite-modal-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" [attr.stroke]="C.green" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <polyline points="9 12 11 14 15 10"/>
+          </svg>
+        </div>
+        <div class="invite-modal-heading">{{ 'company_verify.invite_modal_heading' | t:{name: inviteModalOwner.name} }}</div>
+        <div class="invite-modal-desc">{{ 'company_verify.invite_modal_desc' | t }}</div>
+
+        <div class="invite-link-section">
+          <div class="invite-link-label">{{ 'company_verify.invite_modal_link_label' | t }}</div>
+          <div class="invite-link-row">
+            <div class="invite-link-url">{{ inviteLink }}</div>
+            <app-btn variant="primary" size="sm" (clicked)="copyLink()">
+              {{ linkCopied ? ('company_verify.invite_modal_copied' | t) : ('company_verify.invite_modal_copy' | t) }}
+            </app-btn>
+          </div>
+        </div>
+
+        <div class="invite-phone-section">
+          <app-input
+            [label]="'company_verify.invite_modal_phone_label' | t"
+            placeholder="5x xxx xxxx"
+            [value]="invitePhone"
+            (valueChange)="invitePhone = $event"
+            inputmode="numeric"
+            mask="digits"
+            [maxlength]="9"
+            prefix="+966"
+            [error]="invitePhone && invitePhone.length > 1 && !isValidPhone(invitePhone) ? ('validation.phone_format' | t) : ''"
+          ></app-input>
+        </div>
+
+        <app-btn variant="primary" size="lg" [full]="true" [disabled]="smsSent || !isValidPhone(invitePhone)" (clicked)="sendSms()">
+          <span *ngIf="!smsSent">{{ 'company_verify.invite_modal_send_sms' | t }}</span>
+          <span *ngIf="smsSent" style="display: flex; align-items: center; gap: 6px; justify-content: center;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            {{ 'company_verify.invite_modal_sms_sent' | t }}
+          </span>
+        </app-btn>
+      </div>
+    </app-modal>
   `,
   styles: [`
     :host { display: block; }
@@ -181,6 +231,40 @@ import {
       font-size: 12px; color: ${C.g400};
     }
 
+    /* Invite modal */
+    .invite-modal-body { text-align: center; }
+    .invite-modal-icon {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: ${C.greenLt};
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 16px;
+    }
+    .invite-modal-heading {
+      font-size: 18px; font-weight: 900; color: ${C.g900}; margin-bottom: 6px;
+    }
+    .invite-modal-desc {
+      font-size: 13px; color: ${C.g500}; line-height: 1.55; margin-bottom: 24px;
+      max-width: 380px; margin-left: auto; margin-right: auto;
+    }
+    .invite-link-section {
+      text-align: left; margin-bottom: 20px;
+    }
+    .invite-link-label {
+      font-size: 13px; font-weight: 700; color: ${C.g700}; margin-bottom: 8px;
+    }
+    .invite-link-row {
+      display: flex; align-items: center; gap: 10px;
+      background: ${C.g50}; border: 1.5px solid ${C.g200};
+      border-radius: 10px; padding: 10px 12px;
+    }
+    .invite-link-url {
+      flex: 1; font-size: 13px; color: ${C.g600}; font-weight: 500;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .invite-phone-section {
+      text-align: left; margin-bottom: 20px;
+    }
+
     @media (max-width: 768px) {
       .container { padding: 24px 16px 40px; }
       .non-owner-block { padding: 28px 16px; }
@@ -201,6 +285,16 @@ export class CompanyVerifyComponent implements OnInit {
   backLabel = '';
   currentStep = 0;
   demoRole: 'owner' | 'non-owner' = 'owner';
+
+  // Invite modal state
+  inviteModalOwner: any = null;
+  invitePhone = '';
+  linkCopied = false;
+  smsSent = false;
+
+  get inviteLink(): string {
+    return 'https://portal.safqah.com/verify/owner/abc123';
+  }
 
   get stepLabels() {
     return [
@@ -241,8 +335,10 @@ export class CompanyVerifyComponent implements OnInit {
     } else if (this.from === 'owner-verify') {
       this.backLink = '/dashboard';
       this.backLabel = this.i18n.t('company_verify.back_to_dashboard');
+    } else if (this.from === 'onboarding') {
+      this.backLink = '/dashboard?state=new';
+      this.backLabel = this.i18n.t('company_verify.back_to_dashboard');
     } else {
-      // Onboarding flow — no "back to dashboard" since user hasn't been there yet
       this.backLink = '/verify';
       this.backLabel = this.i18n.t('common.back');
     }
@@ -252,9 +348,34 @@ export class CompanyVerifyComponent implements OnInit {
     this.demoRole = role;
   }
 
-  inviteOwner(owner: any) {
-    const src = this._crOwnersData.find(o => o.name === owner.name);
+  openInviteModal(owner: any) {
+    this.inviteModalOwner = owner;
+    this.invitePhone = '';
+    this.linkCopied = false;
+    this.smsSent = false;
+  }
+
+  closeInviteModal() {
+    this.inviteModalOwner = null;
+  }
+
+  copyLink() {
+    navigator.clipboard.writeText(this.inviteLink).catch(() => {});
+    this.linkCopied = true;
+    setTimeout(() => this.linkCopied = false, 2000);
+  }
+
+  sendSms() {
+    this.smsSent = true;
+    // Mark the owner as invited
+    const src = this._crOwnersData.find(o => o.name === this.inviteModalOwner?.name);
     if (src) src.invited = true;
+    // Auto-close modal after brief delay
+    setTimeout(() => this.closeInviteModal(), 1500);
+  }
+
+  isValidPhone(phone: string): boolean {
+    return /^5\d{8}$/.test(phone);
   }
 
   onStepClick(i: number): void {
@@ -264,10 +385,6 @@ export class CompanyVerifyComponent implements OnInit {
   }
 
   onComplete(): void {
-    if (this.from === 'onboarding') {
-      this.router.navigate(['/onboarding/team']);
-    } else {
-      this.router.navigate(['/dashboard'], { queryParams: { state: 'new' } });
-    }
+    this.router.navigate(['/dashboard'], { queryParams: { state: 'new' } });
   }
 }

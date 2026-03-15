@@ -177,7 +177,7 @@ export class InputComponent {
   @Input() maxlength: number = 0;
   @Input() type: string = 'text';
   @Input() prefix: string = '';
-  @Input() mask: 'digits' | 'phone' | '' = '';
+  @Input() mask: 'digits' | 'phone' | 'currency' | '' = '';
   @Output() valueChange = new EventEmitter<string>();
 
   onValueChange(newValue: string): void {
@@ -194,6 +194,18 @@ export class InputComponent {
         input.value = cleaned;
         this.value = cleaned;
         this.valueChange.emit(cleaned);
+      }
+    } else if (this.mask === 'currency') {
+      const digits = input.value.replace(/[^\d]/g, '');
+      const formatted = digits ? Number(digits).toLocaleString('en-US') : '';
+      if (formatted !== input.value) {
+        const cursorPos = input.selectionStart || 0;
+        const prevLen = input.value.length;
+        input.value = formatted;
+        this.value = formatted;
+        this.valueChange.emit(formatted);
+        const newPos = cursorPos + (formatted.length - prevLen);
+        input.setSelectionRange(newPos, newPos);
       }
     } else if (this.mask === 'phone') {
       const cleaned = input.value.replace(/[^\d+]/g, '');

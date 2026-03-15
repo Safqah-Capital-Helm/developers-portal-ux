@@ -229,7 +229,8 @@ import {
               [helper]="('financing.total_cost_helper' | t)"
               [value]="financingAmount"
               (valueChange)="financingAmount = $event"
-              inputmode="decimal"
+              inputmode="numeric"
+              mask="currency"
             ></app-input>
           </app-card>
 
@@ -1118,9 +1119,12 @@ export class AddApplicationComponent implements OnInit, OnDestroy {
 
   constructor(private router: Router, private route: ActivatedRoute, private i18n: I18nService, private api: ApiService) {}
 
+  private fromOnboarding = false;
+
   ngOnInit(): void {
     const projectParam = this.route.snapshot.queryParamMap.get('project');
     const fresh = this.route.snapshot.queryParamMap.get('fresh');
+    this.fromOnboarding = this.route.snapshot.queryParamMap.get('from') === 'onboarding';
 
     if (projectParam) {
       this.selectedProject = projectParam;
@@ -1257,7 +1261,11 @@ export class AddApplicationComponent implements OnInit, OnDestroy {
   }
 
   goToStatus(): void {
-    this.router.navigateByUrl('/application/1/status');
+    if (this.fromOnboarding) {
+      this.router.navigateByUrl('/dashboard?state=new');
+    } else {
+      this.router.navigateByUrl('/application/1/status');
+    }
   }
 
   go(path: string): void {

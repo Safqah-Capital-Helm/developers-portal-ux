@@ -298,6 +298,8 @@ import type { TimelineEvent, SelectOption } from '../../shared';
                 placeholder="e.g. 30,000,000"
                 suffix="SAR"
                 helper="Total financing amount requested"
+                inputmode="numeric"
+                mask="currency"
                 [(value)]="demoAmount">
               </app-input>
             </div>
@@ -551,7 +553,7 @@ import type { TimelineEvent, SelectOption } from '../../shared';
               <div style="max-width: 400px;">
                 <app-input label="Project Name" placeholder="e.g. Khobar Mixed-Use Tower" helper="Choose a descriptive name for your development project." [value]="''" (valueChange)="$event"></app-input>
                 <div style="margin-top: 16px;">
-                  <app-input label="Financing Amount" placeholder="e.g. 30,000,000" suffix="SAR" helper="Total estimated cost of the project in SAR." [value]="''" (valueChange)="$event"></app-input>
+                  <app-input label="Financing Amount" placeholder="e.g. 30,000,000" suffix="SAR" helper="Total estimated cost of the project in SAR." inputmode="numeric" mask="currency" [value]="''" (valueChange)="$event"></app-input>
                 </div>
               </div>
             </div>

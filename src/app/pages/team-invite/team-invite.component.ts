@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { C } from '../../shared/theme';
@@ -485,7 +485,7 @@ import {
     }
   `]
 })
-export class TeamInviteComponent {
+export class TeamInviteComponent implements OnInit {
   C = C;
   noCrMode = false;
 
@@ -506,7 +506,13 @@ export class TeamInviteComponent {
     'Authorized Signatory': 'common.role_authorized_signatory',
   };
 
-  constructor(private router: Router, public i18n: I18nService) {}
+  private fromOnboarding = false;
+
+  constructor(private router: Router, private route: ActivatedRoute, public i18n: I18nService) {}
+
+  ngOnInit(): void {
+    this.fromOnboarding = this.route.snapshot.queryParamMap.get('from') === 'onboarding';
+  }
 
   translateCrRole(role: string): string {
     return this.crRoleKeyMap[role] ? this.i18n.t(this.crRoleKeyMap[role]) : role;
@@ -542,11 +548,19 @@ export class TeamInviteComponent {
   }
 
   sendAndContinue() {
-    this.router.navigate(['/dashboard'], { queryParams: { state: 'new' } });
+    if (this.fromOnboarding) {
+      this.router.navigateByUrl('/dashboard?state=new');
+    } else {
+      this.router.navigateByUrl('/dashboard/teams');
+    }
   }
 
   skip() {
-    this.router.navigate(['/dashboard'], { queryParams: { state: 'new' } });
+    if (this.fromOnboarding) {
+      this.router.navigateByUrl('/dashboard?state=new');
+    } else {
+      this.router.navigateByUrl('/dashboard/teams');
+    }
   }
 
   isValidEmail(email: string): boolean {

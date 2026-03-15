@@ -161,11 +161,16 @@ type IdentityStep = 'id' | 'otp' | 'verifying' | 'ownerCheck' | 'ownerFail' | 'd
               <div style="margin-top: 20px;">
                 <app-input
                   [label]="'absher.owner_phone_label' | t"
-                  [placeholder]="'absher.owner_phone_placeholder' | t"
+                  placeholder="5x xxx xxxx"
                   [value]="ownerPhone"
                   (valueChange)="ownerPhone = $event"
+                  inputmode="numeric"
+                  mask="digits"
+                  [maxlength]="9"
+                  prefix="+966"
+                  [error]="ownerPhone && ownerPhone.length > 1 && !isValidPhone(ownerPhone) ? i18n.t('validation.phone_format') : ''"
                 ></app-input>
-                <app-btn variant="primary" [full]="true" size="lg" [disabled]="ownerPhone.length < 10" (clicked)="sendSms()">
+                <app-btn variant="primary" [full]="true" size="lg" [disabled]="!isValidPhone(ownerPhone)" (clicked)="sendSms()">
                   {{ 'absher.send_sms' | t }}
                 </app-btn>
               </div>
@@ -460,6 +465,10 @@ export class AbsherComponent implements OnInit, OnDestroy {
     this.copied = true;
     const t = setTimeout(() => { this.copied = false; }, 2000);
     this.timers.push(t);
+  }
+
+  isValidPhone(phone: string): boolean {
+    return /^5\d{8}$/.test(phone);
   }
 
   sendSms(): void {

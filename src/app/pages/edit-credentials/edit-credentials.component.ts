@@ -92,14 +92,22 @@ export class EditCredentialsComponent implements OnInit {
   backLabel = '';
   loading = true;
   initialData: Partial<PrevCredentialsData> | null = null;
+  private fromOnboarding = false;
 
   constructor(private route: ActivatedRoute, private router: Router, private i18n: I18nService, private api: ApiService) {}
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('companyId'));
     this.companyId = id;
-    this.backLink = '/dashboard/company/' + id;
-    this.backLabel = this.i18n.t('credentials.back_to_company');
+    this.fromOnboarding = this.route.snapshot.queryParamMap.get('from') === 'onboarding';
+
+    if (this.fromOnboarding) {
+      this.backLink = '/dashboard?state=new';
+      this.backLabel = this.i18n.t('common.back');
+    } else {
+      this.backLink = '/dashboard/company/' + id;
+      this.backLabel = this.i18n.t('credentials.back_to_company');
+    }
 
     this.api.getCompanyCredentials(String(id)).subscribe(data => {
       this.initialData = data;
@@ -112,7 +120,10 @@ export class EditCredentialsComponent implements OnInit {
   }
 
   save(): void {
-    // In a real app, this would call an API. For the prototype, just navigate back.
-    this.router.navigateByUrl(this.backLink);
+    if (this.fromOnboarding) {
+      this.router.navigateByUrl('/dashboard?state=new');
+    } else {
+      this.router.navigateByUrl(this.backLink);
+    }
   }
 }

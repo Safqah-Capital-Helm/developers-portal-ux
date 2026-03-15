@@ -9,6 +9,7 @@ import {
   CardComponent,
   InputComponent,
   TranslatePipe,
+  I18nService,
 } from '../../shared';
 
 @Component({
@@ -61,7 +62,7 @@ import {
             </div>
 
             <div class="field-group">
-              <app-input [label]="('invite_accept.phone' | t)" [placeholder]="('invite_accept.phone_placeholder' | t)" inputmode="tel" type="tel" mask="phone" [value]="phone" (valueChange)="phone = $event"></app-input>
+              <app-input [label]="('invite_accept.phone' | t)" placeholder="5x xxx xxxx" inputmode="numeric" mask="digits" [maxlength]="9" prefix="+966" [value]="phone" (valueChange)="phone = $event" [error]="phone && phone.length > 1 && !isValidPhone(phone) ? ('validation.phone_format' | t) : ''"></app-input>
             </div>
           </div>
 
@@ -77,7 +78,7 @@ import {
 
         <!-- Actions -->
         <div class="actions">
-          <app-btn variant="primary" size="lg" [disabled]="!fullName.trim() || !phone.trim()" (clicked)="accept()">
+          <app-btn variant="primary" size="lg" [disabled]="!fullName.trim() || !isValidPhone(phone)" (clicked)="accept()">
             {{ 'invite_accept.accept' | t }} <span class="dir-arrow">&rarr;</span>
           </app-btn>
           <button class="decline-btn" (click)="showDecline = true">{{ 'invite_accept.decline_invitation' | t }}</button>
@@ -358,7 +359,11 @@ export class InviteAcceptComponent {
   phone = '';
   showDecline = false;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, public i18n: I18nService) {}
+
+  isValidPhone(phone: string): boolean {
+    return /^5\d{8}$/.test(phone);
+  }
 
   accept() {
     this.router.navigate(['/dashboard']);

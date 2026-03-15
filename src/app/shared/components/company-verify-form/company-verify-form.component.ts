@@ -115,8 +115,10 @@ import { I18nService } from '../../i18n/i18n.service';
           <app-input
             [label]="'company_verify.website_label' | t"
             [placeholder]="'company_verify.website_placeholder' | t"
+            prefix="https://"
             [value]="companyWebsite"
             (valueChange)="companyWebsite = $event"
+            [error]="companyWebsite && !isValidWebsite(companyWebsite) ? ('validation.website_format' | t) : ''"
           ></app-input>
         </div>
       </div>
@@ -448,6 +450,12 @@ export class CompanyVerifyFormComponent {
     ];
   }
   companyWebsite = '';
+
+  isValidWebsite(url: string): boolean {
+    // Accept with or without protocol
+    const pattern = /^(https?:\/\/)?([\w-]+\.)+[a-zA-Z]{2,}(\/.*)?$/;
+    return pattern.test(url.trim());
+  }
 
   // Declaration
   hasLitigations: boolean | null = null;
